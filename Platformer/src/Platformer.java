@@ -1,9 +1,4 @@
-package hgd;
-
-
 //imports
-import com.sun.xml.internal.ws.api.server.Container;
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -28,19 +23,19 @@ public class Platformer extends Application {
 	private Pane root1, root2;
 	
 	//image
-	Image background = new Image("https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwjF6NmO0ojPAhVHJiYKHejHBpcQjBwIBA&url=https%3A%2F%2Fimage.freepik.com%2Ffree-vector%2Fmodern-abstract-background_1048-1003.jpg&psig=AFQjCNEMWzy-0tpH-OyXLNUjeo4QCkp-UA&ust=1473728900524583&cad=rjt");
-	Image hero = new Image("http://zeldawiki.org/images/thumb/2/23/ALBW_Triforce.png/200px-ALBW_Triforce.png");
+	Image background = new Image("Assets/Art/background.jpg");
+	Image hero = new Image("Assets/Art/triforce.png");
 
 	private ImageView image(){
 		 		String Images =
-		 				"file:///Users/marissawalther/Desktop/desktop/triforce.png";
+		 				"Assets/Art/triforce.png";
 		 		Image heroImage;
 		 		heroImage = new Image(Images, 70, 60, false, false);
 		 	ImageView hero = new ImageView(heroImage);
 		 
 		 	hero = new ImageView(heroImage);
-		 	hero.setTranslateX(50);
-		 	hero.setTranslateY(50);
+		 	hero.setX(300);
+		 	hero.setY(200);
 		 	return hero;
 		 	}
 	
@@ -67,7 +62,7 @@ public class Platformer extends Application {
 		Canvas canvas = new Canvas(800, 600);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		gc.drawImage(background, 0, 0);
-		gc.drawImage(hero, rectangle.getX(), rectangle.getY());
+		//gc.drawImage(hero, rectangle.getX(), rectangle.getY());
 		
 		//menu		
 		//make root
@@ -96,7 +91,7 @@ public class Platformer extends Application {
 
 	// creates shape that is added when button pressed
 	private Rectangle makeRectangle() {
-		Rectangle r1 = new Rectangle(300, 200, 100, 150);
+		Rectangle r1 = new Rectangle(300, 200, 70, 60);
 		r1.setStroke(Color.BLACK);
 		r1.setFill(Color.LIMEGREEN);
 		r1.setStrokeWidth(3);
@@ -129,22 +124,23 @@ public class Platformer extends Application {
 				switch (event.getCode()) {
 				case UP:
 					rectangle.setY(rectangle.getY() - movement);
-					image.setY(rectangle.getY() - movement);
+					image.setY(rectangle.getY());
 					break;
 				case RIGHT:
 					rectangle.setX(rectangle.getX() + movement);
-					image.setX(rectangle.getX() + movement);
+					image.setX(rectangle.getX());
 					break;
 				case DOWN:
 					rectangle.setY(rectangle.getY() + movement);
-					image.setY(rectangle.getY() + movement);
+					image.setY(rectangle.getY());
 					break;
 				case LEFT:
 					rectangle.setX(rectangle.getX() - movement);
-					image.setX(rectangle.getX() - movement);
+					image.setX(rectangle.getX());
 					break;
 				}
 			}
 		});
 	}
 }
+
