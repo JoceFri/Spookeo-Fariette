@@ -1,3 +1,5 @@
+package hgd;
+
 
 //imports
 import com.sun.xml.internal.ws.api.server.Container;
@@ -26,9 +28,22 @@ public class Platformer extends Application {
 	private Pane root1, root2;
 	
 	//image
-	Image background = new Image("Assets/Art/background.jpg");
-	Image hero = new Image("Assets/Art/triforce.png");
+	Image background = new Image("https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&ved=0ahUKEwjF6NmO0ojPAhVHJiYKHejHBpcQjBwIBA&url=https%3A%2F%2Fimage.freepik.com%2Ffree-vector%2Fmodern-abstract-background_1048-1003.jpg&psig=AFQjCNEMWzy-0tpH-OyXLNUjeo4QCkp-UA&ust=1473728900524583&cad=rjt");
+	Image hero = new Image("http://zeldawiki.org/images/thumb/2/23/ALBW_Triforce.png/200px-ALBW_Triforce.png");
 
+	private ImageView image(){
+		 		String Images =
+		 				"file:///Users/marissawalther/Desktop/desktop/triforce.png";
+		 		Image heroImage;
+		 		heroImage = new Image(Images, 70, 60, false, false);
+		 	ImageView hero = new ImageView(heroImage);
+		 
+		 	hero = new ImageView(heroImage);
+		 	hero.setTranslateX(50);
+		 	hero.setTranslateY(50);
+		 	return hero;
+		 	}
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -41,6 +56,8 @@ public class Platformer extends Application {
 		
 		//make rectangle
 		final Rectangle rectangle = makeRectangle();
+		
+		final ImageView image = image();
 		
 		//make button
 		final Button button = startButton();
@@ -67,9 +84,10 @@ public class Platformer extends Application {
 		root2 = new Pane();
 		root2.getChildren().add(canvas);
 		root2.getChildren().add(rectangle);
+		root2.getChildren().add(image);
 		//make scene
 		scene2 = new Scene(root2, 800, 600, Color.AQUAMARINE);
-		moveRectangleOnKeyPress(scene2, rectangle, gc);
+		moveRectangleOnKeyPress(scene2, rectangle, image);
 		
 		thestage.setTitle("Spookeo's Journey Yo");
 		thestage.setScene(scene1);	
@@ -104,26 +122,26 @@ public class Platformer extends Application {
 	}
 
 	// makes shape move....
-	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, GraphicsContext gc) {
+	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, ImageView image) {
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
 				switch (event.getCode()) {
 				case UP:
 					rectangle.setY(rectangle.getY() - movement);
-					gc.drawImage(hero, rectangle.getX(), rectangle.getY());
+					image.setY(rectangle.getY() - movement);
 					break;
 				case RIGHT:
 					rectangle.setX(rectangle.getX() + movement);
-					gc.drawImage(hero, rectangle.getX(), rectangle.getY());
+					image.setX(rectangle.getX() + movement);
 					break;
 				case DOWN:
 					rectangle.setY(rectangle.getY() + movement);
-					gc.drawImage(hero, rectangle.getX(), rectangle.getY());
+					image.setY(rectangle.getY() + movement);
 					break;
 				case LEFT:
 					rectangle.setX(rectangle.getX() - movement);
-					gc.drawImage(hero, rectangle.getX(), rectangle.getY());
+					image.setX(rectangle.getX() - movement);
 					break;
 				}
 			}
