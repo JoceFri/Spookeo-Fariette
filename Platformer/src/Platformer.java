@@ -23,14 +23,14 @@ public class Platformer extends Application {
 	private Pane root1, root2;
 	
 	//image
-	Image background = new Image("Assets/Art/background.jpg");
-	Image hero = new Image("Assets/Art/triforce.png");
+	Image background = new Image("Assets/Art/rough drawing.png");
+	Image hero = new Image("Assets/Art/Joey.png");
 
 	private ImageView image(){
 		 		String Images =
-		 				"Assets/Art/triforce.png";
+		 				"Assets/Art/Joey.png";
 		 		Image heroImage;
-		 		heroImage = new Image(Images, 70, 60, false, false);
+		 		heroImage = new Image(Images, 96, 96, false, false);
 		 	ImageView hero = new ImageView(heroImage);
 		 
 		 	hero = new ImageView(heroImage);
@@ -59,7 +59,7 @@ public class Platformer extends Application {
 
 		
 		//make canvas
-		Canvas canvas = new Canvas(800, 600);
+		Canvas canvas = new Canvas(1246, 978);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		gc.drawImage(background, 0, 0);
 		//gc.drawImage(hero, rectangle.getX(), rectangle.getY());
@@ -81,7 +81,7 @@ public class Platformer extends Application {
 		root2.getChildren().add(rectangle);
 		root2.getChildren().add(image);
 		//make scene
-		scene2 = new Scene(root2, 800, 600, Color.AQUAMARINE);
+		scene2 = new Scene(root2, 1246, 978, Color.AQUAMARINE);
 		moveRectangleOnKeyPress(scene2, rectangle, image);
 		
 		thestage.setTitle("Spookeo's Journey Yo");
@@ -91,7 +91,7 @@ public class Platformer extends Application {
 
 	// creates shape that is added when button pressed
 	private Rectangle makeRectangle() {
-		Rectangle r1 = new Rectangle(300, 200, 70, 60);
+		Rectangle r1 = new Rectangle(300, 200, 96, 96);
 		r1.setStroke(Color.BLACK);
 		r1.setFill(Color.LIMEGREEN);
 		r1.setStrokeWidth(3);
@@ -143,4 +143,3 @@ public class Platformer extends Application {
 		});
 	}
 }
-
