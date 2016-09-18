@@ -1,4 +1,5 @@
 //imports
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,18 +18,26 @@ import javafx.stage.Stage;
 public class Platformer extends Application {
 	
 	//global variables
-	private static final double movement = 25.0;
+	//resolution
+	private static final double HEIGHT = 800.0;
+	private static final double WIDTH = 1200.0;
+	private boolean running = false;
+	
+	//movement modifiers
+	private static final double acceleration = 2.5;
+	private static final double gravity = 1.0;
+	
 	private Stage thestage;
 	private Scene scene1, scene2;
 	private Pane root1, root2;
 	
 	//image
 	Image background = new Image("Assets/Art/rough drawing.png");
-	Image hero = new Image("Assets/Art/Joey.png");
+	Image hero = new Image("Assets/Art/joey.png");
 
 	private ImageView image(){
 		 		String Images =
-		 				"Assets/Art/Joey.png";
+		 				"Assets/Art/joey.png";
 		 		Image heroImage;
 		 		heroImage = new Image(Images, 96, 96, false, false);
 		 	ImageView hero = new ImageView(heroImage);
@@ -56,7 +65,6 @@ public class Platformer extends Application {
 		
 		//make button
 		final Button button = startButton();
-
 		
 		//make canvas
 		Canvas canvas = new Canvas(1246, 978);
@@ -83,6 +91,19 @@ public class Platformer extends Application {
 		//make scene
 		scene2 = new Scene(root2, 1246, 978, Color.AQUAMARINE);
 		moveRectangleOnKeyPress(scene2, rectangle, image);
+		
+		
+		// to-do for game mechanics and stuff
+		AnimationTimer gameLoop = new AnimationTimer() {
+
+			@Override
+			public void handle(long now) {
+				gravity(rectangle, image);
+				
+			}
+			
+		};
+		gameLoop.start();
 		
 		thestage.setTitle("Spookeo's Journey Yo");
 		thestage.setScene(scene1);	
@@ -111,32 +132,47 @@ public class Platformer extends Application {
 			@Override
 			public void handle(ActionEvent event) {
 				thestage.setScene(scene2);
+				running = true;
 			}
 		});
 		return btn;
 	}
-
+	private void gravity(final Rectangle rectangle, final ImageView image){
+		if (!(rectangle.getY() + gravity + rectangle.getHeight()>= HEIGHT)) {
+			rectangle.setY(rectangle.getY() + gravity);
+			image.setY(rectangle.getY());
+		}
+	}
 	// makes shape move....
-	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, ImageView image) {
+	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, final ImageView image) {
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
+				
 				switch (event.getCode()) {
 				case UP:
-					rectangle.setY(rectangle.getY() - movement);
+					if (!(rectangle.getY() - acceleration <= 0)) {
+					rectangle.setY(rectangle.getY() - acceleration);
 					image.setY(rectangle.getY());
+					}
 					break;
 				case RIGHT:
-					rectangle.setX(rectangle.getX() + movement);
+					if (!(rectangle.getX() + acceleration + rectangle.getWidth()>= WIDTH)) {
+					rectangle.setX(rectangle.getX() + acceleration);
 					image.setX(rectangle.getX());
+					}
 					break;
 				case DOWN:
-					rectangle.setY(rectangle.getY() + movement);
+					if (!(rectangle.getY() + acceleration + rectangle.getHeight()>= HEIGHT)) {
+					rectangle.setY(rectangle.getY() + acceleration);
 					image.setY(rectangle.getY());
+					}
 					break;
 				case LEFT:
-					rectangle.setX(rectangle.getX() - movement);
+					if (!(rectangle.getX() - acceleration <= 0)) {
+					rectangle.setX(rectangle.getX() - acceleration);
 					image.setX(rectangle.getX());
+					}
 					break;
 				}
 			}
