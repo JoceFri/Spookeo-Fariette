@@ -61,6 +61,7 @@ public class Platformer extends Application {
 		//make rectangle
 		final Rectangle rectangle = makeRectangle(300, 200, 96, 96);
 		final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
+		final Rectangle thirdrectangle = makeRectangle(0 , HEIGHT, 1245, 400);
 		
 		final ImageView image = image();
 		
@@ -89,6 +90,7 @@ public class Platformer extends Application {
 		root2.getChildren().add(canvas);
 		root2.getChildren().add(rectangle);
 		root2.getChildren().add(secondrectangle);
+		root2.getChildren().add(thirdrectangle);
 		root2.getChildren().add(image);
 		//make scene
 		scene2 = new Scene(root2, 1246, 978, Color.AQUAMARINE);
