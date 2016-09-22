@@ -59,7 +59,8 @@ public class Platformer extends Application {
 		thestage = primaryStage;
 		
 		//make rectangle
-		final Rectangle rectangle = makeRectangle();
+		final Rectangle rectangle = makeRectangle(300, 200, 96, 96);
+		final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
 		
 		final ImageView image = image();
 		
@@ -87,6 +88,7 @@ public class Platformer extends Application {
 		root2 = new Pane();
 		root2.getChildren().add(canvas);
 		root2.getChildren().add(rectangle);
+		root2.getChildren().add(secondrectangle);
 		root2.getChildren().add(image);
 		//make scene
 		scene2 = new Scene(root2, 1246, 978, Color.AQUAMARINE);
@@ -99,7 +101,7 @@ public class Platformer extends Application {
 			@Override
 			public void handle(long now) {
 				gravity(rectangle, image);
-				
+				collision(rectangle, secondrectangle);
 			}
 			
 		};
@@ -111,8 +113,8 @@ public class Platformer extends Application {
 	}
 
 	// creates shape that is added when button pressed
-	private Rectangle makeRectangle() {
-		Rectangle r1 = new Rectangle(300, 200, 96, 96);
+	private Rectangle makeRectangle(double x, double y, double width, double height) {
+		Rectangle r1 = new Rectangle(x, y, width, height);
 		r1.setStroke(Color.BLACK);
 		r1.setFill(Color.LIMEGREEN);
 		r1.setStrokeWidth(3);
@@ -142,6 +144,18 @@ public class Platformer extends Application {
 			rectangle.setY(rectangle.getY() + gravity);
 			image.setY(rectangle.getY());
 		}
+	}
+	private void collision(final Rectangle rectangle, final Rectangle secondrectangle){
+		//System.out.println(secondrectangle.getX() + "  " + (rectangle.getX() +rectangle.getWidth() ));
+		if(rectangle.getX() + rectangle.getWidth() <= secondrectangle.getX() && rectangle.getY() >= secondrectangle.getY() && (secondrectangle.getX() - (rectangle.getX()+ rectangle.getWidth())) <= 3){
+			
+			secondrectangle.setX(secondrectangle.getX() + acceleration);
+		}
+		if(secondrectangle.getX() + secondrectangle.getWidth() <= rectangle.getX() && rectangle.getY() >= secondrectangle.getY() && (rectangle.getX() - (secondrectangle.getX() +secondrectangle.getWidth()) <= 3 )){
+			
+			secondrectangle.setX(secondrectangle.getX() - acceleration);
+		}
+		
 	}
 	// makes shape move....
 	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, final ImageView image) {
