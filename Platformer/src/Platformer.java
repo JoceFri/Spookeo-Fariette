@@ -21,11 +21,14 @@ public class Platformer extends Application {
 	//resolution
 	private static final double HEIGHT = 800.0;
 	private static final double WIDTH = 1200.0;
-	private boolean running = false;
 	
 	//movement modifiers
-	private static final double acceleration = 2.5;
+	private static final double acceleration = 8;
 	private static final double gravity = 1.0;
+	private int cooldown = 60;
+	
+	private Sounds bgNoise = new Sounds();
+	
 	
 	private Stage thestage;
 	private Scene scene1, scene2;
@@ -71,7 +74,7 @@ public class Platformer extends Application {
 		//make canvas
 		Canvas canvas = new Canvas(1246, 978);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		gc.drawImage(background, 0, 0);
+		//gc.drawImage(background, 0, 0);
 		//gc.drawImage(hero, rectangle.getX(), rectangle.getY());
 		
 		//menu		
@@ -95,7 +98,8 @@ public class Platformer extends Application {
 		//make scene
 		scene2 = new Scene(root2, 1246, 978, Color.AQUAMARINE);
 		moveRectangleOnKeyPress(scene2, rectangle, image);
-		
+		bgNoise.loadSound("Assets/Sound/background.wav");
+		bgNoise.runLoop();
 		
 		// to-do for game mechanics and stuff
 		AnimationTimer gameLoop = new AnimationTimer() {
@@ -103,7 +107,8 @@ public class Platformer extends Application {
 			@Override
 			public void handle(long now) {
 				gravity(rectangle, image);
-				collision(rectangle, secondrectangle);
+				collision(rectangle, secondrectangle, image);
+				
 			}
 			
 		};
@@ -136,7 +141,6 @@ public class Platformer extends Application {
 			@Override
 			public void handle(ActionEvent event) {
 				thestage.setScene(scene2);
-				running = true;
 			}
 		});
 		return btn;
@@ -147,18 +151,32 @@ public class Platformer extends Application {
 			image.setY(rectangle.getY());
 		}
 	}
-	private void collision(final Rectangle rectangle, final Rectangle secondrectangle){
+	private void collision(final Rectangle rectangle, final Rectangle secondrectangle, final ImageView image){
 		//System.out.println(secondrectangle.getX() + "  " + (rectangle.getX() +rectangle.getWidth() ));
-		if(rectangle.getX() + rectangle.getWidth() <= secondrectangle.getX() && rectangle.getY() >= secondrectangle.getY() && (secondrectangle.getX() - (rectangle.getX()+ rectangle.getWidth())) <= 3){
+		if(rectangle.getX() + rectangle.getWidth() <= secondrectangle.getX() && rectangle.getY() >= secondrectangle.getY() && (secondrectangle.getX() - (rectangle.getX()+ rectangle.getWidth())) <= acceleration){
 			
+			rectangle.setX(secondrectangle.getX()-rectangle.getWidth() - 1);
+			image.setX(rectangle.getX());
 			secondrectangle.setX(secondrectangle.getX() + acceleration);
+
 		}
-		if(secondrectangle.getX() + secondrectangle.getWidth() <= rectangle.getX() && rectangle.getY() >= secondrectangle.getY() && (rectangle.getX() - (secondrectangle.getX() +secondrectangle.getWidth()) <= 3 )){
+		if(secondrectangle.getX() + secondrectangle.getWidth() <= rectangle.getX() && rectangle.getY() >= secondrectangle.getY() && (rectangle.getX() - (secondrectangle.getX() +secondrectangle.getWidth()) <= acceleration)){
 			
+			rectangle.setX(secondrectangle.getX() + secondrectangle.getWidth() + 1);
+			image.setX(rectangle.getX());
 			secondrectangle.setX(secondrectangle.getX() - acceleration);
+
+			
 		}
 		
+		//check for on top of box
+		
 	}
+	
+	private void jump(final Rectangle rectangle, final ImageView image){
+		
+	}
+	
 	// makes shape move....
 	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, final ImageView image) {
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -167,10 +185,7 @@ public class Platformer extends Application {
 				
 				switch (event.getCode()) {
 				case UP:
-					if (!(rectangle.getY() - acceleration <= 0)) {
-					rectangle.setY(rectangle.getY() - acceleration);
-					image.setY(rectangle.getY());
-					}
+					jump(rectangle, image);
 					break;
 				case RIGHT:
 					if (!(rectangle.getX() + acceleration + rectangle.getWidth()>= WIDTH)) {
