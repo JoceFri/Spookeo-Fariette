@@ -24,8 +24,8 @@ public class Platformer extends Application {
 	
 	//movement modifiers
 	private static final double acceleration = 8;
-	private static final double gravity = 1.0;
-	private int cooldown = 60;
+	private static final double gravity = 2.0;
+	private int cooldown = 120;
 	
 	private Sounds bgNoise = new Sounds();
 	
@@ -108,7 +108,7 @@ public class Platformer extends Application {
 			public void handle(long now) {
 				gravity(rectangle, image);
 				collision(rectangle, secondrectangle, image);
-				
+				cooldown++;
 			}
 			
 		};
@@ -174,7 +174,15 @@ public class Platformer extends Application {
 	}
 	
 	private void jump(final Rectangle rectangle, final ImageView image){
-		
+		boolean canJump = false;
+		double jumpmax = rectangle.getY() - 550;
+		if(cooldown >= 120){
+			canJump = true;
+		}
+		if(canJump){
+			rectangle.setY(rectangle.getY() - jumpmax);
+			cooldown = 0;
+		}
 	}
 	
 	// makes shape move....
