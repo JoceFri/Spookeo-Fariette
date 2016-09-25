@@ -1,4 +1,3 @@
-
 //imports
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -17,39 +16,47 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class Platformer extends Application {
-
-	// global variables
-	// resolution
-	private static final double HEIGHT = 800.0;
-	private static final double WIDTH = 1200.0;
-
-	// movement modifiers
+	
+	//global variables
+	//resolution
+	private static final double HEIGHT = 600.0;
+	private static final double WIDTH = 800.0;
+	
+	//movement modifiers
 	private static final double acceleration = 8;
 	private static final double gravity = 2.0;
 	private int cooldown = 120;
-
+	
 	private Sounds bgNoise = new Sounds();
-
+	private Sounds jumpSound = new Sounds();
+	
+	
 	private Stage thestage;
 	private Scene scene1, scene2;
 	private Pane root1, root2;
-
-	// image
+	
+	//image
 	Image background = new Image("Assets/Art/rough drawing.png");
 	Image hero = new Image("Assets/Art/joey.png");
+	Image dirt1 = new Image("Assets/Art/2side_ground.png");
+	Image dirt2 = new Image("Assets/Art/leftedge_ground.png");
+	Image dirt3 = new Image("Assets/Art/rightedge_ground.png");
+	Image dirt4 = new Image("Assets/Art/rightedge_ground.png");
+	
 
-	private ImageView image() {
-		String Images = "Assets/Art/joey.png";
-		Image heroImage;
-		heroImage = new Image(Images, 96, 96, false, false);
-		ImageView hero = new ImageView(heroImage);
-
-		hero = new ImageView(heroImage);
-		hero.setX(300);
-		hero.setY(200);
-		return hero;
-	}
-
+	private ImageView image(){
+		 		String Images =
+		 				"Assets/Art/joey.png";
+		 		Image heroImage;
+		 		heroImage = new Image(Images, 64, 64, false, false);
+		 	ImageView hero = new ImageView(heroImage);
+		 
+		 	hero = new ImageView(heroImage);
+		 	hero.setX(300);
+		 	hero.setY(200);
+		 	return hero;
+		 	}
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -57,47 +64,57 @@ public class Platformer extends Application {
 	// sets scene and adds objects
 	@Override
 	public void start(Stage primaryStage) {
-
+		
 		thestage = primaryStage;
-
-		// make rectangle
-		final Rectangle rectangle = makeRectangle(300, 200, 96, 96);
+		
+		//make rectangle
+		final Rectangle rectangle = makeRectangle(300, 200, 64, 64);
 		final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
-		final Rectangle thirdrectangle = makeRectangle(0, HEIGHT, 1245, 400);
-
+		//final Rectangle thirdrectangle = makeRectangle(0 , HEIGHT, 1245, 400);
+		rectangle.setFill(Color.TRANSPARENT);
+		
 		final ImageView image = image();
-
-		// make button
+		
+		//make button
 		final Button button = startButton();
-
-		// make canvas
-		Canvas canvas = new Canvas(1246, 978);
+		
+		//make canvas
+		Canvas canvas = new Canvas(864, 664);
 		GraphicsContext gc = canvas.getGraphicsContext2D();
-		// gc.drawImage(background, 0, 0);
-		// gc.drawImage(hero, rectangle.getX(), rectangle.getY());
-
-		// menu
-		// make root
-		root1 = new Pane();
+		gc.drawImage(dirt2, 0, HEIGHT - 21);
+		gc.drawImage(dirt3, WIDTH, HEIGHT - 21);
+		for (int i = 64; i <= WIDTH; i += 64) {
+			gc.drawImage(dirt1, i, HEIGHT - 21);
+		}
+		
+		//gc.drawImage(background, 0, 0);
+		//gc.drawImage(hero, rectangle.getX(), rectangle.getY());
+		
+		//menu		
+		//make root
+		root1 = new Pane();	
 		root1.getChildren().add(canvas);
 		root1.getChildren().add(button);
-		// make scene
+		//make scene
 		scene1 = new Scene(root1, 800, 600, Color.AQUAMARINE);
-
-		// game
-		// make root
+	
+		
+			
+		//game
+		//make root
 		root2 = new Pane();
 		root2.getChildren().add(canvas);
 		root2.getChildren().add(rectangle);
 		root2.getChildren().add(secondrectangle);
-		root2.getChildren().add(thirdrectangle);
+		//root2.getChildren().add(thirdrectangle);
 		root2.getChildren().add(image);
-		// make scene
-		scene2 = new Scene(root2, 1246, 978, Color.AQUAMARINE);
+		//make scene
+		scene2 = new Scene(root2, 864, 664, Color.AQUAMARINE);
 		moveRectangleOnKeyPress(scene2, rectangle, image);
 		bgNoise.loadSound("Assets/Sound/background.wav");
+		jumpSound.loadSound("Assets/Sound/jump1.wav");
 		bgNoise.runLoop();
-
+		
 		// to-do for game mechanics and stuff
 		AnimationTimer gameLoop = new AnimationTimer() {
 
@@ -106,13 +123,14 @@ public class Platformer extends Application {
 				gravity(rectangle, image);
 				collision(rectangle, secondrectangle, image);
 				cooldown++;
+				
 			}
-
+			
 		};
 		gameLoop.start();
-
+		
 		thestage.setTitle("Spookeo's Journey Yo");
-		thestage.setScene(scene1);
+		thestage.setScene(scene1);	
 		thestage.show();
 	}
 
@@ -142,40 +160,34 @@ public class Platformer extends Application {
 		});
 		return btn;
 	}
-
-	private void gravity(final Rectangle rectangle, final ImageView image) {
-		if (!(rectangle.getY() + gravity + rectangle.getHeight() >= HEIGHT)) {
+	private void gravity(final Rectangle rectangle, final ImageView image){
+		if (!(rectangle.getY() + gravity + rectangle.getHeight()>= HEIGHT)) {
 			rectangle.setY(rectangle.getY() + gravity);
 			image.setY(rectangle.getY());
 		}
 	}
-
-	private void collision(final Rectangle rectangle, final Rectangle secondrectangle, final ImageView image) {
-		// System.out.println(secondrectangle.getX() + " " + (rectangle.getX()
-		// +rectangle.getWidth() ));
-		if (rectangle.getX() + rectangle.getWidth() <= secondrectangle.getX()
-				&& rectangle.getY() >= secondrectangle.getY()
-				&& (secondrectangle.getX() - (rectangle.getX() + rectangle.getWidth())) <= acceleration) {
-
-			rectangle.setX(secondrectangle.getX() - rectangle.getWidth() - 1);
+	private void collision(final Rectangle rectangle, final Rectangle secondrectangle, final ImageView image){
+		//System.out.println(secondrectangle.getX() + "  " + (rectangle.getX() +rectangle.getWidth() ));
+		if(rectangle.getX() + rectangle.getWidth() <= secondrectangle.getX() && rectangle.getY() >= secondrectangle.getY() && (secondrectangle.getX() - (rectangle.getX()+ rectangle.getWidth())) <= acceleration){
+			
+			rectangle.setX(secondrectangle.getX()-rectangle.getWidth() - 1);
 			image.setX(rectangle.getX());
 			secondrectangle.setX(secondrectangle.getX() + acceleration);
 
 		}
-		if (secondrectangle.getX() + secondrectangle.getWidth() <= rectangle.getX()
-				&& rectangle.getY() >= secondrectangle.getY()
-				&& (rectangle.getX() - (secondrectangle.getX() + secondrectangle.getWidth()) <= acceleration)) {
-
+		if(secondrectangle.getX() + secondrectangle.getWidth() <= rectangle.getX() && rectangle.getY() >= secondrectangle.getY() && (rectangle.getX() - (secondrectangle.getX() +secondrectangle.getWidth()) <= acceleration)){
+			
 			rectangle.setX(secondrectangle.getX() + secondrectangle.getWidth() + 1);
 			image.setX(rectangle.getX());
 			secondrectangle.setX(secondrectangle.getX() - acceleration);
 
+			
 		}
-
-		// check for on top of box
-
+		
+		//check for on top of box
+		
 	}
-
+	
 	private void jump(final Rectangle rectangle, final ImageView image) {
 		boolean canJump = false;
 		double jumpmax = rectangle.getY() - 550;
@@ -189,36 +201,37 @@ public class Platformer extends Application {
 			if (canJump) {
 				rectangle.setY(rectangle.getY() - 200);
 				cooldown = 0;
+				jumpSound.run();
 			}
-		}
+		}	
 	}
-
+	
 	// makes shape move....
 	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, final ImageView image) {
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent event) {
-
+				
 				switch (event.getCode()) {
 				case UP:
 					jump(rectangle, image);
 					break;
 				case RIGHT:
-					if (!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)) {
-						rectangle.setX(rectangle.getX() + acceleration);
-						image.setX(rectangle.getX());
+					if (!(rectangle.getX() + acceleration + rectangle.getWidth()>= WIDTH)) {
+					rectangle.setX(rectangle.getX() + acceleration);
+					image.setX(rectangle.getX());
 					}
 					break;
 				case DOWN:
-					if (!(rectangle.getY() + acceleration + rectangle.getHeight() >= HEIGHT)) {
-						rectangle.setY(rectangle.getY() + acceleration);
-						image.setY(rectangle.getY());
+					if (!(rectangle.getY() + acceleration + rectangle.getHeight()>= HEIGHT)) {
+					rectangle.setY(rectangle.getY() + acceleration);
+					image.setY(rectangle.getY());
 					}
 					break;
 				case LEFT:
 					if (!(rectangle.getX() - acceleration <= 0)) {
-						rectangle.setX(rectangle.getX() - acceleration);
-						image.setX(rectangle.getX());
+					rectangle.setX(rectangle.getX() - acceleration);
+					image.setX(rectangle.getX());
 					}
 					break;
 				}
