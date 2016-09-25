@@ -41,7 +41,9 @@ public class Platformer extends Application {
 	Image dirt1 = new Image("Assets/Art/2side_ground.png");
 	Image dirt2 = new Image("Assets/Art/leftedge_ground.png");
 	Image dirt3 = new Image("Assets/Art/rightedge_ground.png");
-	Image dirt4 = new Image("Assets/Art/rightedge_ground.png");
+	Image dirt4 = new Image("Assets/Art/fulldirt_block.png");
+	Image dirt5 = new Image("Assets/Art/leftedge_dirt.png");
+	Image dirt6 = new Image("Assets/Art/rightedge_dirt.png");
 	
 
 	private ImageView image(){
@@ -83,8 +85,11 @@ public class Platformer extends Application {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 		gc.drawImage(dirt2, 0, HEIGHT - 21);
 		gc.drawImage(dirt3, WIDTH, HEIGHT - 21);
+		gc.drawImage(dirt5,  0,  HEIGHT + 43);
+		gc.drawImage(dirt6, WIDTH, HEIGHT + 43);
 		for (int i = 64; i <= WIDTH; i += 64) {
 			gc.drawImage(dirt1, i, HEIGHT - 21);
+			gc.drawImage(dirt4, i, HEIGHT + 43);
 		}
 		
 		//gc.drawImage(background, 0, 0);
