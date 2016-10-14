@@ -26,6 +26,8 @@ public class Platformer extends Application {
 	private static final double acceleration = 8;
 	private static final double gravity = 2.0;
 	private int cooldown = 120;
+	private boolean jumping = false;
+	private boolean jumpPress = false;
 	
 	private Sounds bgNoise = new Sounds();
 	private Sounds jumpSound = new Sounds();
@@ -74,6 +76,7 @@ public class Platformer extends Application {
 		final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
 		//final Rectangle thirdrectangle = makeRectangle(0 , HEIGHT, 1245, 400);
 		rectangle.setFill(Color.TRANSPARENT);
+		rectangle.setStroke(Color.TRANSPARENT);
 		
 		final ImageView image = image();
 		
@@ -127,6 +130,7 @@ public class Platformer extends Application {
 			public void handle(long now) {
 				gravity(rectangle, image);
 				collision(rectangle, secondrectangle, image);
+				jump(rectangle, image);
 				cooldown++;
 				
 			}
@@ -166,7 +170,7 @@ public class Platformer extends Application {
 		return btn;
 	}
 	private void gravity(final Rectangle rectangle, final ImageView image){
-		if (!(rectangle.getY() + gravity + rectangle.getHeight()>= HEIGHT)) {
+		if (!(rectangle.getY() + gravity + rectangle.getHeight()>= HEIGHT) && jumping == false) {
 			rectangle.setY(rectangle.getY() + gravity);
 			image.setY(rectangle.getY());
 		}
@@ -192,23 +196,32 @@ public class Platformer extends Application {
 		//check for on top of box
 		
 	}
-	
+	double jumpmax = 0;
+	boolean canJump = false;
 	private void jump(final Rectangle rectangle, final ImageView image) {
-		boolean canJump = false;
-		double jumpmax = rectangle.getY() - 550;
+		if(jumpPress){
+		
 		if (cooldown >= 120) {
+			jumpmax = rectangle.getY() - 150;
 			canJump = true;
 		}
 		if (canJump) {
 			if (rectangle.getY() <= jumpmax) {
 				canJump = false;
+				jumping = false;
+				jumpPress = false;
 			}
 			if (canJump) {
-				rectangle.setY(rectangle.getY() - 200);
+				//jumping = true;
 				cooldown = 0;
-				jumpSound.run();
+				if(rectangle.getY() >= jumpmax){
+					rectangle.setY(rectangle.getY() - acceleration);
+					System.out.println(rectangle.getY());
+				}
+				//jumpSound.run();
 			}
-		}	
+		}
+		}
 	}
 	
 	// makes shape move....
@@ -219,7 +232,10 @@ public class Platformer extends Application {
 				
 				switch (event.getCode()) {
 				case UP:
-					jump(rectangle, image);
+					jumpPress = true;
+					break;
+				case W:
+					jumpPress = true;
 					break;
 				case RIGHT:
 					if (!(rectangle.getX() + acceleration + rectangle.getWidth()>= WIDTH)) {
@@ -227,16 +243,22 @@ public class Platformer extends Application {
 					image.setX(rectangle.getX());
 					}
 					break;
-				case DOWN:
-					if (!(rectangle.getY() + acceleration + rectangle.getHeight()>= HEIGHT)) {
-					rectangle.setY(rectangle.getY() + acceleration);
-					image.setY(rectangle.getY());
+				case D:
+					if(!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)){
+						rectangle.setX(rectangle.getX() + acceleration);
+						image.setX(rectangle.getX());
 					}
 					break;
 				case LEFT:
 					if (!(rectangle.getX() - acceleration <= 0)) {
 					rectangle.setX(rectangle.getX() - acceleration);
 					image.setX(rectangle.getX());
+					}
+					break;
+				case A:
+					if(!(rectangle.getX() - acceleration <= 0)) {
+						rectangle.setX(rectangle.getX() - acceleration);
+						image.setX(rectangle.getX());
 					}
 					break;
 				}
