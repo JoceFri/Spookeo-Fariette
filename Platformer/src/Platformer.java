@@ -1,4 +1,3 @@
-
 //imports
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -12,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -21,8 +21,8 @@ public class Platformer extends Application {
 
 	// global variables
 	// resolution
-	private static final double HEIGHT = 600.0;
-	private static final double WIDTH = 800.0;
+	private static final double HEIGHT = 800.0;
+	private static final double WIDTH = 1200.0;
 
 	// movement modifiers
 	private static final double acceleration = 8;
@@ -33,10 +33,12 @@ public class Platformer extends Application {
 
 	private Sounds bgNoise = new Sounds();
 	private Sounds jumpSound = new Sounds();
+	
+	private Scenes scene = new Scenes();
 
 	private Stage thestage;
-	private Scene scene1, scene2;
-	private Pane root1, root2;
+	private Scene menuScene, gameScene, controlScene;
+	private Pane menuRoot, gameRoot, controlRoot;
 
 	private Player hero = new Player(300, 200, 96, 96, new Image("Assets/Art/joey.png"));
 
@@ -48,6 +50,7 @@ public class Platformer extends Application {
 	Image dirt4 = new Image("Assets/Art/fulldirt_block.png");
 	Image dirt5 = new Image("Assets/Art/leftedge_dirt.png");
 	Image dirt6 = new Image("Assets/Art/rightedge_dirt.png");
+	Image title = new Image("Assets/Art/titlescreen.png");
 
 	// --------------------------- Methods to run everything
 	// -----------------------------//
@@ -69,14 +72,21 @@ public class Platformer extends Application {
 		// 400);
 		rectangle.setFill(Color.AQUAMARINE);
 
-		// final ImageView image = image();
-
-		// make button
-		final Button button = startButton();
-
-		// make canvas
-		Canvas canvas = new Canvas(864, 664);
-		GraphicsContext gc = canvas.getGraphicsContext2D();
+		// make backgrounds
+		BackgroundFill menuBG = new BackgroundFill(Color.BLACK, null, null);
+		BackgroundFill controlBG = new BackgroundFill(Color.AQUAMARINE, null, null);
+		BackgroundFill gameBG = new BackgroundFill(Color.SKYBLUE, null, null);
+		
+		// make canvases
+		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
+		mc.drawImage(title, 300, 100);
+		
+		Canvas controlCanvas = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext cc = controlCanvas.getGraphicsContext2D();
+		
+		Canvas gameCanvas = new Canvas(WIDTH + 64, HEIGHT + 64);
+		GraphicsContext gc = gameCanvas.getGraphicsContext2D();
 		gc.drawImage(dirt2, 0, HEIGHT - 21);
 		gc.drawImage(dirt3, WIDTH, HEIGHT - 21);
 		gc.drawImage(dirt5, 0, HEIGHT + 43);
@@ -88,25 +98,36 @@ public class Platformer extends Application {
 
 		// -------- Menu ----------//
 
-		// make root
-		root1 = new Pane();
-		root1.getChildren().add(button);
-
+		// make control
+		controlRoot = new Pane();
+		controlRoot.setBackground(new Background(controlBG));
+		controlRoot.getChildren().add(menuButton());
+		controlRoot.getChildren().add(startButton());
+		controlScene = new Scene(controlRoot, WIDTH, HEIGHT, Color.AQUAMARINE);
+		
+		// make menu
+		menuRoot = new Pane();
+		menuRoot.setBackground(new Background(menuBG));
+		menuRoot.getChildren().add(menuCanvas);
+		menuRoot.getChildren().add(startButton());
+		menuRoot.getChildren().add(controlButton());
+		
 		// make scene
-		scene1 = new Scene(root1, 800, 600, Color.AQUAMARINE);
+		menuScene = new Scene(menuRoot, WIDTH, HEIGHT, Color.AQUAMARINE);
 
 		// ---------- Game ----------//
 
-		// make root
-		root2 = new Pane();
-		root2.getChildren().add(canvas);
-		root2.getChildren().add(rectangle);
-		root2.getChildren().add(secondrectangle);
-		// root2.getChildren().add(thirdrectangle);
-		root2.getChildren().add(hero.getImageView());
+		// make game
+		gameRoot = new Pane();
+		gameRoot.setBackground(new Background(gameBG));
+		gameRoot.getChildren().add(gameCanvas);
+		gameRoot.getChildren().add(rectangle);
+		gameRoot.getChildren().add(secondrectangle);
+		// gameRoot.getChildren().add(thirdrectangle);
+		gameRoot.getChildren().add(hero.getImageView());
 		// make scene
-		scene2 = new Scene(root2, 864, 664, Color.AQUAMARINE);
-		moveRectangleOnKeyPress(scene2, rectangle, hero.getImageView());
+		gameScene = new Scene(gameRoot, WIDTH + 64, HEIGHT + 64, Color.AQUAMARINE);
+		moveRectangleOnKeyPress(gameScene, rectangle, hero.getImageView());
 
 		// load sound stuff
 		bgNoise.loadSound("Assets/Sound/background.wav");
@@ -128,8 +149,8 @@ public class Platformer extends Application {
 		};
 		gameLoop.start();
 
-		thestage.setTitle("Spookeo's Journey Yo");
-		thestage.setScene(scene1);
+		thestage.setTitle("Spookeo and Fariette");
+		thestage.setScene(menuScene);
 		thestage.show();
 	}
 
@@ -147,9 +168,9 @@ public class Platformer extends Application {
 
 	// creates start button
 	private Button startButton() {
-		Button btn = new Button("Click here to start your adventure");
-		btn.setTranslateX(300);
-		btn.setTranslateY(300);
+		Button btn = new Button("", new ImageView("Assets/Art/play.png"));
+
+		btn.relocate(450, 500);
 
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -157,7 +178,44 @@ public class Platformer extends Application {
 			// sets button to false and creates a rectangle that appears after
 			@Override
 			public void handle(ActionEvent event) {
-				thestage.setScene(scene2);
+				thestage.setTitle("Spookeo's Journey Yo");
+				thestage.setScene(gameScene);
+			}
+		});
+		return btn;
+	}
+	
+	// creates button to reach controls screen
+	private Button controlButton() {
+		Button btn = new Button("", new ImageView("Assets/Art/controls.png"));
+		btn.relocate(650, 500);
+
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+
+			// action for the start button
+			// sets button to false and creates a rectangle that appears after
+			@Override
+			public void handle(ActionEvent event) {
+				thestage.setTitle("Controls");
+				thestage.setScene(controlScene);
+			}
+		});
+		return btn;
+	}
+	
+	// creates button to reach menu
+	private Button menuButton() {
+		Button btn = new Button("", new ImageView("Assets/Art/menu.png"));
+		btn.relocate(650, 500);
+
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+
+			// action for the start button
+			// sets button to false and creates a rectangle that appears after
+			@Override
+			public void handle(ActionEvent event) {
+				thestage.setTitle("Spookeo and Fariette");
+				thestage.setScene(menuScene);
 			}
 		});
 		return btn;
