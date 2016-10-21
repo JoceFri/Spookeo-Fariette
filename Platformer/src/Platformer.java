@@ -1,4 +1,15 @@
 //imports
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -34,7 +45,7 @@ public class Platformer extends Application {
 	private Sounds bgNoise = new Sounds();
 	private Sounds jumpSound = new Sounds();
 	
-	private Scenes scene = new Scenes();
+//	private Scenes scene = new Scenes();
 
 	private Stage thestage;
 	private Scene menuScene, gameScene, controlScene;
@@ -43,7 +54,6 @@ public class Platformer extends Application {
 	private Player hero = new Player(300, 200, 96, 96, new Image("Assets/Art/joey.png"));
 
 	// image
-	// Image hero = new Image("Assets/Art/joey.png");
 	Image dirt1 = new Image("Assets/Art/2side_ground.png");
 	Image dirt2 = new Image("Assets/Art/leftedge_ground.png");
 	Image dirt3 = new Image("Assets/Art/rightedge_ground.png");
@@ -51,6 +61,10 @@ public class Platformer extends Application {
 	Image dirt5 = new Image("Assets/Art/leftedge_dirt.png");
 	Image dirt6 = new Image("Assets/Art/rightedge_dirt.png");
 	Image title = new Image("Assets/Art/titlescreen.png");
+
+	URL url = getClass().getResource("Assets/Json/characters.json");
+	public Platformer() throws IOException {
+	}
 
 	// --------------------------- Methods to run everything
 	// -----------------------------//
@@ -64,6 +78,29 @@ public class Platformer extends Application {
 	public void start(Stage primaryStage) {
 
 		thestage = primaryStage;
+
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			JsonNode rootNode = mapper.readTree(new File(url.getPath()));
+			ArrayNode framesNode = (ArrayNode)rootNode.get("spookeo").get("frames");
+			Iterator<JsonNode> framesIterator =  framesNode.elements();
+			List<Sprite> frames = new ArrayList<>();
+			while (framesIterator.hasNext()) {
+				JsonNode tempNode = framesIterator.next();
+				Sprite tempTexture = new Sprite.Builder()
+						.spriteSheet(tempNode.get("spriteSheet").textValue())
+						.frameNumber(tempNode.get("frameNumber").asInt())
+						.height(tempNode.get("height").asInt())
+						.width(tempNode.get("width").asInt())
+						.xOffset(tempNode.get("xOffset").asInt())
+						.yOffset(tempNode.get("yOffset").asInt())
+						.build();
+				frames.add(tempTexture);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		// make rectangle
 		final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());

@@ -1,0 +1,14 @@
+{
+	"spookeo": {
+		"spriteSheet": "Assets/Art/joey.png",
+		"frames": [
+			{
+				"xOffset": "0",
+				"yOffset": "0",
+				"width": "64",
+				"height": "64",
+				"frameNumber": "0"
+			}
+		]
+	}
+}
