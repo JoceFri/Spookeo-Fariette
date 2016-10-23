@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-//import com.fasterxml.jackson.databind.JsonNode;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -48,8 +48,8 @@ public class Platformer extends Application {
 //	private Scenes scene = new Scenes();
 
 	private Stage thestage;
-	private Scene menuScene, gameScene, controlScene, igmenu;
-	private Pane menuRoot, gameRoot, controlRoot, igmenuroot;
+	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols;
+	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot;
 
 	private Player hero = new Player(300, 200, 96, 96, new Image("Assets/Art/joey.png"), 300, 200, 96, 96);
 
@@ -79,7 +79,7 @@ public class Platformer extends Application {
 
 		thestage = primaryStage;
 
-/*		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(new File(url.getPath()));
 			ArrayNode framesNode = (ArrayNode)rootNode.get("spookeo").get("frames");
@@ -101,7 +101,7 @@ public class Platformer extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-*/
+
 		// make rectangle
 		final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
 		final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
@@ -113,6 +113,7 @@ public class Platformer extends Application {
 		BackgroundFill menuBG = new BackgroundFill(Color.BLACK, null, null);
 		BackgroundFill controlBG = new BackgroundFill(Color.AQUAMARINE, null, null);
 		BackgroundFill gameBG = new BackgroundFill(Color.SKYBLUE, null, null);
+		BackgroundFill igControlBG = new BackgroundFill(Color.BLUE, null, null);
 		
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
@@ -158,7 +159,14 @@ public class Platformer extends Application {
 		igmenuroot.getChildren().add(resetButton());
 		igmenuroot.getChildren().add(igMenuReturn());
 		igmenuroot.getChildren().add(resumeButton());
+		igmenuroot.getChildren().add(igControl());
 		igmenu = new Scene(igmenuroot, WIDTH + 64, HEIGHT + 64, Color.TRANSPARENT);
+		//in game controls
+		igcontrolroot = new Pane();
+		igcontrolroot.setBackground(new Background(igControlBG));
+		igcontrolroot.getChildren().add(igMenuButton2());
+		igcontrolroot.getChildren().add(resumeButton());
+		igcontrols = new Scene(igcontrolroot, WIDTH + 64, HEIGHT + 64, Color.ALICEBLUE);
 		// make game
 		gameRoot = new Pane();
 		gameRoot.setBackground(new Background(gameBG));
@@ -230,7 +238,7 @@ public class Platformer extends Application {
 		return btn;
 	}
 	private Button resetButton(){
-		Button btn = new Button("RESET");
+		Button btn = new Button("Retry");
 		btn.relocate(600, 400);
 		btn.setOnAction(new EventHandler<ActionEvent>(){
 
@@ -281,6 +289,19 @@ public class Platformer extends Application {
 		btn.relocate(600, 450);
 		return btn;
 	}
+	private Button igControl(){
+		Button btn = new Button("Controls");
+		btn.relocate(600, 550);
+		btn.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				thestage.setScene(igcontrols);
+			}
+			
+		});
+		return btn;
+	}
 	// creates button to reach menu
 	private Button menuButton() {
 		Button btn = new Button("", new ImageView("Assets/Art/menu.png"));
@@ -296,6 +317,19 @@ public class Platformer extends Application {
 				thestage.setScene(menuScene);
 				
 			}
+		});
+		return btn;
+	}
+	private Button igMenuButton2(){
+		Button btn = new Button("Go back");
+		btn.relocate(600, 400);
+		btn.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				thestage.setScene(igmenu);
+			}
+			
 		});
 		return btn;
 	}
