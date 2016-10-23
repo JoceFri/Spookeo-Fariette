@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+//import com.fasterxml.jackson.databind.JsonNode;
+//import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -36,7 +36,7 @@ public class Platformer extends Application {
 	private static final double WIDTH = 1200.0;
 
 	// movement modifiers
-	private static final double acceleration = 8;
+	public static final double acceleration = 8;
 	private static final double gravity = 2.0;
 	private int cooldown = 120;
 	private boolean jumping = false;
@@ -48,10 +48,10 @@ public class Platformer extends Application {
 //	private Scenes scene = new Scenes();
 
 	private Stage thestage;
-	private Scene menuScene, gameScene, controlScene;
-	private Pane menuRoot, gameRoot, controlRoot;
+	private Scene menuScene, gameScene, controlScene, igmenu;
+	private Pane menuRoot, gameRoot, controlRoot, igmenuroot;
 
-	private Player hero = new Player(300, 200, 96, 96, new Image("Assets/Art/joey.png"));
+	private Player hero = new Player(300, 200, 96, 96, new Image("Assets/Art/joey.png"), 300, 200, 96, 96);
 
 	// image
 	Image dirt1 = new Image("Assets/Art/2side_ground.png");
@@ -61,7 +61,7 @@ public class Platformer extends Application {
 	Image dirt5 = new Image("Assets/Art/leftedge_dirt.png");
 	Image dirt6 = new Image("Assets/Art/rightedge_dirt.png");
 	Image title = new Image("Assets/Art/titlescreen.png");
-
+	AnimationTimer gameLoop;
 	URL url = getClass().getResource("Assets/Json/characters.json");
 	public Platformer() throws IOException {
 	}
@@ -79,7 +79,7 @@ public class Platformer extends Application {
 
 		thestage = primaryStage;
 
-		ObjectMapper mapper = new ObjectMapper();
+/*		ObjectMapper mapper = new ObjectMapper();
 		try {
 			JsonNode rootNode = mapper.readTree(new File(url.getPath()));
 			ArrayNode framesNode = (ArrayNode)rootNode.get("spookeo").get("frames");
@@ -101,7 +101,7 @@ public class Platformer extends Application {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+*/
 		// make rectangle
 		final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
 		final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
@@ -153,13 +153,19 @@ public class Platformer extends Application {
 		menuScene = new Scene(menuRoot, WIDTH, HEIGHT, Color.AQUAMARINE);
 
 		// ---------- Game ----------//
-
+		//in game menu
+		igmenuroot = new Pane();
+		igmenuroot.getChildren().add(resetButton());
+		igmenuroot.getChildren().add(igMenuReturn());
+		igmenuroot.getChildren().add(resumeButton());
+		igmenu = new Scene(igmenuroot, WIDTH + 64, HEIGHT + 64, Color.TRANSPARENT);
 		// make game
 		gameRoot = new Pane();
 		gameRoot.setBackground(new Background(gameBG));
 		gameRoot.getChildren().add(gameCanvas);
 		gameRoot.getChildren().add(rectangle);
 		gameRoot.getChildren().add(secondrectangle);
+		gameRoot.getChildren().add(igMenuButton());
 		// gameRoot.getChildren().add(thirdrectangle);
 		gameRoot.getChildren().add(hero.getImageView());
 		// make scene
@@ -172,7 +178,7 @@ public class Platformer extends Application {
 		bgNoise.runLoop();
 
 		// loop methods for game mechanics
-		AnimationTimer gameLoop = new AnimationTimer() {
+		 gameLoop = new AnimationTimer() {
 
 			@Override
 			public void handle(long now) {
@@ -185,10 +191,10 @@ public class Platformer extends Application {
 
 		};
 		gameLoop.start();
-
 		thestage.setTitle("Spookeo and Fariette");
 		thestage.setScene(menuScene);
 		thestage.show();
+		
 	}
 
 	// ----------------------- Creating Objects
@@ -215,13 +221,30 @@ public class Platformer extends Application {
 			// sets button to false and creates a rectangle that appears after
 			@Override
 			public void handle(ActionEvent event) {
+				start(thestage);
 				thestage.setTitle("Spookeo's Journey Yo");
 				thestage.setScene(gameScene);
+				
 			}
 		});
 		return btn;
 	}
-	
+	private Button resetButton(){
+		Button btn = new Button("RESET");
+		btn.relocate(600, 400);
+		btn.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				start(thestage);
+				thestage.setScene(gameScene);
+				
+			}
+			
+			
+		});
+		return btn;
+	}
 	// creates button to reach controls screen
 	private Button controlButton() {
 		Button btn = new Button("", new ImageView("Assets/Art/controls.png"));
@@ -239,7 +262,25 @@ public class Platformer extends Application {
 		});
 		return btn;
 	}
-	
+	private Button igMenuButton(){
+		Button btn = new Button("Menu");
+		btn.relocate(1200, 25);
+		btn.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				thestage.setScene(igmenu);
+				gameLoop.stop();
+			}
+			
+		});
+		return btn;
+	}
+	private Button igMenuReturn(){
+		Button btn = menuButton();
+		btn.relocate(600, 450);
+		return btn;
+	}
 	// creates button to reach menu
 	private Button menuButton() {
 		Button btn = new Button("", new ImageView("Assets/Art/menu.png"));
@@ -253,11 +294,27 @@ public class Platformer extends Application {
 			public void handle(ActionEvent event) {
 				thestage.setTitle("Spookeo and Fariette");
 				thestage.setScene(menuScene);
+				
 			}
 		});
 		return btn;
 	}
+	private Button resumeButton() {
+		Button btn = new Button("resume");
+		btn.relocate(600, 350);
 
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+
+			// action for the start button
+			// sets button to false and creates a rectangle that appears after
+			@Override
+			public void handle(ActionEvent event) {
+				thestage.setScene(gameScene);
+				gameLoop.start();
+			}
+		});
+		return btn;
+	}
 	// ---------------------- Methods for moving/Colliding
 	// --------------------------------------------------//
 
