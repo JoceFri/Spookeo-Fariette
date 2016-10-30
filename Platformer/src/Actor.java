@@ -8,6 +8,12 @@ public class Actor {
 	private double x = 0.0;
 	private double y = 0.0;
 	private double angle = 0.0;
+	private double hbex = 0.00;
+	private double hbwhy = 0.0;
+	private int hbwid = 0;
+	private int hbht = 0;
+	
+	
 	
 	private Image character = null;
 	ImageView actor;
@@ -16,7 +22,7 @@ public class Actor {
 	private double acceleration = 0.0;	
 	
 	// Set initial x and y coordinates and image associated with actor
-	public Actor(double ex, double why, int sizeX, int sizeY, Image person) {
+	public Actor(double ex, double why, int sizeX, int sizeY, Image person, double hbx, double hby, int hbwidth, int hblength) {
 		x = ex;
 		y = why;
 		width = sizeX;
@@ -112,4 +118,31 @@ public class Actor {
 		return actor;
 		
 	}
+	public void setHBY(double why){
+		hbwhy = why;
+	}
+	public void setHBX(double ex){
+		hbex = ex;
+	}
+	public void setHBWidth(int wd){
+		hbwid = wd;
+	}
+	public void setHBHeight(int ht){
+		hbht = ht;
+	}
+	public double getHBX(){
+		return hbex;
+	}
+	public double getHBY(){
+		return hbwhy;
+	}
+	public int getHBWidth(){
+		return hbwid;
+	}
+	public int getHBHeight(){
+		return hbht;
+	}
+	//draw box
+	
 }
+
