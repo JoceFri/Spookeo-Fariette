@@ -32,8 +32,8 @@ public class Platformer extends Application {
 
 	// global variables
 	// resolution
-	private static final double HEIGHT = 800.0;
-	private static final double WIDTH = 1200.0;
+	private static final double HEIGHT = 600.0;
+	private static final double WIDTH = 1000.0;
 
 	// movement modifiers
 	public static final double acceleration = 8;
@@ -51,7 +51,7 @@ public class Platformer extends Application {
 	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols;
 	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot;
 
-	private Player hero = new Player(300, 200, 96, 96, new Image("Assets/Art/joey.png"), 300, 200, 96, 96);
+	private Player hero = new Player(300, 200, 96, 96, new Image("Assets/Art/joey.png"));
 
 	// image
 	Image dirt1 = new Image("Assets/Art/2side_ground.png");
@@ -105,9 +105,10 @@ public class Platformer extends Application {
 		// make rectangle
 		final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
 		final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
-		// final Rectangle thirdrectangle = makeRectangle(0 , HEIGHT, 1245,
-		// 400);
+		final Rectangle thirdrectangle = makeRectangle(800, HEIGHT - 200, 442, 200);
+		thirdrectangle.setFill(Color.TRANSPARENT);
 		rectangle.setFill(Color.AQUAMARINE);
+
 
 		// make backgrounds
 		BackgroundFill menuBG = new BackgroundFill(Color.BLACK, null, null);
@@ -134,6 +135,13 @@ public class Platformer extends Application {
 			gc.drawImage(dirt4, i, HEIGHT + 43);
 		}
 
+		for (int i = 64; i <= HEIGHT - 200; i += 60) {
+			gc.drawImage(dirt4, i + 800 - 65, HEIGHT - 200);
+			gc.drawImage(dirt4, i + 800 - 65, HEIGHT - 150);
+			gc.drawImage(dirt4, i + 800 - 65, HEIGHT - 100);
+			gc.drawImage(dirt4, i + 800 - 65, HEIGHT - 65);
+			gc.drawImage(dirt4, i + 800 - 65, HEIGHT );
+		}
 		// -------- Menu ----------//
 
 		// make control
@@ -174,7 +182,7 @@ public class Platformer extends Application {
 		gameRoot.getChildren().add(rectangle);
 		gameRoot.getChildren().add(secondrectangle);
 		gameRoot.getChildren().add(igMenuButton());
-		// gameRoot.getChildren().add(thirdrectangle);
+		gameRoot.getChildren().add(thirdrectangle);
 		gameRoot.getChildren().add(hero.getImageView());
 		// make scene
 		gameScene = new Scene(gameRoot, WIDTH + 64, HEIGHT + 64, Color.AQUAMARINE);
