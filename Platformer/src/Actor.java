@@ -31,6 +31,10 @@ public class Actor {
 		actor = new ImageView(person);
 		actor.setX(ex);
 		actor.setY(why);
+		hbex = hbx;
+		hbwhy = hby;
+		hbwid = hbwidth;
+		hbht = hblength;
 	}
 	
 	//--------------- Setters ----------------------//
@@ -144,5 +148,7 @@ public class Actor {
 	}
 	//draw box
 	
+}
+
 }
 
