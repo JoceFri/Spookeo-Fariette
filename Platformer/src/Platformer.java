@@ -61,6 +61,7 @@ public class Platformer extends Application {
 	Image dirt5 = new Image("Assets/Art/leftedge_dirt.png");
 	Image dirt6 = new Image("Assets/Art/rightedge_dirt.png");
 	Image title = new Image("Assets/Art/titlescreen.png");
+	Image bg = new Image("Assets/Art/BackGround.png");
 	AnimationTimer gameLoop;
 	URL url = getClass().getResource("Assets/Json/characters.json");
 	public Platformer() throws IOException {
@@ -126,13 +127,14 @@ public class Platformer extends Application {
 		
 		Canvas gameCanvas = new Canvas(WIDTH + 64, HEIGHT + 64);
 		GraphicsContext gc = gameCanvas.getGraphicsContext2D();
-		gc.drawImage(dirt2, 0, HEIGHT - 21);
-		gc.drawImage(dirt3, WIDTH, HEIGHT - 21);
-		gc.drawImage(dirt5, 0, HEIGHT + 43);
-		gc.drawImage(dirt6, WIDTH, HEIGHT + 43);
-		for (int i = 64; i <= WIDTH; i += 64) {
-			gc.drawImage(dirt1, i, HEIGHT - 21);
-			gc.drawImage(dirt4, i, HEIGHT + 43);
+		gc.drawImage(bg, 0, 0);
+		gc.drawImage(dirt2, -21, HEIGHT - 21);
+		gc.drawImage(dirt3, WIDTH + 21, HEIGHT - 21);
+		gc.drawImage(dirt5, -21, HEIGHT + 43);
+		gc.drawImage(dirt6, WIDTH + 21, HEIGHT + 43);
+		for (int i = 0; i <= WIDTH + 64; i += 64) {
+			gc.drawImage(dirt1, i, HEIGHT - 25);
+			gc.drawImage(dirt4, i, HEIGHT + 37);
 		}
 
 		for (int i = 64; i <= HEIGHT - 200; i += 60) {
