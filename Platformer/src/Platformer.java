@@ -33,7 +33,7 @@ public class Platformer extends Application {
 	// global variables
 	// resolution
 	private static final double HEIGHT = 600.0;
-	private static final double WIDTH = 1000.0;
+	private static final double WIDTH = 1200.0;
 
 	// movement modifiers
 	public static final double acceleration = 8;
@@ -52,6 +52,10 @@ public class Platformer extends Application {
 	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot;
 
 	private Player hero = new Player(300, 200, 96, 96, new Image("Assets/Art/joey.png"));
+	final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
+	final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
+	final Rectangle thirdrectangle = makeRectangle(800, HEIGHT - 200, 442, 200);
+	final Rectangle rock = makeRectangle(100, HEIGHT - 128, 128, 128);
 
 	// image
 	Image dirt1 = new Image("Assets/Art/2side_ground.png");
@@ -104,12 +108,9 @@ public class Platformer extends Application {
 		}
 
 		// make rectangle
-		final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
-		final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
-		final Rectangle thirdrectangle = makeRectangle(800, HEIGHT - 200, 442, 200);
+		
 		thirdrectangle.setFill(Color.TRANSPARENT);
 		rectangle.setFill(Color.AQUAMARINE);
-
 
 		// make backgrounds
 		BackgroundFill menuBG = new BackgroundFill(Color.BLACK, null, null);
@@ -128,16 +129,16 @@ public class Platformer extends Application {
 		Canvas gameCanvas = new Canvas(WIDTH + 64, HEIGHT + 64);
 		GraphicsContext gc = gameCanvas.getGraphicsContext2D();
 		gc.drawImage(bg, 0, 0);
-		gc.drawImage(dirt2, -21, HEIGHT - 21);
-		gc.drawImage(dirt3, WIDTH + 21, HEIGHT - 21);
-		gc.drawImage(dirt5, -21, HEIGHT + 43);
-		gc.drawImage(dirt6, WIDTH + 21, HEIGHT + 43);
-		for (int i = 0; i <= WIDTH + 64; i += 64) {
+		gc.drawImage(dirt2, 0, HEIGHT - 25);
+		gc.drawImage(dirt3, WIDTH, HEIGHT - 25);
+		gc.drawImage(dirt5, 0, HEIGHT + 37);
+		gc.drawImage(dirt6, WIDTH, HEIGHT + 37);
+		for (int i = 64; i <= WIDTH; i += 64) {
 			gc.drawImage(dirt1, i, HEIGHT - 25);
 			gc.drawImage(dirt4, i, HEIGHT + 37);
 		}
 
-		for (int i = 64; i <= HEIGHT - 200; i += 60) {
+		for (int i = 64; i <= WIDTH; i += 60) {
 			gc.drawImage(dirt4, i + 800 - 65, HEIGHT - 200);
 			gc.drawImage(dirt4, i + 800 - 65, HEIGHT - 150);
 			gc.drawImage(dirt4, i + 800 - 65, HEIGHT - 100);
@@ -185,6 +186,7 @@ public class Platformer extends Application {
 		gameRoot.getChildren().add(secondrectangle);
 		gameRoot.getChildren().add(igMenuButton());
 		gameRoot.getChildren().add(thirdrectangle);
+		gameRoot.getChildren().add(rock);
 		gameRoot.getChildren().add(hero.getImageView());
 		// make scene
 		gameScene = new Scene(gameRoot, WIDTH + 64, HEIGHT + 64, Color.AQUAMARINE);
@@ -371,25 +373,29 @@ public class Platformer extends Application {
 	}
 
 	// Method for collision between two rectangles
-	private void collision(final Rectangle rectangle, final Rectangle secondrectangle, final ImageView image) {
+	private void collision(final Rectangle rectangle1, final Rectangle secondrectangle2, final ImageView image) {
 		// System.out.println(secondrectangle.getX() + " " + (rectangle.getX()
 		// +rectangle.getWidth() ));
-		if (rectangle.getX() + rectangle.getWidth() <= secondrectangle.getX()
-				&& rectangle.getY() >= secondrectangle.getY()
-				&& (secondrectangle.getX() - (rectangle.getX() + rectangle.getWidth())) <= acceleration) {
+		if (rectangle1 == thirdrectangle || secondrectangle2 == thirdrectangle) {
+			rectangle.setX(thirdrectangle.getX());
+		}
+		
+		else if (rectangle1.getX() + rectangle1.getWidth() <= secondrectangle2.getX()
+				&& rectangle1.getY() >= secondrectangle2.getY()
+				&& (secondrectangle2.getX() - (rectangle1.getX() + rectangle1.getWidth())) <= acceleration) {
 
-			rectangle.setX(secondrectangle.getX() - rectangle.getWidth() - 1);
-			image.setX(rectangle.getX());
-			secondrectangle.setX(secondrectangle.getX() + acceleration);
+			rectangle1.setX(secondrectangle2.getX() - rectangle1.getWidth() - 1);
+			image.setX(rectangle1.getX());
+			secondrectangle2.setX(secondrectangle2.getX() + acceleration);
 
 		}
-		if (secondrectangle.getX() + secondrectangle.getWidth() <= rectangle.getX()
-				&& rectangle.getY() >= secondrectangle.getY()
-				&& (rectangle.getX() - (secondrectangle.getX() + secondrectangle.getWidth()) <= acceleration)) {
+		else if (secondrectangle2.getX() + secondrectangle2.getWidth() <= rectangle1.getX()
+				&& rectangle1.getY() >= secondrectangle2.getY()
+				&& (rectangle1.getX() - (secondrectangle2.getX() + secondrectangle2.getWidth()) <= acceleration)) {
 
-			rectangle.setX(secondrectangle.getX() + secondrectangle.getWidth() + 1);
-			image.setX(rectangle.getX());
-			secondrectangle.setX(secondrectangle.getX() - acceleration);
+			rectangle1.setX(secondrectangle2.getX() + secondrectangle2.getWidth() + 1);
+			image.setX(rectangle1.getX());
+			secondrectangle2.setX(secondrectangle2.getX() - acceleration);
 
 		}
 
