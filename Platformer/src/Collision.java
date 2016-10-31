@@ -1,4 +1,5 @@
 
+
 public class Collision {
 	Actor shapeOne = null;
 	Actor shapeTwo = null;
@@ -18,24 +19,32 @@ public class Collision {
 				&& (shapeTwo.getHBX() - (shapeOne.getHBX() + shapeOne.getHBWidth())) <= Platformer.acceleration) {
 			leftCollision = true;
 			return true;
+		} else {
+			leftCollision = false;
 		}
 		if (shapeOne.getHBX() >= shapeTwo.getHBX() + shapeTwo.getHBWidth() && shapeOne.getHBY() >= shapeTwo.getHBY()
 				&& shapeOne.getHBX() - (shapeTwo.getHBX() + shapeTwo.getHBWidth()) <= Platformer.acceleration) {
 			System.out.println("TRUE");
 			rightCollision = true;
 			return true;
+		} else {
+			rightCollision = false;
 		}
 		if (((shapeOne.getHBX() + shapeOne.getHBWidth() >= shapeTwo.getHBX() && (shapeTwo.getHBX() - shapeOne.getHBX()) <= shapeOne.getHBWidth())
-				|| (shapeTwo.getHBX() + shapeTwo.getHBWidth() >= shapeOne.getHBX()) && (shapeOne.getHBX() - shapeTwo.getHBX()) <= shapeOne.getHBWidth())
-				&& shapeOne.getHBY() - shapeOne.getHBHeight() <= shapeTwo.getHBY()) {
+				&& ((shapeTwo.getHBX() + shapeTwo.getHBWidth() >= shapeOne.getHBX()) && (shapeOne.getHBX() - shapeTwo.getHBX()) <= shapeOne.getHBWidth()))
+				&& shapeOne.getHBY() + shapeOne.getHBHeight() >= shapeTwo.getHBY()) {
 			topCollision = true;
 			return true;
+		} else {
+			topCollision = false;
 		}
 		if(((shapeOne.getHBX() + shapeOne.getHBWidth() >= shapeTwo.getHBX() && (shapeTwo.getHBX() - shapeOne.getHBX()) <= shapeOne.getHBWidth())
-				|| (shapeTwo.getHBX() + shapeTwo.getHBWidth() >= shapeOne.getHBX()) && (shapeOne.getHBX() - shapeTwo.getHBX()) <= shapeOne.getHBWidth())
+				&& ((shapeTwo.getHBX() + shapeTwo.getHBWidth() >= shapeOne.getHBX()) && (shapeOne.getHBX() - shapeTwo.getHBX()) <= shapeOne.getHBWidth()))
 				&& shapeOne.getHBY() >= shapeTwo.getHBY()) {
 			bottomCollision = true;
 			return true;
+		} else{
+			bottomCollision = false;
 		}
 
 		return false;
@@ -47,22 +56,18 @@ public class Collision {
 				shapeTwo.setX(shapeTwo.getX() + Platformer.acceleration);
 				shapeTwo.setHBX(shapeTwo.getHBX() + Platformer.acceleration);
 				shapeTwo.getImageView().setX(shapeTwo.getImageView().getX() + Platformer.acceleration);
-				leftCollision = false;
 			}
 			if (rightCollision) {
 				shapeTwo.setX(shapeTwo.getX() - Platformer.acceleration);
 				shapeTwo.setHBX(shapeTwo.getHBX() - Platformer.acceleration);
 				shapeTwo.getImageView().setX(shapeTwo.getImageView().getX() - Platformer.acceleration);
-				rightCollision = false;
 			}
 		}
 	}
 	public boolean onTop(){
 		if(topCollision){
-			topCollision = false;
 			return true;
 		}
 		return false;
 	}
 }
-
