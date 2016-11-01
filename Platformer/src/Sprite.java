@@ -9,6 +9,7 @@ public class Sprite {
 	private int xOffset;
 	private int yOffset;
 	private int frameNumber;
+	private Image sprite;
 
 	private Sprite(Builder builder) {
 		this.id = builder.id;
@@ -74,6 +75,14 @@ public class Sprite {
 
 	public void setFrameNumber(int frameNumber) {
 		this.frameNumber = frameNumber;
+	}
+	
+	public void setSprite(Image sprite) {
+		this.sprite = sprite;
+	}
+	
+	public Image getSprite() {
+		return sprite;
 	}
 
 	@Override

@@ -1,19 +1,12 @@
 //imports
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -84,31 +77,10 @@ public class Platformer extends Application {
 
 		thestage = primaryStage;
 
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			JsonNode rootNode = mapper.readTree(new File(url.getPath()));
-			ArrayNode framesNode = (ArrayNode)rootNode.get("spookeo").get("frames");
-			Iterator<JsonNode> framesIterator =  framesNode.elements();
-			List<Sprite> frames = new ArrayList<>();
-			while (framesIterator.hasNext()) {
-				JsonNode tempNode = framesIterator.next();
-				Sprite tempTexture = new Sprite.Builder()
-						.spriteSheet(tempNode.get("spriteSheet").textValue())
-						.frameNumber(tempNode.get("frameNumber").asInt())
-						.height(tempNode.get("height").asInt())
-						.width(tempNode.get("width").asInt())
-						.xOffset(tempNode.get("xOffset").asInt())
-						.yOffset(tempNode.get("yOffset").asInt())
-						.build();
-				frames.add(tempTexture);
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		Animation player = SpriteLoader.loadAnimation("characters", "spookeo");
+		player.setCycleCount(Animation.INDEFINITE);
 
 		// make rectangle
-		
 		thirdrectangle.setFill(Color.TRANSPARENT);
 		rectangle.setFill(Color.AQUAMARINE);
 
@@ -188,6 +160,7 @@ public class Platformer extends Application {
 		gameRoot.getChildren().add(thirdrectangle);
 		gameRoot.getChildren().add(rock);
 		gameRoot.getChildren().add(hero.getImageView());
+		gameRoot.getChildren().add(new Group(player.getImageView()));
 		// make scene
 		gameScene = new Scene(gameRoot, WIDTH + 64, HEIGHT + 64, Color.AQUAMARINE);
 		moveRectangleOnKeyPress(gameScene, rectangle, hero.getImageView());
@@ -211,6 +184,7 @@ public class Platformer extends Application {
 
 		};
 		gameLoop.start();
+		player.play();
 		thestage.setTitle("Spookeo and Fariette");
 		thestage.setScene(menuScene);
 		thestage.show();
