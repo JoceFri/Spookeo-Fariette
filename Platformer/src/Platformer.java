@@ -44,7 +44,7 @@ public class Platformer extends Application {
 	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols;
 	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot;
 
-	private Player hero = new Player(300, 200, 96, 96, new Image("Assets/Art/joey.png"));
+	private Player hero = new Player(300, 200, 96, 96, new Image("Assets/Art/joey.png"), 300, 200, 96, 96);
 	final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
 	final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
 	final Rectangle thirdrectangle = makeRectangle(800, HEIGHT - 200, 442, 200);
@@ -77,8 +77,8 @@ public class Platformer extends Application {
 
 		thestage = primaryStage;
 
-		Animation player = SpriteLoader.loadAnimation("characters", "spookeo");
-		player.setCycleCount(Animation.INDEFINITE);
+//		Animation player = SpriteLoader.loadAnimation("characters", "spookeo");
+//		player.setCycleCount(Animation.INDEFINITE);
 
 		// make rectangle
 		thirdrectangle.setFill(Color.TRANSPARENT);
@@ -89,14 +89,25 @@ public class Platformer extends Application {
 		BackgroundFill controlBG = new BackgroundFill(Color.AQUAMARINE, null, null);
 		BackgroundFill gameBG = new BackgroundFill(Color.SKYBLUE, null, null);
 		BackgroundFill igControlBG = new BackgroundFill(Color.BLUE, null, null);
+		BackgroundFill igMenuBG = new BackgroundFill(Color.BLACK, null, null);
+		
 		
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
 		mc.drawImage(title, 300, 100);
 		
+		Canvas iGMCanvas = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext igmc = iGMCanvas.getGraphicsContext2D();
+		igmc.drawImage(title, 300, 100);
+		
 		Canvas controlCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext cc = controlCanvas.getGraphicsContext2D();
+		cc.drawImage(title, 300, 100);
+		
+		Canvas iGCCanvas = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext igcc = iGCCanvas.getGraphicsContext2D();
+		igcc.drawImage(title, 300, 100);
 		
 		Canvas gameCanvas = new Canvas(WIDTH + 64, HEIGHT + 64);
 		GraphicsContext gc = gameCanvas.getGraphicsContext2D();
@@ -122,9 +133,10 @@ public class Platformer extends Application {
 		// make control
 		controlRoot = new Pane();
 		controlRoot.setBackground(new Background(controlBG));
+		controlRoot.getChildren().add(controlCanvas);
 		controlRoot.getChildren().add(menuButton());
 		controlRoot.getChildren().add(startButton());
-		controlScene = new Scene(controlRoot, WIDTH, HEIGHT, Color.AQUAMARINE);
+		controlScene = new Scene(controlRoot, WIDTH, HEIGHT);
 		
 		// make menu
 		menuRoot = new Pane();
@@ -132,24 +144,28 @@ public class Platformer extends Application {
 		menuRoot.getChildren().add(menuCanvas);
 		menuRoot.getChildren().add(startButton());
 		menuRoot.getChildren().add(controlButton());
-		
-		// make scene
-		menuScene = new Scene(menuRoot, WIDTH, HEIGHT, Color.AQUAMARINE);
+		menuScene = new Scene(menuRoot, WIDTH, HEIGHT);
 
 		// ---------- Game ----------//
+
 		//in game menu
 		igmenuroot = new Pane();
+		igmenuroot.setBackground(new Background(igMenuBG));
+		igmenuroot.getChildren().add(iGMCanvas);
 		igmenuroot.getChildren().add(resetButton());
-		igmenuroot.getChildren().add(igMenuReturn());
+		igmenuroot.getChildren().add(menuButton());
 		igmenuroot.getChildren().add(resumeButton());
 		igmenuroot.getChildren().add(igControl());
-		igmenu = new Scene(igmenuroot, WIDTH + 64, HEIGHT + 64, Color.TRANSPARENT);
+		igmenu = new Scene(igmenuroot, WIDTH, HEIGHT);
+		
 		//in game controls
 		igcontrolroot = new Pane();
 		igcontrolroot.setBackground(new Background(igControlBG));
+		igcontrolroot.getChildren().add(iGCCanvas);
 		igcontrolroot.getChildren().add(igMenuButton2());
 		igcontrolroot.getChildren().add(resumeButton());
-		igcontrols = new Scene(igcontrolroot, WIDTH + 64, HEIGHT + 64, Color.ALICEBLUE);
+		igcontrols = new Scene(igcontrolroot, WIDTH, HEIGHT);
+		
 		// make game
 		gameRoot = new Pane();
 		gameRoot.setBackground(new Background(gameBG));
@@ -160,9 +176,9 @@ public class Platformer extends Application {
 		gameRoot.getChildren().add(thirdrectangle);
 		gameRoot.getChildren().add(rock);
 		gameRoot.getChildren().add(hero.getImageView());
-		gameRoot.getChildren().add(new Group(player.getImageView()));
+		//gameRoot.getChildren().add(new Group(player.getImageView()));
 		// make scene
-		gameScene = new Scene(gameRoot, WIDTH + 64, HEIGHT + 64, Color.AQUAMARINE);
+		gameScene = new Scene(gameRoot, WIDTH + 64, HEIGHT + 64);
 		moveRectangleOnKeyPress(gameScene, rectangle, hero.getImageView());
 
 		// load sound stuff
@@ -184,7 +200,7 @@ public class Platformer extends Application {
 
 		};
 		gameLoop.start();
-		player.play();
+		//player.play();
 		thestage.setTitle("Spookeo and Fariette");
 		thestage.setScene(menuScene);
 		thestage.show();
