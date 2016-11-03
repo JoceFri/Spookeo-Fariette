@@ -34,6 +34,7 @@ public class Platformer extends Application {
 	private int cooldown = 120;
 	private boolean jumping = false;
 	private boolean jumpPress = false;
+	Collision c;
 
 	private Sounds bgNoise = new Sounds();
 	private Sounds jumpSound = new Sounds();
@@ -45,10 +46,11 @@ public class Platformer extends Application {
 	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot;
 
 	private Player hero = new Player(300, 200, 96, 96, new Image("Assets/Art/joey.png"), 300, 200, 96, 96);
+	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new Image("Assets/Art/pushable_box.png"), 500, HEIGHT - 100, 100, 100);
 	final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
-	final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
-	final Rectangle thirdrectangle = makeRectangle(800, HEIGHT - 200, 442, 200);
-	final Rectangle rock = makeRectangle(100, HEIGHT - 128, 128, 128);
+	//final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
+	//final Rectangle thirdrectangle = makeRectangle(800, HEIGHT - 200, 442, 200);
+	//final Rectangle rock = makeRectangle(100, HEIGHT - 128, 128, 128);
 
 	// image
 	Image dirt1 = new Image("Assets/Art/2side_ground.png");
@@ -77,11 +79,11 @@ public class Platformer extends Application {
 
 		thestage = primaryStage;
 
-//		Animation player = SpriteLoader.loadAnimation("characters", "spookeo");
-//		player.setCycleCount(Animation.INDEFINITE);
+		//Animation player = SpriteLoader.loadAnimation("characters", "spookeo");
+		//player.setCycleCount(Animation.INDEFINITE);
 
 		// make rectangle
-		thirdrectangle.setFill(Color.TRANSPARENT);
+		//thirdrectangle.setFill(Color.TRANSPARENT);
 		rectangle.setFill(Color.AQUAMARINE);
 
 		// make backgrounds
@@ -89,25 +91,14 @@ public class Platformer extends Application {
 		BackgroundFill controlBG = new BackgroundFill(Color.AQUAMARINE, null, null);
 		BackgroundFill gameBG = new BackgroundFill(Color.SKYBLUE, null, null);
 		BackgroundFill igControlBG = new BackgroundFill(Color.BLUE, null, null);
-		BackgroundFill igMenuBG = new BackgroundFill(Color.BLACK, null, null);
-		
 		
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
 		mc.drawImage(title, 300, 100);
 		
-		Canvas iGMCanvas = new Canvas(WIDTH, HEIGHT);
-		GraphicsContext igmc = iGMCanvas.getGraphicsContext2D();
-		igmc.drawImage(title, 300, 100);
-		
 		Canvas controlCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext cc = controlCanvas.getGraphicsContext2D();
-		cc.drawImage(title, 300, 100);
-		
-		Canvas iGCCanvas = new Canvas(WIDTH, HEIGHT);
-		GraphicsContext igcc = iGCCanvas.getGraphicsContext2D();
-		igcc.drawImage(title, 300, 100);
 		
 		Canvas gameCanvas = new Canvas(WIDTH + 64, HEIGHT + 64);
 		GraphicsContext gc = gameCanvas.getGraphicsContext2D();
@@ -133,10 +124,9 @@ public class Platformer extends Application {
 		// make control
 		controlRoot = new Pane();
 		controlRoot.setBackground(new Background(controlBG));
-		controlRoot.getChildren().add(controlCanvas);
 		controlRoot.getChildren().add(menuButton());
 		controlRoot.getChildren().add(startButton());
-		controlScene = new Scene(controlRoot, WIDTH, HEIGHT);
+		controlScene = new Scene(controlRoot, WIDTH, HEIGHT, Color.AQUAMARINE);
 		
 		// make menu
 		menuRoot = new Pane();
@@ -144,41 +134,39 @@ public class Platformer extends Application {
 		menuRoot.getChildren().add(menuCanvas);
 		menuRoot.getChildren().add(startButton());
 		menuRoot.getChildren().add(controlButton());
-		menuScene = new Scene(menuRoot, WIDTH, HEIGHT);
+		
+		// make scene
+		menuScene = new Scene(menuRoot, WIDTH, HEIGHT, Color.AQUAMARINE);
 
 		// ---------- Game ----------//
-
 		//in game menu
 		igmenuroot = new Pane();
-		igmenuroot.setBackground(new Background(igMenuBG));
-		igmenuroot.getChildren().add(iGMCanvas);
 		igmenuroot.getChildren().add(resetButton());
-		igmenuroot.getChildren().add(menuButton());
+		igmenuroot.getChildren().add(igMenuReturn());
 		igmenuroot.getChildren().add(resumeButton());
 		igmenuroot.getChildren().add(igControl());
-		igmenu = new Scene(igmenuroot, WIDTH, HEIGHT);
-		
+		igmenu = new Scene(igmenuroot, WIDTH + 64, HEIGHT + 64, Color.TRANSPARENT);
 		//in game controls
 		igcontrolroot = new Pane();
 		igcontrolroot.setBackground(new Background(igControlBG));
-		igcontrolroot.getChildren().add(iGCCanvas);
 		igcontrolroot.getChildren().add(igMenuButton2());
 		igcontrolroot.getChildren().add(resumeButton());
-		igcontrols = new Scene(igcontrolroot, WIDTH, HEIGHT);
-		
+		igcontrols = new Scene(igcontrolroot, WIDTH + 64, HEIGHT + 64, Color.ALICEBLUE);
 		// make game
 		gameRoot = new Pane();
 		gameRoot.setBackground(new Background(gameBG));
 		gameRoot.getChildren().add(gameCanvas);
 		gameRoot.getChildren().add(rectangle);
-		gameRoot.getChildren().add(secondrectangle);
+		//gameRoot.getChildren().add(secondrectangle);
 		gameRoot.getChildren().add(igMenuButton());
-		gameRoot.getChildren().add(thirdrectangle);
-		gameRoot.getChildren().add(rock);
+		//gameRoot.getChildren().add(thirdrectangle);
+		//gameRoot.getChildren().add(rock);
 		gameRoot.getChildren().add(hero.getImageView());
+		gameRoot.getChildren().add(box.getImageView());
+		c= new Collision(hero, box);
 		//gameRoot.getChildren().add(new Group(player.getImageView()));
 		// make scene
-		gameScene = new Scene(gameRoot, WIDTH + 64, HEIGHT + 64);
+		gameScene = new Scene(gameRoot, WIDTH + 64, HEIGHT + 64, Color.AQUAMARINE);
 		moveRectangleOnKeyPress(gameScene, rectangle, hero.getImageView());
 
 		// load sound stuff
@@ -191,8 +179,10 @@ public class Platformer extends Application {
 
 			@Override
 			public void handle(long now) {
+				c.moveObject();
+				if(!c.onTop()){
 				gravity(rectangle, hero.getImageView());
-				collision(rectangle, secondrectangle, hero.getImageView());
+				}
 				jump(rectangle, hero.getImageView());
 				cooldown++;
 
@@ -201,6 +191,7 @@ public class Platformer extends Application {
 		};
 		gameLoop.start();
 		//player.play();
+		
 		thestage.setTitle("Spookeo and Fariette");
 		thestage.setScene(menuScene);
 		thestage.show();
@@ -359,11 +350,12 @@ public class Platformer extends Application {
 		if (!(rectangle.getY() + gravity + rectangle.getHeight() >= HEIGHT)) {
 			rectangle.setY(rectangle.getY() + gravity);
 			image.setY(rectangle.getY());
+			hero.setHBY(rectangle.getY());
 		}
 	}
 
 	// Method for collision between two rectangles
-	private void collision(final Rectangle rectangle1, final Rectangle secondrectangle2, final ImageView image) {
+	/*private void collision(final Rectangle rectangle1, final Rectangle secondrectangle2, final ImageView image) {
 		// System.out.println(secondrectangle.getX() + " " + (rectangle.getX()
 		// +rectangle.getWidth() ));
 		if (rectangle1 == thirdrectangle || secondrectangle2 == thirdrectangle) {
@@ -392,7 +384,7 @@ public class Platformer extends Application {
 		// check for on top of box
 
 	}
-
+	*/
 	// jump
 	double jumpmax = 0;
 	boolean canJump = false;
@@ -402,7 +394,7 @@ public class Platformer extends Application {
 
 			if (cooldown >= 120) {
 				jumpSound.run();
-				jumpmax = rectangle.getY() - 150;
+				jumpmax = rectangle.getY() - 225;
 				canJump = true;
 			}
 			if (canJump) {
@@ -416,6 +408,7 @@ public class Platformer extends Application {
 					cooldown = 0;
 					if (rectangle.getY() >= jumpmax) {
 						rectangle.setY(rectangle.getY() - acceleration);
+						hero.setHBX(rectangle.getY());
 					}
 
 				}
@@ -440,24 +433,28 @@ public class Platformer extends Application {
 					if (!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)) {
 						rectangle.setX(rectangle.getX() + acceleration);
 						image.setX(rectangle.getX());
+						hero.setHBX(rectangle.getX());
 					}
 					break;
 				case D:
 					if (!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)) {
 						rectangle.setX(rectangle.getX() + acceleration);
 						image.setX(rectangle.getX());
+						hero.setHBX(rectangle.getX());
 					}
 					break;
 				case LEFT:
 					if (!(rectangle.getX() - acceleration <= 0)) {
 						rectangle.setX(rectangle.getX() - acceleration);
 						image.setX(rectangle.getX());
+						hero.setHBX(rectangle.getX());
 					}
 					break;
 				case A:
 					if (!(rectangle.getX() - acceleration <= 0)) {
 						rectangle.setX(rectangle.getX() - acceleration);
 						image.setX(rectangle.getX());
+						hero.setHBX(rectangle.getX());
 					}
 					break;
 				}
