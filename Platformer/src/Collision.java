@@ -1,5 +1,4 @@
 
-
 public class Collision {
 	Actor shapeOne = null;
 	Actor shapeTwo = null;
@@ -14,15 +13,15 @@ public class Collision {
 	}
 
 	public boolean isColliding() {
-		System.out.println(topCollision);
-		if (shapeOne.getHBX() + shapeOne.getHBWidth() <= shapeTwo.getHBX() && shapeOne.getHBY() >= shapeTwo.getHBY()
+		System.out.println(shapeOne.getHBX() + " " + shapeTwo.getHBX());
+		if (shapeOne.getHBX() + shapeOne.getHBWidth() <= shapeTwo.getHBX() && shapeOne.getHBY() >= (shapeTwo.getHBY() - shapeTwo.getHBHeight())
 				&& (shapeTwo.getHBX() - (shapeOne.getHBX() + shapeOne.getHBWidth())) <= Platformer.acceleration) {
 			leftCollision = true;
 			return true;
 		} else {
 			leftCollision = false;
 		}
-		if (shapeOne.getHBX() >= shapeTwo.getHBX() + shapeTwo.getHBWidth() && shapeOne.getHBY() >= shapeTwo.getHBY()
+		if (shapeOne.getHBX() >= shapeTwo.getHBX() + shapeTwo.getHBWidth() && shapeOne.getHBY() >= (shapeTwo.getHBY() - shapeTwo.getHBHeight())
 				&& shapeOne.getHBX() - (shapeTwo.getHBX() + shapeTwo.getHBWidth()) <= Platformer.acceleration) {
 			System.out.println("TRUE");
 			rightCollision = true;
