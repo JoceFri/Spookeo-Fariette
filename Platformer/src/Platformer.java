@@ -1,6 +1,7 @@
 //imports
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -25,8 +26,8 @@ public class Platformer extends Application {
 
 	// global variables
 	// resolution
-	private static final double HEIGHT = 600.0;
-	private static final double WIDTH = 1200.0;
+	private static final double HEIGHT = 704.0;
+	private static final double WIDTH = 1600.0;
 
 	// movement modifiers
 	public static final double acceleration = 8;
@@ -34,7 +35,7 @@ public class Platformer extends Application {
 	private int cooldown = 120;
 	private boolean jumping = false;
 	private boolean jumpPress = false;
-	Collision c;
+	private Collision c;
 
 	private Sounds bgNoise = new Sounds();
 	private Sounds jumpSound = new Sounds();
@@ -45,13 +46,15 @@ public class Platformer extends Application {
 	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols;
 	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot;
 
-	private Player hero = new Player(300, 200, 96, 96, new Image("Assets/Art/joey.png"), 300, 200, 96, 96);
+	private Player hero = new Player(300, 200, 65, 64, new Image("Assets/Art/ghost_same.png"), 300, 200, 65, 64);
 	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new Image("Assets/Art/pushable_box.png"), 500, HEIGHT - 100, 100, 100);
+	private Nonmoveable rock = new Nonmoveable(100, HEIGHT - 128, 64, 128, new Image("Assets/Art/skinny rock.png"), 100, HEIGHT - 128, 64, 128);
 	final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
-	//final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
-	//final Rectangle thirdrectangle = makeRectangle(800, HEIGHT - 200, 442, 200);
-	//final Rectangle rock = makeRectangle(100, HEIGHT - 128, 128, 128);
-
+	final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
+	final Rectangle thirdrectangle = makeRectangle(800, HEIGHT - 200, 442, 200);
+	
+	ArrayList<Nonmoveable> nmo = new ArrayList<Nonmoveable>();
+	
 	// image
 	Image dirt1 = new Image("Assets/Art/2side_ground.png");
 	Image dirt2 = new Image("Assets/Art/leftedge_ground.png");
@@ -60,7 +63,7 @@ public class Platformer extends Application {
 	Image dirt5 = new Image("Assets/Art/leftedge_dirt.png");
 	Image dirt6 = new Image("Assets/Art/rightedge_dirt.png");
 	Image title = new Image("Assets/Art/titlescreen.png");
-	Image bg = new Image("Assets/Art/BackGround.png");
+	ImageView bg = new ImageView("Assets/Art/BackGround.png");
 	AnimationTimer gameLoop;
 	URL url = getClass().getResource("Assets/Json/characters.json");
 	public Platformer() throws IOException {
@@ -78,55 +81,82 @@ public class Platformer extends Application {
 	public void start(Stage primaryStage) {
 
 		thestage = primaryStage;
+		
+		bg.setFitHeight(HEIGHT);
+		bg.setFitWidth(WIDTH * 2);
+		
+		nmo.add(new Nonmoveable(0, HEIGHT - 128, 64, 64, dirt2, 0, HEIGHT - 128, 64, 64));
+		nmo.add(new Nonmoveable(WIDTH, HEIGHT - 128, 64, 64, dirt3, WIDTH, HEIGHT - 128, 64, 64));
+		nmo.add(new Nonmoveable(0, HEIGHT - 64, 64, 64, dirt5, 0, HEIGHT - 64, 64, 64));
+		nmo.add(new Nonmoveable(WIDTH, HEIGHT - 64, 64, 64, dirt6, WIDTH, HEIGHT - 64, 64, 64));
+		
+		
+		for (int i = 64; i <= WIDTH; i += 64) {
 
-		//Animation player = SpriteLoader.loadAnimation("characters", "spookeo");
-		//player.setCycleCount(Animation.INDEFINITE);
+			nmo.add(new Nonmoveable(i, HEIGHT - 128, 64, 64, dirt1, i, HEIGHT - 128, 64, 64));
+			nmo.add(new Nonmoveable(i, HEIGHT - 64, 64, 64, dirt4, i, HEIGHT - 64, 64, 64));
+		}
+
+		for (int i = 64; i <= WIDTH; i += 60) {
+			
+			nmo.add(new Nonmoveable(i + 800 - 65, HEIGHT - 200, 64, 64, dirt4, i + 800 - 65, HEIGHT - 200, 64, 64));
+			nmo.add(new Nonmoveable(i + 800 - 65, HEIGHT - 150, 64, 64, dirt4, i + 800 - 65, HEIGHT - 150, 64, 64));
+			nmo.add(new Nonmoveable(i + 800 - 65, HEIGHT - 100, 64, 64, dirt4, i + 800 - 65, HEIGHT - 100, 64, 64));
+			nmo.add(new Nonmoveable(i + 800 - 65, HEIGHT - 50, 64, 64, dirt4, i + 800 - 65, HEIGHT - 50, 64, 64));
+			nmo.add(new Nonmoveable(i + 800 - 65, HEIGHT, 64, 64, dirt4, i + 800 - 65, HEIGHT, 64, 64));
+				
+		}
+		
+		nmo.add(rock);
+		
+//		Animation player = SpriteLoader.loadAnimation("characters", "spookeo");
+//		player.setCycleCount(Animation.INDEFINITE);
 
 		// make rectangle
-		//thirdrectangle.setFill(Color.TRANSPARENT);
+		thirdrectangle.setFill(Color.TRANSPARENT);
 		rectangle.setFill(Color.AQUAMARINE);
 
 		// make backgrounds
 		BackgroundFill menuBG = new BackgroundFill(Color.BLACK, null, null);
-		BackgroundFill controlBG = new BackgroundFill(Color.AQUAMARINE, null, null);
-		BackgroundFill gameBG = new BackgroundFill(Color.SKYBLUE, null, null);
-		BackgroundFill igControlBG = new BackgroundFill(Color.BLUE, null, null);
+		BackgroundFill controlBG = new BackgroundFill(Color.BLACK, null, null);
+		BackgroundFill gameBG = new BackgroundFill(Color.BLACK, null, null);
+		BackgroundFill igControlBG = new BackgroundFill(Color.BLACK, null, null);
+		BackgroundFill igMenuBG = new BackgroundFill(Color.BLACK, null, null);
+		
 		
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
-		mc.drawImage(title, 300, 100);
+		mc.drawImage(title, 500, 100);
+		
+		Canvas iGMCanvas = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext igmc = iGMCanvas.getGraphicsContext2D();
+		igmc.drawImage(title, 500, 100);
 		
 		Canvas controlCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext cc = controlCanvas.getGraphicsContext2D();
+		cc.drawImage(title, 500, 100);
 		
-		Canvas gameCanvas = new Canvas(WIDTH + 64, HEIGHT + 64);
+		Canvas iGCCanvas = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext igcc = iGCCanvas.getGraphicsContext2D();
+		igcc.drawImage(title, 500, 100);
+		
+		Canvas gameCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext gc = gameCanvas.getGraphicsContext2D();
-		gc.drawImage(bg, 0, 0);
-		gc.drawImage(dirt2, 0, HEIGHT - 25);
-		gc.drawImage(dirt3, WIDTH, HEIGHT - 25);
-		gc.drawImage(dirt5, 0, HEIGHT + 37);
-		gc.drawImage(dirt6, WIDTH, HEIGHT + 37);
-		for (int i = 64; i <= WIDTH; i += 64) {
-			gc.drawImage(dirt1, i, HEIGHT - 25);
-			gc.drawImage(dirt4, i, HEIGHT + 37);
+		for (int i = 0; i < nmo.size(); i++) {
+			gc.drawImage(nmo.get(i).getImage(), nmo.get(i).getX(), nmo.get(i).getY());
 		}
 
-		for (int i = 64; i <= WIDTH; i += 60) {
-			gc.drawImage(dirt4, i + 800 - 65, HEIGHT - 200);
-			gc.drawImage(dirt4, i + 800 - 65, HEIGHT - 150);
-			gc.drawImage(dirt4, i + 800 - 65, HEIGHT - 100);
-			gc.drawImage(dirt4, i + 800 - 65, HEIGHT - 65);
-			gc.drawImage(dirt4, i + 800 - 65, HEIGHT );
-		}
+	
 		// -------- Menu ----------//
 
 		// make control
 		controlRoot = new Pane();
 		controlRoot.setBackground(new Background(controlBG));
+		controlRoot.getChildren().add(controlCanvas);
 		controlRoot.getChildren().add(menuButton());
 		controlRoot.getChildren().add(startButton());
-		controlScene = new Scene(controlRoot, WIDTH, HEIGHT, Color.AQUAMARINE);
+		controlScene = new Scene(controlRoot, WIDTH, HEIGHT);
 		
 		// make menu
 		menuRoot = new Pane();
@@ -134,39 +164,43 @@ public class Platformer extends Application {
 		menuRoot.getChildren().add(menuCanvas);
 		menuRoot.getChildren().add(startButton());
 		menuRoot.getChildren().add(controlButton());
-		
-		// make scene
-		menuScene = new Scene(menuRoot, WIDTH, HEIGHT, Color.AQUAMARINE);
+		menuScene = new Scene(menuRoot, WIDTH, HEIGHT);
 
 		// ---------- Game ----------//
+
 		//in game menu
 		igmenuroot = new Pane();
+		igmenuroot.setBackground(new Background(igMenuBG));
+		igmenuroot.getChildren().add(iGMCanvas);
 		igmenuroot.getChildren().add(resetButton());
-		igmenuroot.getChildren().add(igMenuReturn());
+		igmenuroot.getChildren().add(menuButton());
 		igmenuroot.getChildren().add(resumeButton());
 		igmenuroot.getChildren().add(igControl());
-		igmenu = new Scene(igmenuroot, WIDTH + 64, HEIGHT + 64, Color.TRANSPARENT);
+		igmenu = new Scene(igmenuroot, WIDTH, HEIGHT);
+		
 		//in game controls
 		igcontrolroot = new Pane();
 		igcontrolroot.setBackground(new Background(igControlBG));
+		igcontrolroot.getChildren().add(iGCCanvas);
 		igcontrolroot.getChildren().add(igMenuButton2());
 		igcontrolroot.getChildren().add(resumeButton());
-		igcontrols = new Scene(igcontrolroot, WIDTH + 64, HEIGHT + 64, Color.ALICEBLUE);
+		igcontrols = new Scene(igcontrolroot, WIDTH, HEIGHT);
+		
 		// make game
 		gameRoot = new Pane();
 		gameRoot.setBackground(new Background(gameBG));
+		gameRoot.getChildren().add(bg);
 		gameRoot.getChildren().add(gameCanvas);
 		gameRoot.getChildren().add(rectangle);
 		//gameRoot.getChildren().add(secondrectangle);
 		gameRoot.getChildren().add(igMenuButton());
-		//gameRoot.getChildren().add(thirdrectangle);
-		//gameRoot.getChildren().add(rock);
+		gameRoot.getChildren().add(thirdrectangle);
 		gameRoot.getChildren().add(hero.getImageView());
 		gameRoot.getChildren().add(box.getImageView());
-		c= new Collision(hero, box);
 		//gameRoot.getChildren().add(new Group(player.getImageView()));
-		// make scene
-		gameScene = new Scene(gameRoot, WIDTH + 64, HEIGHT + 64, Color.AQUAMARINE);
+		gameScene = new Scene(gameRoot, WIDTH, HEIGHT);
+		
+		c = new Collision(hero, box);
 		moveRectangleOnKeyPress(gameScene, rectangle, hero.getImageView());
 
 		// load sound stuff
@@ -191,7 +225,6 @@ public class Platformer extends Application {
 		};
 		gameLoop.start();
 		//player.play();
-		
 		thestage.setTitle("Spookeo and Fariette");
 		thestage.setScene(menuScene);
 		thestage.show();
@@ -214,7 +247,7 @@ public class Platformer extends Application {
 	private Button startButton() {
 		Button btn = new Button("", new ImageView("Assets/Art/play.png"));
 
-		btn.relocate(450, 500);
+		btn.relocate(650, 500);
 
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -232,7 +265,7 @@ public class Platformer extends Application {
 	}
 	private Button resetButton(){
 		Button btn = new Button("Retry");
-		btn.relocate(600, 400);
+		btn.relocate(650, 500);
 		btn.setOnAction(new EventHandler<ActionEvent>(){
 
 			@Override
@@ -249,7 +282,7 @@ public class Platformer extends Application {
 	// creates button to reach controls screen
 	private Button controlButton() {
 		Button btn = new Button("", new ImageView("Assets/Art/controls.png"));
-		btn.relocate(650, 500);
+		btn.relocate(850, 500);
 
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -263,9 +296,10 @@ public class Platformer extends Application {
 		});
 		return btn;
 	}
+	
 	private Button igMenuButton(){
 		Button btn = new Button("Menu");
-		btn.relocate(1200, 25);
+		btn.relocate(1500, 25);
 		btn.setOnAction(new EventHandler<ActionEvent>(){
 
 			@Override
@@ -277,14 +311,15 @@ public class Platformer extends Application {
 		});
 		return btn;
 	}
+	
 	private Button igMenuReturn(){
 		Button btn = menuButton();
-		btn.relocate(600, 450);
+		btn.relocate(650, 500);
 		return btn;
 	}
 	private Button igControl(){
 		Button btn = new Button("Controls");
-		btn.relocate(600, 550);
+		btn.relocate(850, 600);
 		btn.setOnAction(new EventHandler<ActionEvent>(){
 
 			@Override
@@ -298,7 +333,7 @@ public class Platformer extends Application {
 	// creates button to reach menu
 	private Button menuButton() {
 		Button btn = new Button("", new ImageView("Assets/Art/menu.png"));
-		btn.relocate(650, 500);
+		btn.relocate(850, 500);
 
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -315,7 +350,7 @@ public class Platformer extends Application {
 	}
 	private Button igMenuButton2(){
 		Button btn = new Button("Go back");
-		btn.relocate(600, 400);
+		btn.relocate(850, 600);
 		btn.setOnAction(new EventHandler<ActionEvent>(){
 
 			@Override
@@ -328,7 +363,7 @@ public class Platformer extends Application {
 	}
 	private Button resumeButton() {
 		Button btn = new Button("resume");
-		btn.relocate(600, 350);
+		btn.relocate(650, 600);
 
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -354,37 +389,6 @@ public class Platformer extends Application {
 		}
 	}
 
-	// Method for collision between two rectangles
-	/*private void collision(final Rectangle rectangle1, final Rectangle secondrectangle2, final ImageView image) {
-		// System.out.println(secondrectangle.getX() + " " + (rectangle.getX()
-		// +rectangle.getWidth() ));
-		if (rectangle1 == thirdrectangle || secondrectangle2 == thirdrectangle) {
-			rectangle.setX(thirdrectangle.getX());
-		}
-		
-		else if (rectangle1.getX() + rectangle1.getWidth() <= secondrectangle2.getX()
-				&& rectangle1.getY() >= secondrectangle2.getY()
-				&& (secondrectangle2.getX() - (rectangle1.getX() + rectangle1.getWidth())) <= acceleration) {
-
-			rectangle1.setX(secondrectangle2.getX() - rectangle1.getWidth() - 1);
-			image.setX(rectangle1.getX());
-			secondrectangle2.setX(secondrectangle2.getX() + acceleration);
-
-		}
-		else if (secondrectangle2.getX() + secondrectangle2.getWidth() <= rectangle1.getX()
-				&& rectangle1.getY() >= secondrectangle2.getY()
-				&& (rectangle1.getX() - (secondrectangle2.getX() + secondrectangle2.getWidth()) <= acceleration)) {
-
-			rectangle1.setX(secondrectangle2.getX() + secondrectangle2.getWidth() + 1);
-			image.setX(rectangle1.getX());
-			secondrectangle2.setX(secondrectangle2.getX() - acceleration);
-
-		}
-
-		// check for on top of box
-
-	}
-	*/
 	// jump
 	double jumpmax = 0;
 	boolean canJump = false;
@@ -408,7 +412,7 @@ public class Platformer extends Application {
 					cooldown = 0;
 					if (rectangle.getY() >= jumpmax) {
 						rectangle.setY(rectangle.getY() - acceleration);
-						hero.setHBX(rectangle.getY());
+						hero.setHBY(rectangle.getY());
 					}
 
 				}
