@@ -109,8 +109,8 @@ public class Platformer extends Application {
 		
 		nmo.add(rock);
 		
-//		Animation player = SpriteLoader.loadAnimation("characters", "spookeo");
-//		player.setCycleCount(Animation.INDEFINITE);
+		Animation player = SpriteLoader.loadAnimation("characters", "spookeo");
+		player.setCycleCount(Animation.INDEFINITE);
 
 		// make rectangle
 		thirdrectangle.setFill(Color.TRANSPARENT);
@@ -197,7 +197,7 @@ public class Platformer extends Application {
 		gameRoot.getChildren().add(thirdrectangle);
 		gameRoot.getChildren().add(hero.getImageView());
 		gameRoot.getChildren().add(box.getImageView());
-		//gameRoot.getChildren().add(new Group(player.getImageView()));
+		gameRoot.getChildren().add(new Group(player.getImageView()));
 		gameScene = new Scene(gameRoot, WIDTH, HEIGHT);
 		
 		c = new Collision(hero, box);
@@ -224,7 +224,7 @@ public class Platformer extends Application {
 
 		};
 		gameLoop.start();
-		//player.play();
+		player.play();
 		thestage.setTitle("Spookeo and Fariette");
 		thestage.setScene(menuScene);
 		thestage.show();

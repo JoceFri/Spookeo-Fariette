@@ -43,6 +43,40 @@ public class SpriteLoader {
 		return null;
 	}
 	
+	public static Sprite loadSprite(String path, String name) {
+		String source = ("src/Assets/Json/"+path+".json");
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			JsonNode rootNode = mapper.readTree(new File(source));
+			if(rootNode.has(name)) {
+				JsonNode node = rootNode.get(name);
+				String spriteSheet = node.get("spriteSheet").asText();
+				int xOffset = node.get("xOffset").asInt();
+				int yOffset = node.get("yOffset").asInt();
+				int width = node.get("width").asInt();
+				int height = node.get("height").asInt();
+				Sprite sprite = new Sprite.Builder()
+					.xOffset(xOffset)
+					.yOffset(yOffset)
+					.width(width)
+					.height(height)
+					.build();
+				Image image = loadImage(spriteSheet, xOffset, yOffset, width, height);
+				sprite.setSprite(image);
+				return sprite;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private static Image loadImage(String path, int xOffset, int yOffset, int width, int height) {
+		final int x = xOffset + width;
+		final int y = yOffset + height;
+		return new Image("Assets/Art/"+path+".png", x, y, false, false);
+	}
+	
 	private static ImageView loadSprite(String path, int xOffset, int yOffset, int width, int height, int column) {
 		final int x = xOffset + width * column;
 		final int y = yOffset + height;
