@@ -1,6 +1,6 @@
 {
-	"spookeo": {
-		"spriteSheet": "Spookeo_IDLE",
+	"spookeo_idle": {
+		"spriteSheet": "spookeo_sheet",
 		"xOffset": "0",
 		"yOffset": "0",
 		"width": "64",
@@ -8,13 +8,13 @@
 		"frameNumber": "9",
 		"duration": "600"
 	},
-	"fariette": {
-		"spriteSheet": "joey",
+	"spookeo_push": {
+		"spriteSheet": "spookeo_sheet",
 		"xOffset": "0",
-		"yOffset": "0",
+		"yOffset": "64",
 		"width": "64",
 		"height": "64",
-		"frameNumber": "1",
-		"duration": "18"
+		"frameNumber": "8",
+		"duration": "600"
 	}
 }

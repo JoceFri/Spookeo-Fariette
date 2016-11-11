@@ -32,7 +32,7 @@ public class SpriteLoader {
 						.column(column)
 						.build();
 				String spriteSheet = charNode.get("spriteSheet").asText();
-				ImageView imageView = loadSprite(spriteSheet, xOffset, yOffset, width, height, column);
+				ImageView imageView = loadSprite(spriteSheet);
 				imageView.setViewport(new Rectangle2D(xOffset, yOffset, width, height));
 				animation.setImageView(imageView);
 				return animation;
@@ -77,10 +77,8 @@ public class SpriteLoader {
 		return new Image("Assets/Art/"+path+".png", x, y, false, false);
 	}
 	
-	private static ImageView loadSprite(String path, int xOffset, int yOffset, int width, int height, int column) {
-		final int x = xOffset + width * column;
-		final int y = yOffset + height;
-		Image image = new Image("Assets/Art/"+path+".png", x, y, false, false);
+	private static ImageView loadSprite(String path) {
+		Image image = new Image("Assets/Animations/"+path+".png");
 		return new ImageView(image);
 	}
 }

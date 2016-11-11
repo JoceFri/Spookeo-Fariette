@@ -22,7 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-public class Platformer extends Application {
+public class Platformer extends Application implements Images {
 
 	// global variables
 	// resolution
@@ -108,9 +108,6 @@ public class Platformer extends Application {
 		}
 		
 		nmo.add(rock);
-		
-		Animation player = SpriteLoader.loadAnimation("characters", "spookeo");
-		player.setCycleCount(Animation.INDEFINITE);
 
 		// make rectangle
 		thirdrectangle.setFill(Color.TRANSPARENT);
@@ -197,7 +194,8 @@ public class Platformer extends Application {
 		gameRoot.getChildren().add(thirdrectangle);
 		gameRoot.getChildren().add(hero.getImageView());
 		gameRoot.getChildren().add(box.getImageView());
-		gameRoot.getChildren().add(new Group(player.getImageView()));
+		gameRoot.getChildren().add(SPOOKEO_IDLE.getImageView());
+		gameRoot.getChildren().add(SPOOKEO_PUSH.getImageView());
 		gameScene = new Scene(gameRoot, WIDTH, HEIGHT);
 		
 		c = new Collision(hero, box);
@@ -207,6 +205,8 @@ public class Platformer extends Application {
 		bgNoise.loadSound("Assets/Sound/background.wav");
 		jumpSound.loadSound("Assets/Sound/jump1.wav");
 		bgNoise.runLoop();
+		
+		Images.initAnimations();
 
 		// loop methods for game mechanics
 		 gameLoop = new AnimationTimer() {
@@ -224,7 +224,7 @@ public class Platformer extends Application {
 
 		};
 		gameLoop.start();
-		player.play();
+		Images.playAnimations();
 		thestage.setTitle("Spookeo and Fariette");
 		thestage.setScene(menuScene);
 		thestage.show();
