@@ -1,13 +1,13 @@
 
 public class Collision {
-	Actor shapeOne = null;
-	Actor shapeTwo = null;
+	Obj shapeOne = null;
+	Obj shapeTwo = null;
 	private boolean leftCollision;
 	private boolean rightCollision;
 	private boolean topCollision;
 	private boolean bottomCollision;
 
-	public Collision(Actor one, Actor two) {
+	public Collision(Obj one, Obj two) {
 		shapeOne = one;
 		shapeTwo = two;
 	}

@@ -28,6 +28,8 @@ public class Obj {
 		actor = new ImageView(person);
 		actor.setX(ex);
 		actor.setY(why);
+		actor.setFitWidth(sizeX);
+		actor.setFitHeight(sizeY);
 		hbex = hbx;
 		hbwhy = hby;
 		hbwid = hbwidth;

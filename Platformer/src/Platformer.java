@@ -53,24 +53,17 @@ public class Platformer extends Application implements Images {
 
 	private Player hero = new Player(300, 200, 65, 64, new Image("Assets/Art/ghost_same.png"), 300, 200, 65, 64);
 	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new Image("Assets/Art/pushable_box.png"), 500, HEIGHT - 100, 100, 100);
-	private Nonmoveable rock = new Nonmoveable(100, HEIGHT - 128, 64, 128, new Image("Assets/Art/skinny rock.png"), 100, HEIGHT - 128, 64, 128);
 	final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
 	final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
 	final Rectangle thirdrectangle = makeRectangle(800, HEIGHT - 200, 442, 200);
 
-	Animation player = SpriteLoader.loadAnimation("characters", "spookeo");
-
 	ArrayList<Nonmoveable> nmo = new ArrayList<Nonmoveable>();
-
-	// image
-	Image dirt1 = new Image("Assets/Art/2side_ground.png");
-	Image dirt2 = new Image("Assets/Art/leftedge_ground.png");
-	Image dirt3 = new Image("Assets/Art/rightedge_ground.png");
-	Image dirt4 = new Image("Assets/Art/fulldirt_block.png");
-	Image dirt5 = new Image("Assets/Art/leftedge_dirt.png");
-	Image dirt6 = new Image("Assets/Art/rightedge_dirt.png");
-	Image title = new Image("Assets/Art/titlescreen.png");
+	ArrayList<Moveable> mo = new ArrayList<Moveable>();
+	MapLoader m = new MapLoader();
+	
 	ImageView bg = new ImageView("Assets/Art/BackGround.png");
+	Image title = new Image("Assets/Art/titlescreen.png");
+	
 	AnimationTimer gameLoop;
 	URL url = getClass().getResource("Assets/Json/characters.json");
 	public Platformer() throws IOException {
@@ -92,31 +85,14 @@ public class Platformer extends Application implements Images {
 		bg.setFitHeight(HEIGHT);
 		bg.setFitWidth(WIDTH * 2);
 
-		nmo.add(new Nonmoveable(0, HEIGHT - 128, 64, 64, dirt2, 0, HEIGHT - 128, 64, 64));
-		nmo.add(new Nonmoveable(WIDTH, HEIGHT - 128, 64, 64, dirt3, WIDTH, HEIGHT - 128, 64, 64));
-		nmo.add(new Nonmoveable(0, HEIGHT - 64, 64, 64, dirt5, 0, HEIGHT - 64, 64, 64));
-		nmo.add(new Nonmoveable(WIDTH, HEIGHT - 64, 64, 64, dirt6, WIDTH, HEIGHT - 64, 64, 64));
-
-
-		for (int i = 64; i <= WIDTH; i += 64) {
-
-			nmo.add(new Nonmoveable(i, HEIGHT - 128, 64, 64, dirt1, i, HEIGHT - 128, 64, 64));
-			nmo.add(new Nonmoveable(i, HEIGHT - 64, 64, 64, dirt4, i, HEIGHT - 64, 64, 64));
-		}
-
-		for (int i = 64; i <= WIDTH; i += 60) {
-
-			nmo.add(new Nonmoveable(i + 800 - 65, HEIGHT - 200, 64, 64, dirt4, i + 800 - 65, HEIGHT - 200, 64, 64));
-			nmo.add(new Nonmoveable(i + 800 - 65, HEIGHT - 150, 64, 64, dirt4, i + 800 - 65, HEIGHT - 150, 64, 64));
-			nmo.add(new Nonmoveable(i + 800 - 65, HEIGHT - 100, 64, 64, dirt4, i + 800 - 65, HEIGHT - 100, 64, 64));
-			nmo.add(new Nonmoveable(i + 800 - 65, HEIGHT - 50, 64, 64, dirt4, i + 800 - 65, HEIGHT - 50, 64, 64));
-			nmo.add(new Nonmoveable(i + 800 - 65, HEIGHT, 64, 64, dirt4, i + 800 - 65, HEIGHT, 64, 64));
-
-		}
-
-		nmo.add(rock);
-
-
+		// Load Map
+		m.readIn(WIDTH, HEIGHT, "map.txt");
+		
+		// Get nonmoveable objects
+		nmo = m.getNMO();
+		
+		// Get moveable objects
+		mo = m.getMO();
 
 		// make rectangle
 		thirdrectangle.setFill(Color.TRANSPARENT);
@@ -129,7 +105,6 @@ public class Platformer extends Application implements Images {
 		BackgroundFill igControlBG = new BackgroundFill(Color.BLACK, null, null);
 		BackgroundFill igMenuBG = new BackgroundFill(Color.BLACK, null, null);
 
-		player.setCycleCount(Animation.INDEFINITE);
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
@@ -152,6 +127,10 @@ public class Platformer extends Application implements Images {
 		for (int i = 0; i < nmo.size(); i++) {
 			gc.drawImage(nmo.get(i).getImage(), nmo.get(i).getX(), nmo.get(i).getY());
 		}
+		for (int i = 0; i < mo.size(); i++) {
+			gc.drawImage(mo.get(i).getImage(), mo.get(i).getX(), mo.get(i).getY());
+		}
+		
 
 
 		// -------- Menu ----------//
@@ -204,10 +183,10 @@ public class Platformer extends Application implements Images {
 		gameRoot.getChildren().add(hero.getImageView());
 		gameRoot.getChildren().add(box.getImageView());
 		gameRoot.getChildren().add(SPOOKEO_IDLE.getImageView());
-		gameRoot.getChildern().add(SPOOKEO_PUSH.getImageView());
+		gameRoot.getChildren().add(SPOOKEO_PUSH.getImageView());
 		gameScene = new Scene(gameRoot, WIDTH, HEIGHT);
 
-		c = new Collision(gameRoot, hero, box);
+		c = new Collision(hero, box);
 		moveRectangleOnKeyPress(gameScene, rectangle, hero.getImageView());
 
 		// load sound stuff
@@ -441,21 +420,18 @@ public class Platformer extends Application implements Images {
 			@Override
 			public void handle(KeyEvent event) {
 
-				
-
-
-				if (event.getCode().equals(KeyCode.D)) {
+				if (event.getCode().equals(KeyCode.D) || event.getCode().equals(KeyCode.RIGHT)) {
 					right = true;
 					moveRight(rectangle, image, right);
 				}
 
-				if (event.getCode().equals(KeyCode.W)) {
+				if (event.getCode().equals(KeyCode.W) || event.getCode().equals(KeyCode.UP)) {
 					jumpPress = true;
 
 
 				}
 
-				if (event.getCode().equals(KeyCode.A)) {
+				if (event.getCode().equals(KeyCode.A) || event.getCode().equals(KeyCode.LEFT)) {
 					left = true;
 					moveLeft(rectangle, image, left);
 				}
