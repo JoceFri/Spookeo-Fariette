@@ -11,9 +11,14 @@ public class Collision {
 		shapeOne = one;
 		shapeTwo = two;
 	}
+	
+	public void setObjs (Obj one, Obj two) {
+		shapeOne = one;
+		shapeTwo = two;
+	}
 
 	public boolean isColliding() {
-		System.out.println(shapeOne.getHBX() + " " + shapeTwo.getHBX());
+		//System.out.println(shapeOne.getHBX() + " " + shapeTwo.getHBX());
 		if (shapeOne.getHBX() + shapeOne.getHBWidth() <= shapeTwo.getHBX() && shapeOne.getHBY() >= (shapeTwo.getHBY() - shapeTwo.getHBHeight())
 				&& (shapeTwo.getHBX() - (shapeOne.getHBX() + shapeOne.getHBWidth())) <= Platformer.acceleration) {
 			leftCollision = true;
@@ -23,7 +28,7 @@ public class Collision {
 		}
 		if (shapeOne.getHBX() >= shapeTwo.getHBX() + shapeTwo.getHBWidth() && shapeOne.getHBY() >= (shapeTwo.getHBY() - shapeTwo.getHBHeight())
 				&& shapeOne.getHBX() - (shapeTwo.getHBX() + shapeTwo.getHBWidth()) <= Platformer.acceleration) {
-			System.out.println("TRUE");
+			//System.out.println("TRUE");
 			rightCollision = true;
 			return true;
 		} else {
@@ -63,10 +68,19 @@ public class Collision {
 			}
 		}
 	}
-	public boolean onTop(){
-		if(topCollision){
-			return true;
-		}
-		return false;
+	public boolean top(){
+		return topCollision;
+	}
+	
+	public boolean left(){
+		return leftCollision;
+	}
+	
+	public boolean right(){
+		return rightCollision;
+	}
+	
+	public boolean bottom(){
+		return bottomCollision;
 	}
 }

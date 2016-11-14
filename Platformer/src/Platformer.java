@@ -2,16 +2,11 @@
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.function.Predicate;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -38,26 +33,24 @@ public class Platformer extends Application implements Images {
 	public static final double acceleration = 8;
 	private static final double gravity = 2.0;
 	private int cooldown = 120;
-	private boolean jumping = false;
 	private boolean jumpPress = false;
+	private boolean bottom = false;
+	private boolean top = false;
+	boolean right = false;
+	boolean left = false;
 	private Collision c;
 
 	private Sounds bgNoise = new Sounds();
 	private Sounds jumpSound = new Sounds();
 
-	//	private Scenes scene = new Scenes();
-
 	private Stage thestage;
 	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols;
 	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot;
 
-	private Player hero = new Player(300, 200, 65, 64, new Image("Assets/Art/ghost_same.png"), 300, 200, 65, 64);
-	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new Image("Assets/Art/pushable_box.png"), 500, HEIGHT - 100, 100, 100);
+	private Player hero = new Player(300, 200, 65, 64, SPOOKEO_IDLE.getImageView(), 300, 200, 65, 64);
+	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new ImageView("Assets/Art/pushable_box.png"), 500, HEIGHT - 100, 100, 100);
 	final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
-	final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
-	final Rectangle thirdrectangle = makeRectangle(800, HEIGHT - 200, 442, 200);
-	
-	
+
 	BackgroundFill menuBG = new BackgroundFill(Color.BLACK, null, null);
 	BackgroundFill controlBG = new BackgroundFill(Color.BLACK, null, null);
 	BackgroundFill gameBG = new BackgroundFill(Color.BLACK, null, null);
@@ -67,12 +60,16 @@ public class Platformer extends Application implements Images {
 	ArrayList<Nonmoveable> nmo = new ArrayList<Nonmoveable>();
 	ArrayList<Moveable> mo = new ArrayList<Moveable>();
 	MapLoader m = new MapLoader();
-	
+
 	ImageView bg = new ImageView("Assets/Art/BackGround.png");
 	Image title = new Image("Assets/Art/titlescreen.png");
-	
+
 	AnimationTimer gameLoop;
 	URL url = getClass().getResource("Assets/Json/characters.json");
+
+	Canvas gameCanvas = new Canvas(WIDTH, HEIGHT);
+	GraphicsContext gc = gameCanvas.getGraphicsContext2D();
+
 	public Platformer() throws IOException {
 	}
 
@@ -88,10 +85,10 @@ public class Platformer extends Application implements Images {
 	public void start(Stage primaryStage) {
 		thestage = primaryStage;
 		load();
-		
+
 		// make backgrounds
 		draw();
-		
+
 		// load sound stuff
 		sound();
 
@@ -100,21 +97,21 @@ public class Platformer extends Application implements Images {
 	}
 
 	private void load() {
-		
+
 
 		bg.setFitHeight(HEIGHT);
 		bg.setFitWidth(WIDTH * 2);
 
 		// Load Map
 		m.readIn(WIDTH, HEIGHT, "map.txt");
-		
+
 		// Get nonmoveable objects
 		nmo = m.getNMO();
-		
+
 		// Get moveable objects
 		mo = m.getMO();
 
-		
+
 	}
 
 	private void animation() {
@@ -122,17 +119,30 @@ public class Platformer extends Application implements Images {
 
 			@Override
 			public void handle(long now) {
-				c.moveObject();
-				if(!c.onTop()){
+
+				gc.clearRect(0, 0, WIDTH, HEIGHT);
+
+				for (int i = 0; i < mo.size(); i++) {
+					gc.drawImage(mo.get(i).getImageView().getImage(), mo.get(i).getX(), mo.get(i).getY());
+				}
+
+				for (int i = 0; i < nmo.size(); i++) {
+					gc.drawImage(nmo.get(i).getImageView().getImage(), nmo.get(i).getX(), nmo.get(i).getY());
+				}
+				
+				resetCollision();
+				collisionCheck();
+				if(!top){
 					gravity(rectangle, hero.getImageView());
 				}
 				jump(rectangle, hero.getImageView());
+
 				cooldown++;
 
 			}
 
 		};
-		
+
 		Images.initAnimations();
 		gameLoop.start();
 		Images.playAnimations();
@@ -140,7 +150,7 @@ public class Platformer extends Application implements Images {
 		thestage.setScene(menuScene);
 		thestage.show();
 
-		
+
 	}
 
 	private void sound() {
@@ -150,8 +160,7 @@ public class Platformer extends Application implements Images {
 	}
 
 	private void draw() {
-		thirdrectangle.setFill(Color.TRANSPARENT);
-		rectangle.setFill(Color.AQUAMARINE);
+
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
@@ -168,16 +177,6 @@ public class Platformer extends Application implements Images {
 		Canvas iGCCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext igcc = iGCCanvas.getGraphicsContext2D();
 		igcc.drawImage(title, 500, 100);
-
-		Canvas gameCanvas = new Canvas(WIDTH, HEIGHT);
-		GraphicsContext gc = gameCanvas.getGraphicsContext2D();
-		for (int i = 0; i < nmo.size(); i++) {
-			gc.drawImage(nmo.get(i).getImage(), nmo.get(i).getX(), nmo.get(i).getY());
-		}
-		for (int i = 0; i < mo.size(); i++) {
-			gc.drawImage(mo.get(i).getImage(), mo.get(i).getX(), mo.get(i).getY());
-		}
-		
 
 
 		// -------- Menu ----------//
@@ -224,12 +223,8 @@ public class Platformer extends Application implements Images {
 		gameRoot.getChildren().add(bg);
 		gameRoot.getChildren().add(gameCanvas);
 		gameRoot.getChildren().add(rectangle);
-		//gameRoot.getChildren().add(secondrectangle);
 		gameRoot.getChildren().add(igMenuButton());
-		gameRoot.getChildren().add(thirdrectangle);
 		gameRoot.getChildren().add(hero.getImageView());
-		gameRoot.getChildren().add(box.getImageView());
-		gameRoot.getChildren().add(SPOOKEO_IDLE.getImageView());
 		gameRoot.getChildren().add(SPOOKEO_PUSH.getImageView());
 		gameScene = new Scene(gameRoot, WIDTH, HEIGHT);
 
@@ -243,8 +238,8 @@ public class Platformer extends Application implements Images {
 	// creates rectangle
 	private Rectangle makeRectangle(double x, double y, double width, double height) {
 		Rectangle r1 = new Rectangle(x, y, width, height);
-		r1.setStroke(Color.BLACK);
-		r1.setFill(Color.LIMEGREEN);
+		r1.setStroke(Color.TRANSPARENT);
+		r1.setFill(Color.TRANSPARENT);
 		r1.setStrokeWidth(3);
 		return r1;
 	}
@@ -318,11 +313,6 @@ public class Platformer extends Application implements Images {
 		return btn;
 	}
 
-	private Button igMenuReturn(){
-		Button btn = menuButton();
-		btn.relocate(650, 500);
-		return btn;
-	}
 	private Button igControl(){
 		Button btn = new Button("Controls");
 		btn.relocate(850, 600);
@@ -398,8 +388,8 @@ public class Platformer extends Application implements Images {
 	// jump
 	double jumpmax = 0;
 	boolean canJump = false;
-	boolean right = false;
-	boolean left = false;
+	boolean lefty = false;
+	boolean righty = false;
 
 	private void jump(final Rectangle rectangle, final ImageView image) {
 		if (jumpPress) {
@@ -410,9 +400,8 @@ public class Platformer extends Application implements Images {
 				canJump = true;
 			}
 			if (canJump) {
-				if (rectangle.getY() <= jumpmax) {
+				if (rectangle.getY() <= jumpmax || bottom) {
 					canJump = false;
-					jumping = false;
 					jumpPress = false;
 				}
 				if (canJump) {
@@ -431,64 +420,137 @@ public class Platformer extends Application implements Images {
 		}
 	}
 
-	// makes shape move....
-	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, final ImageView image) {
-		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
-			@Override
-			public void handle(KeyEvent event) {
+	// Reset collision variables
+	public void resetCollision() {
+		bottom = false;
+		top = false;
+		left = false;
+		right = false;
+	}
+	// Checks for collision with all objects
+	public void collisionCheck() {
 
-				if (event.getCode().equals(KeyCode.D) || event.getCode().equals(KeyCode.RIGHT)) {
-					right = true;
-					moveRight(rectangle, image, right);
+		// Check every background object
+		// Check for able to move
+		for (Nonmoveable nm : nmo) {
+			c.setObjs(hero, nm);
+			c.isColliding();
+			if (c.bottom()) {
+				bottom = true;
+			}
+			if (c.top()) {
+				top = true;
+
+			}
+			if (c.left()) {
+				left = true;
+			}
+			if (c.right()) {
+				right = true;
+			}
+		}
+
+		// Check every interactable object
+		// Check for ineractions
+		for (Moveable em : mo) {
+			c.setObjs(hero, em);
+			c.isColliding();
+			boolean boxLeft = false;
+			boolean boxRight = false;
+			
+
+			if (em instanceof Box && c.isColliding()) {
+				for (Nonmoveable nm : nmo) {
+					Collision c2 = new Collision(em, nm);
+					c2.isColliding();
+					if (c2.left()) {
+						boxLeft = true;
+						break;
+					}
+					if (c2.right()) {
+						boxRight = true;
+						break;
+					}
 				}
-
-				if (event.getCode().equals(KeyCode.W) || event.getCode().equals(KeyCode.UP)) {
-					jumpPress = true;
-
-
+				if (!boxLeft && !boxRight) {
+					c.moveObject();
 				}
-
-				if (event.getCode().equals(KeyCode.A) || event.getCode().equals(KeyCode.LEFT)) {
+				
+				if (boxLeft) {
 					left = true;
-					moveLeft(rectangle, image, left);
 				}
+				
+				if (boxRight) {
+					right = true;
+				}
+				
+			}
+		}
+	}
+
+// makes shape move....
+private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, final ImageView image) {
+	scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+		@Override
+		public void handle(KeyEvent event) {
+
+			if (event.getCode().equals(KeyCode.D) || event.getCode().equals(KeyCode.RIGHT)) {
+				if (!left) {
+					righty = true;
+					moveRight(rectangle, image, righty);
+				}
+			}
+
+			if (event.getCode().equals(KeyCode.W) || event.getCode().equals(KeyCode.UP)) {
+				jumpPress = true;
+
 
 			}
 
+			if (event.getCode().equals(KeyCode.A) || event.getCode().equals(KeyCode.LEFT)) {
+				if (!right) {	
+					lefty = true;
+					moveLeft(rectangle, image, lefty);
+				}
+			}
+
+		}
 
 
 
-		});
+
+	});
+
+}
+private boolean moveRight(Rectangle rectangle, ImageView image, Boolean rights) {
+	if (rights == false) {
+		return righty;
+	}
+	else if (!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)) {
+		rectangle.setX(rectangle.getX() + acceleration);
+		image.setX(rectangle.getX());
+		hero.setHBX(rectangle.getX());
 
 	}
-	private boolean moveRight(Rectangle rectangle, ImageView image, Boolean rights) {
-		if (rights == false) {
-			return right;
-		}
-		else if (!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)) {
-			rectangle.setX(rectangle.getX() + acceleration);
-			image.setX(rectangle.getX());
-			hero.setHBX(rectangle.getX());
 
-		}
-
-		return right;
+	return righty;
+}
+private boolean moveLeft(Rectangle rectangle, ImageView image, Boolean lefts) {
+	if (lefts == false) {
+		return lefty;
 	}
-	private boolean moveLeft(Rectangle rectangle, ImageView image, Boolean lefts) {
-		if (lefts == false) {
-			return right;
-		}
-		else if (!(rectangle.getX() - acceleration <= 0)) {
-			rectangle.setX(rectangle.getX() - acceleration);
-			image.setX(rectangle.getX());
-			hero.setHBX(rectangle.getX());
-		}
-
-
-		return left;
+	else if (!(rectangle.getX() - acceleration <= 0)) {
+		rectangle.setX(rectangle.getX() - acceleration);
+		image.setX(rectangle.getX());
+		hero.setHBX(rectangle.getX());
 	}
-	
-	
-	
+
+
+	return lefty;
+}
+
+
+
 }

@@ -1,4 +1,3 @@
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Obj {
@@ -7,7 +6,6 @@ public class Obj {
 	private int height = 0;
 	private double x = 0.0;
 	private double y = 0.0;
-	
 	private double hbex = 0.00;
 	private double hbwhy = 0.0;
 	private int hbwid = 0;
@@ -15,17 +13,15 @@ public class Obj {
 	
 	
 	
-	private Image character = null;
 	ImageView actor;
 	
 	// Set initial x and y coordinates and image associated with actor
-	public Obj(double ex, double why, int sizeX, int sizeY, Image person, double hbx, double hby, int hbwidth, int hblength) {
+	public Obj(double ex, double why, int sizeX, int sizeY, ImageView person, double hbx, double hby, int hbwidth, int hblength) {
 		x = ex;
 		y = why;
 		width = sizeX;
 		height = sizeY;
-		character = person;
-		actor = new ImageView(person);
+		actor = person;
 		actor.setX(ex);
 		actor.setY(why);
 		actor.setFitWidth(sizeX);
@@ -75,11 +71,6 @@ public class Obj {
 		hbht = ht;
 	}
 	
-	// set image associated with the actor
-	public void setImage (Image actor) {
-		character = actor;
-	}
-	
 	//----------- Getters -------------------//
 	
 	//get x coordinate of the actor
@@ -102,16 +93,9 @@ public class Obj {
 		return height;
 	}
 	
-	// get image associated with the actor
-	public Image getImage() {
-		return character;
-	}
-	
 	// Imageview
-	public ImageView getImageView() {
-		
-		return actor;
-		
+	public ImageView getImageView() {	
+		return actor;	
 	}
 
 	public double getHBX(){

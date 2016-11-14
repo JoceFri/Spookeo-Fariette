@@ -3,22 +3,23 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 
 public class MapLoader {
 
 	
-	// load all images once
-	Image dirt1 = new Image("Assets/Art/2side_ground.png");
-	Image dirt2 = new Image("Assets/Art/leftedge_ground.png");
-	Image dirt3 = new Image("Assets/Art/rightedge_ground.png");
-	Image dirt4 = new Image("Assets/Art/fulldirt_block.png");
-	Image dirt5 = new Image("Assets/Art/leftedge_dirt.png");
-	Image dirt6 = new Image("Assets/Art/rightedge_dirt.png");
-	Image hero = new Image("Assets/Art/ghost_same.png");
-	Image rock = new Image("Assets/Art/skinny rock.png");
-	Image flower = new Image("Assets/Art/tippableflower (1).png");
-	Image box = new Image("Assets/Art/pushable_box.png");
+	// load all ImageViews once
+	ImageView dirt1 = new ImageView("Assets/Art/2side_ground.png");
+	ImageView dirt2 = new ImageView("Assets/Art/leftedge_ground.png");
+	ImageView dirt3 = new ImageView("Assets/Art/rightedge_ground.png");
+	ImageView dirt4 = new ImageView("Assets/Art/fulldirt_block.png");
+	ImageView dirt5 = new ImageView("Assets/Art/leftedge_dirt.png");
+	ImageView dirt6 = new ImageView("Assets/Art/rightedge_dirt.png");
+	ImageView hero = new ImageView("Assets/Art/ghost_same.png");
+	ImageView rock = new ImageView("Assets/Art/skinny rock.png");
+	ImageView flower = new ImageView("Assets/Art/tippableflower (1).png");
+	ImageView box = new ImageView("Assets/Art/pushable_box.png");
 	
 	// Store all elements into either list of nonmoveables or moveables
 	ArrayList<Nonmoveable> nmo = new ArrayList<Nonmoveable>();
@@ -42,17 +43,17 @@ public class MapLoader {
 					
 					// ground left edge
 					if (line[i] == 'a') {
-						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt2, j, height - k, 64, 64));
+						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt2, j, height - k + 21, 64, 43));
 					}
 					
 					// ground right edge
 					else if (line[i] == 'b') {
-						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt3, j, height - k, 64, 64));
+						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt3, j, height - k + 21, 64, 43));
 					}
 					
 					// ground block
 					else if (line[i] == 'c') {
-						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt1, j, height - k, 64, 64));
+						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt1, j, height - k + 21, 64, 43));
 					}
 					
 					// dirt left edge
@@ -70,34 +71,19 @@ public class MapLoader {
 						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt4, j, height - k, 64, 64));
 					}
 					
-					// spookeo
-					else if (line[i] == 'g') {
-						mo.add(new Moveable(j, height - k, 64, 64, hero, j, height - k, 64, 64));
-					}
-					
 					// box
 					else if (line[i] == 'h') {
-						mo.add(new Moveable(j, height - k, 64, 64, box, j, height - k, 64, 64));
+						mo.add(new Box(j, height - k + 23, 65, 65, box, j, height - k + 23, 65, 65));
 					}
 					
 					// rock
 					else if (line[i] == 'i') {
-						mo.add(new Moveable(j, height - k, 64, 128, rock, j, height - k, 64, 128));
+						mo.add(new Rock(j, height - k + 28, 64, 128, rock, j, height - k + 28, 64, 128));
 					}
 					
 					// flower
 					else if (line[i] == 'j') {
-						mo.add(new Moveable(j, height - k, 64, 192, flower, j, height - k, 64, 192));
-					}
-					
-					// button
-					else if (line[i] == 'k') {
-
-					}
-					
-					// unmoveable bee trap
-					else if (line[i] == 'l') {
-
+						mo.add(new Flower(j, height - k + 28, 64, 192, flower, j, height - k + 28, 64, 192));
 					}
 					
 					else {}
