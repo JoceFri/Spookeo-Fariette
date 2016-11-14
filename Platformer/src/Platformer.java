@@ -56,6 +56,13 @@ public class Platformer extends Application implements Images {
 	final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
 	final Rectangle secondrectangle = makeRectangle(500, HEIGHT - 100, 100, 100);
 	final Rectangle thirdrectangle = makeRectangle(800, HEIGHT - 200, 442, 200);
+	
+	
+	BackgroundFill menuBG = new BackgroundFill(Color.BLACK, null, null);
+	BackgroundFill controlBG = new BackgroundFill(Color.BLACK, null, null);
+	BackgroundFill gameBG = new BackgroundFill(Color.BLACK, null, null);
+	BackgroundFill igControlBG = new BackgroundFill(Color.BLACK, null, null);
+	BackgroundFill igMenuBG = new BackgroundFill(Color.BLACK, null, null);
 
 	ArrayList<Nonmoveable> nmo = new ArrayList<Nonmoveable>();
 	ArrayList<Moveable> mo = new ArrayList<Moveable>();
@@ -79,8 +86,21 @@ public class Platformer extends Application implements Images {
 	// sets scene and adds objects
 	@Override
 	public void start(Stage primaryStage) {
-
 		thestage = primaryStage;
+		load();
+		
+		// make backgrounds
+		draw();
+		
+		// load sound stuff
+		sound();
+
+		// loop methods for game mechanics
+		animation();
+	}
+
+	private void load() {
+		
 
 		bg.setFitHeight(HEIGHT);
 		bg.setFitWidth(WIDTH * 2);
@@ -94,17 +114,44 @@ public class Platformer extends Application implements Images {
 		// Get moveable objects
 		mo = m.getMO();
 
-		// make rectangle
+		
+	}
+
+	private void animation() {
+		gameLoop = new AnimationTimer() {
+
+			@Override
+			public void handle(long now) {
+				c.moveObject();
+				if(!c.onTop()){
+					gravity(rectangle, hero.getImageView());
+				}
+				jump(rectangle, hero.getImageView());
+				cooldown++;
+
+			}
+
+		};
+		
+		Images.initAnimations();
+		gameLoop.start();
+		Images.playAnimations();
+		thestage.setTitle("Spookeo and Fariette");
+		thestage.setScene(menuScene);
+		thestage.show();
+
+		
+	}
+
+	private void sound() {
+		bgNoise.loadSound("Assets/Sound/background.wav");
+		jumpSound.loadSound("Assets/Sound/jump1.wav");
+		bgNoise.runLoop();		
+	}
+
+	private void draw() {
 		thirdrectangle.setFill(Color.TRANSPARENT);
 		rectangle.setFill(Color.AQUAMARINE);
-
-		// make backgrounds
-		BackgroundFill menuBG = new BackgroundFill(Color.BLACK, null, null);
-		BackgroundFill controlBG = new BackgroundFill(Color.BLACK, null, null);
-		BackgroundFill gameBG = new BackgroundFill(Color.BLACK, null, null);
-		BackgroundFill igControlBG = new BackgroundFill(Color.BLACK, null, null);
-		BackgroundFill igMenuBG = new BackgroundFill(Color.BLACK, null, null);
-
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
@@ -188,35 +235,6 @@ public class Platformer extends Application implements Images {
 
 		c = new Collision(hero, box);
 		moveRectangleOnKeyPress(gameScene, rectangle, hero.getImageView());
-
-		// load sound stuff
-		bgNoise.loadSound("Assets/Sound/background.wav");
-		jumpSound.loadSound("Assets/Sound/jump1.wav");
-		bgNoise.runLoop();
-
-		// loop methods for game mechanics
-		gameLoop = new AnimationTimer() {
-
-			@Override
-			public void handle(long now) {
-				c.moveObject();
-				if(!c.onTop()){
-					gravity(rectangle, hero.getImageView());
-				}
-				jump(rectangle, hero.getImageView());
-				cooldown++;
-
-			}
-
-		};
-		
-		Images.initAnimations();
-		gameLoop.start();
-		Images.playAnimations();
-		thestage.setTitle("Spookeo and Fariette");
-		thestage.setScene(menuScene);
-		thestage.show();
-
 	}
 
 	// ----------------------- Creating Objects
