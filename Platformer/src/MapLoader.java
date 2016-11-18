@@ -10,12 +10,12 @@ public class MapLoader {
 
 	
 	// load all ImageViews once
-	ImageView dirt1 = new ImageView("Assets/Art/2side_ground.png");
-	ImageView dirt2 = new ImageView("Assets/Art/leftedge_ground.png");
-	ImageView dirt3 = new ImageView("Assets/Art/rightedge_ground.png");
-	ImageView dirt4 = new ImageView("Assets/Art/fulldirt_block.png");
-	ImageView dirt5 = new ImageView("Assets/Art/leftedge_dirt.png");
-	ImageView dirt6 = new ImageView("Assets/Art/rightedge_dirt.png");
+	ImageView dirt1 = new ImageView("Assets/Art/middirtop_spooky.png");
+	ImageView dirt2 = new ImageView("Assets/Art/leftdirttop_spooky.png");
+	ImageView dirt3 = new ImageView("Assets/Art/rightdirttop_spooky clone.png");
+	ImageView dirt4 = new ImageView("Assets/Art/fulldirt_spooky.png");
+	ImageView dirt5 = new ImageView("Assets/Art/leftdirtbottom_spooky.png");
+	ImageView dirt6 = new ImageView("Assets/Art/middirtbottom_spooky.png");
 	ImageView hero = new ImageView("Assets/Art/ghost_same.png");
 	ImageView rock = new ImageView("Assets/Art/skinny rock.png");
 	ImageView flower = new ImageView("Assets/Art/tippableflower (1).png");
@@ -73,7 +73,7 @@ public class MapLoader {
 					
 					// box
 					else if (line[i] == 'h') {
-						mo.add(new Box(j, height - k + 23, 65, 65, box, j, height - k + 23, 65, 65));
+						mo.add(new Box(j, height - k + 23, 65, 65, box, j, height - k + 23, 60, 60));
 					}
 					
 					// rock
