@@ -451,7 +451,7 @@ public class Platformer extends Application implements Images {
 	private Button menuButton() {
 		Button btn = new Button("", MENU.getImageView());
 		btn.setBackground(new Background(transparent));
-		btn.relocate(810, 600);
+		btn.relocate((WIDTH/2) - 94, 575);
 		
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
