@@ -1,0 +1,101 @@
+{
+	"titleScreen": {
+		"spriteSheet": 	"titlescreen",
+		"xOffset": 		"0",
+		"yOffset": 		"0",
+		"width": 		"320",
+		"height": 		"320",
+		"frameNumber": 	"2",
+		"duration": 	"600"
+	},
+	"start": {
+		"spriteSheet": 	"buttons",
+		"xOffset": 		"0",
+		"yOffset": 		"64",
+		"width": 		"156",
+		"height": 		"32",
+		"frameNumber": 	"1",
+		"duration": 	"1"
+	},
+	"startHover": {
+		"spriteSheet": 	"buttons",
+		"xOffset": 		"156",
+		"yOffset": 		"64",
+		"width": 		"156",
+		"height": 		"32",
+		"frameNumber": 	"1",
+		"duration": 	"1"
+	},
+	"control": {
+		"spriteSheet": "buttons",
+		"xOffset": 		"0",
+		"yOffset": 		"0",
+		"width": 		"156",
+		"height":		"32",
+		"frameNumber": 	"1",
+		"duration": 	"1"
+	},
+	"controlHover": {
+		"spriteSheet":	"buttons",
+		"xOffset":		"156",
+		"yOffset":		"0",
+		"width":		"156",
+		"height":		"32",
+		"frameNumber":	"1",
+		"duration":		"1"
+	},
+	"menu": {
+		"spriteSheet":	"buttons",
+		"xOffset":		"0",
+		"yOffset":		"32",
+		"width":		"156",
+		"height":		"32",
+		"frameNumber":	"1",
+		"duration":		"1"
+	},
+	"menuHover": {
+		"spriteSheet":	"buttons",
+		"xOffset":		"156",
+		"yOffset":		"32",
+		"width":		"156",
+		"height":		"32",
+		"frameNumber":	"1",
+		"duration":		"1"
+	},
+	"resume": {
+		"spriteSheet":	"buttons",
+		"xOffset":		"0",
+		"yOffset":		"96",
+		"width":		"156",
+		"height":		"32",
+		"frameNumber":	"1",
+		"duration":		"1"
+	},
+	"resumeHover": {
+		"spriteSheet":	"buttons",
+		"xOffset":		"156",
+		"yOffset":		"96",
+		"width":		"156",
+		"height":		"32",
+		"frameNumber":	"1",
+		"duration":		"1"
+	},
+	"reset": {
+		"spriteSheet":	"buttons",
+		"xOffset":		"0",
+		"yOffset":		"128",
+		"width":		"156",
+		"height":		"32",
+		"frameNumber":	"1",
+		"duration":		"1"
+	},
+	"resetHover": {
+		"spriteSheet":	"buttons",
+		"xOffset":		"156",
+		"yOffset":		"128",
+		"width":		"156",
+		"height":		"32",
+		"frameNumber":	"1",
+		"duration":		"1"
+	}
+}
