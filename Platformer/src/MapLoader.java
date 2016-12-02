@@ -19,8 +19,12 @@ public class MapLoader {
 	ImageView hero = new ImageView("Assets/Art/ghost_same.png");
 	ImageView rock = new ImageView("Assets/Art/skinny rock.png");
 	ImageView flower = new ImageView("Assets/Art/tippableflower (1).png");
+	ImageView dirt7 = new ImageView("Assets/Art/rightdirtbottom_spooky.png");
+	ImageView dirt8 = new ImageView("Assets/Art/leftedge_dirt.png");
+	ImageView dirt9 = new ImageView("Assets/Art/leftcorner_spooky.png");
 	ImageView box = new ImageView("Assets/Art/pushable_box.png");
-	
+	ImageView dirt10 = new ImageView("Assets/Art/leftdirtbottom_spooky.png");
+	ImageView dirt11 = new ImageView("Assets/Art/rightcorner_spooky.png");
 	// Store all elements into either list of nonmoveables or moveables
 	ArrayList<Nonmoveable> nmo = new ArrayList<Nonmoveable>();
 	ArrayList<Moveable> mo = new ArrayList<Moveable>();
@@ -85,7 +89,21 @@ public class MapLoader {
 					else if (line[i] == 'j') {
 						mo.add(new Flower(j, height - k + 28, 64, 192, flower, j, height - k + 28, 64, 192));
 					}
-					
+					else if (line[i] == 'k') {
+						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt7, j, height - k, 64, 64));
+					}
+					else if (line[i] == 'l') {
+						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt8, j, height - k, 64, 64));
+					}
+					else if (line[i] == 'm') {
+						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt9, j, height - k, 64, 64));
+					}
+					else if (line[i] == 'n') {
+						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt10, j, height - k, 64, 64));
+					}
+					else if (line[i] == 'p') {
+						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt11, j, height - k, 64, 64));
+					}
 					else {}
 					
 					// Go right on x axis
