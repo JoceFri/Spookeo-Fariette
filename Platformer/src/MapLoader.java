@@ -71,6 +71,12 @@ public class MapLoader {
 						nmo.add(new Nonmoveable(j, height - k, 64, 64, dirt4, j, height - k, 64, 64));
 					}
 					
+//					else if (line[i] == 'g') {
+//						Player player = new Player(j, height - k, 64, 64, Images.SPOOKEO_IDLE.getImageView(), j, height - k, 64, 64);
+//						player.setIsAnimated(true);
+//						mo.add(player);
+//					}
+					
 					// box
 					else if (line[i] == 'h') {
 						mo.add(new Box(j, height - k + 23, 65, 65, box, j, height - k + 23, 60, 60));

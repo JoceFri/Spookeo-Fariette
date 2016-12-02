@@ -3,17 +3,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
-import com.sun.javafx.scene.control.skin.TitledPaneSkin;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -74,6 +72,12 @@ public class Platformer extends Application implements Images {
 
 	Canvas gameCanvas = new Canvas(WIDTH, HEIGHT);
 	GraphicsContext gc = gameCanvas.getGraphicsContext2D();
+	
+	MenuButton start = new MenuButton(START.getImageView(), START_HOVER.getImageView(), (WIDTH/2) - 88, 500);
+	MenuButton reset = new MenuButton(RESET.getImageView(), RESET_HOVER.getImageView(), 610, 500);
+	MenuButton igMenu = new MenuButton(MENU.getImageView(), MENU_HOVER.getImageView(), 1440, 25);
+	MenuButton resume = new MenuButton(RESUME.getImageView(), RESUME_HOVER.getImageView(), 810, 500);
+	MenuButton menu = new MenuButton(MENU.getImageView(), MENU_HOVER.getImageView(), (WIDTH/2) - 94, 575);
 
 	public Platformer() throws IOException {
 	}
@@ -166,42 +170,28 @@ public class Platformer extends Application implements Images {
 		bgNoise.runLoop();		
 	}
 
-	private void draw() {
-
-		// make canvases
-		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
-		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
-//		mc.drawImage(title, 500, 100);
-
-		Canvas iGMCanvas = new Canvas(WIDTH, HEIGHT);
-		GraphicsContext igmc = iGMCanvas.getGraphicsContext2D();
-//		igmc.drawImage(title, 500, 100);
-
-		Canvas controlCanvas = new Canvas(WIDTH, HEIGHT);
-		GraphicsContext cc = controlCanvas.getGraphicsContext2D();
-//		cc.drawImage(title, 500, 100);
-
-		Canvas iGCCanvas = new Canvas(WIDTH, HEIGHT);
-		GraphicsContext igcc = iGCCanvas.getGraphicsContext2D();
-//		igcc.drawImage(title, 500, 100);
-
-
+	private void draw() {		
+		// -------- make buttons -------- //		
+		start.setAction(startAction());
+		reset.setAction(retryAction());
+		igMenu.setAction(igMenuAction());
+		resume.setAction(resumeAction());
+		menu.setAction(menuAction());
+	
 		// -------- Menu ----------//
 
 		// make control
 		controlRoot = new Pane();
 		controlRoot.setBackground(new Background(controlBG));
-		controlRoot.getChildren().add(controlCanvas);
-		controlRoot.getChildren().add(menuButton());
-		controlRoot.getChildren().add(startButton());
+		controlRoot.getChildren().add(menu.getButton());
+//		controlRoot.getChildren().add(startButton());
 		controlScene = new Scene(controlRoot, WIDTH, HEIGHT);
 
 		// make menu
 		menuRoot = new Pane();
 		menuRoot.setBackground(new Background(menuBG));
 		menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
-		menuRoot.getChildren().add(menuCanvas);
-		menuRoot.getChildren().add(startButton());
+		menuRoot.getChildren().add(start.getButton());
 //		menuRoot.getChildren().add(controlButton());
 		menuScene = new Scene(menuRoot, WIDTH, HEIGHT);
 
@@ -210,19 +200,18 @@ public class Platformer extends Application implements Images {
 		//in game menu
 		igmenuroot = new Pane();
 		igmenuroot.setBackground(new Background(igMenuBG));
-		igmenuroot.getChildren().add(iGMCanvas);
-		igmenuroot.getChildren().add(resetButton());
-		igmenuroot.getChildren().add(menuButton());
-		igmenuroot.getChildren().add(resumeButton());
+		igmenuroot.getChildren().add(reset.getButton());
+		igmenuroot.getChildren().add(resume.getButton());
+//		igmenuroot.getChildren().add(menu.getButton());
+		igmenuroot.getChildren().add(RESUME.getImageView());
 //		igmenuroot.getChildren().add(igControl());
 		igmenu = new Scene(igmenuroot, WIDTH, HEIGHT);
 
 		//in game controls
 		igcontrolroot = new Pane();
 		igcontrolroot.setBackground(new Background(igControlBG));
-		igcontrolroot.getChildren().add(iGCCanvas);
 //		igcontrolroot.getChildren().add(igMenuButton2());
-		igcontrolroot.getChildren().add(resumeButton());
+//		igcontrolroot.getChildren().add(resume.getButton());
 		igcontrols = new Scene(igcontrolroot, WIDTH, HEIGHT);
 
 		// make game
@@ -231,7 +220,7 @@ public class Platformer extends Application implements Images {
 		gameRoot.getChildren().add(bg);
 		gameRoot.getChildren().add(gameCanvas);
 		gameRoot.getChildren().add(rectangle);
-		gameRoot.getChildren().add(igMenuButton());
+		gameRoot.getChildren().add(igMenu.getButton());
 		gameRoot.getChildren().add(hero.getImageView());
 		gameRoot.getChildren().add(SPOOKEO_PUSH.getImageView());
 		gameScene = new Scene(gameRoot, WIDTH, HEIGHT);
@@ -244,74 +233,22 @@ public class Platformer extends Application implements Images {
 			count++;
 		}
 	}
-
-	// ----------------------- Creating Objects
-	// -----------------------------------//
-
-	// creates rectangle
-	private Rectangle makeRectangle(double x, double y, double width, double height) {
-		Rectangle r1 = new Rectangle(x, y, width, height);
-		r1.setStroke(Color.TRANSPARENT);
-		r1.setFill(Color.TRANSPARENT);
-		r1.setStrokeWidth(3);
-		return r1;
-	}
-
-	// creates start button
-	private Button startButton() {
-		Button btn = new Button("", START.getImageView());
-		btn.setBackground(new Background(transparent));
-
-		btn.relocate((WIDTH/2) - 88, 500);
-
-		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+	
+	// -------- Create Action Events -------- //
+	private EventHandler<ActionEvent> startAction() {
+		return new EventHandler<ActionEvent>() {
 			@Override
-			public void handle(MouseEvent event) {
-				btn.setGraphic(Images.START_HOVER.getImageView());
-			}
-		});
-		
-		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				btn.setGraphic(Images.START.getImageView());
-			}
-		});
-		
-		btn.setOnAction(new EventHandler<ActionEvent>() {
-
-			// action for the start button
-			// sets button to false and creates a rectangle that appears after
-			@Override
-			public void handle(ActionEvent event) {
-				menuRoot.getChildren().remove(TITLE_SCREEN.getImageView());
+			public void handle(ActionEvent e) {
+				menuRoot.getChildren().clear();
 				start(thestage);
 				thestage.setTitle("Spookeo's Journey Yo");
 				thestage.setScene(gameScene);
 			}
-		});
-		return btn;
+		};
 	}
-	private Button resetButton(){
-		Button btn = new Button("", RESET.getImageView());
-		btn.setBackground(new Background(transparent));
-		btn.relocate(610, 500);
-		
-		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				btn.setGraphic(RESET_HOVER.getImageView());
-			}
-		});
-		
-		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				btn.setGraphic(RESET.getImageView());
-			}
-		});
-		btn.setOnAction(new EventHandler<ActionEvent>(){
-
+	
+	private EventHandler<ActionEvent> retryAction() {
+		return new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
 				if (count == 0) {
@@ -345,9 +282,155 @@ public class Platformer extends Application implements Images {
 				start(thestage);
 				thestage.setScene(gameScene);
 			}
-		});
-		return btn;
+		};
 	}
+	
+	private EventHandler<ActionEvent> igMenuAction() {
+		return new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				igmenuroot.getChildren().add(TITLE_SCREEN.getImageView());
+				igmenuroot.getChildren().add(menu.getButton());
+				gameRoot.getChildren().remove(igMenu.getButton());
+				thestage.setScene(igmenu);
+				gameLoop.stop();
+			}
+
+		};
+	}
+	
+	private EventHandler<ActionEvent> menuAction() {
+		return new EventHandler<ActionEvent>() {
+			// action for the start button
+			// sets button to false and creates a rectangle that appears after
+			@Override
+			public void handle(ActionEvent event) {
+				menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
+				thestage.setTitle("Spookeo and Fariette");
+				thestage.setScene(menuScene);
+
+			}
+		};
+	}
+	
+	private EventHandler<ActionEvent> resumeAction() {
+		return new EventHandler<ActionEvent>() {
+
+			// action for the start button
+			// sets button to false and creates a rectangle that appears after
+			@Override
+			public void handle(ActionEvent event) {
+				igmenuroot.getChildren().remove(TITLE_SCREEN.getImageView());
+				gameRoot.getChildren().add(igMenu.getButton());
+				thestage.setScene(gameScene);
+				gameLoop.start();
+			}
+		};
+	}
+
+	// ----------------------- Creating Objects
+	// -----------------------------------//
+
+	// creates rectangle
+	private Rectangle makeRectangle(double x, double y, double width, double height) {
+		Rectangle r1 = new Rectangle(x, y, width, height);
+		r1.setStroke(Color.TRANSPARENT);
+		r1.setFill(Color.TRANSPARENT);
+		r1.setStrokeWidth(3);
+		return r1;
+	}
+
+	// creates start button
+//	private Button startButton() {
+//		Button btn = new Button("", START.getImageView());
+//		btn.setBackground(new Background(transparent));
+//		btn.relocate((WIDTH/2) - 88, 500);
+//
+//		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				btn.setGraphic(Images.START_HOVER.getImageView());
+//			}
+//		});
+//		
+//		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				btn.setGraphic(Images.START.getImageView());
+//			}
+//		});
+//		
+//		btn.setOnAction(new EventHandler<ActionEvent>() {
+//
+//			// action for the start button
+//			// sets button to false and creates a rectangle that appears after
+//			@Override
+//			public void handle(ActionEvent event) {
+//				menuRoot.getChildren().remove(TITLE_SCREEN.getImageView());
+//				start(thestage);
+//				thestage.setTitle("Spookeo's Journey Yo");
+//				thestage.setScene(gameScene);
+//			}
+//		});
+//		return btn;
+//	}
+//	
+//	private Button resetButton(){
+//		Button btn = new Button("", RESET.getImageView());
+//		btn.setBackground(new Background(transparent));
+//		btn.relocate(610, 500);
+//		
+//		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				btn.setGraphic(RESET_HOVER.getImageView());
+//			}
+//		});
+//		
+//		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				btn.setGraphic(RESET.getImageView());
+//			}
+//		});
+//		btn.setOnAction(new EventHandler<ActionEvent>(){
+//
+//			@Override
+//			public void handle(ActionEvent event) {
+//				if (count == 0) {
+//					zzzz = true; 
+//					
+//				}
+//				else {
+//					zzzz = false;
+//				}
+//				
+//				isTrue(zzzz);
+//				gameRoot.getChildren().remove(hero.getImageView());
+//				gameRoot.getChildren().remove(rectangle);
+//
+//				hero.setX(300);
+//				hero.getImageView().setX(300);
+//				rectangle.setX(300);
+//
+//				gameRoot.getChildren().add(hero.getImageView());
+//				gameRoot.getChildren().add(rectangle);
+//
+//
+//				for(int i = 1; i<= mo.size(); i++){
+//					mo.remove(i);
+//					box.setX(500);
+//					box.getImageView().setX(500);
+//				}
+//				mo.remove(1);
+//
+//				thestage.hide();
+//				start(thestage);
+//				thestage.setScene(gameScene);
+//			}
+//		});
+//		return btn;
+//	}
 	private boolean isTrue(boolean b) {
 		return b;
 	}
@@ -385,38 +468,38 @@ public class Platformer extends Application implements Images {
 		return btn;
 	}
 
-	private Button igMenuButton(){
-		Button btn = new Button("", MENU.getImageView());
-		btn.setBackground(new Background(transparent));
-		btn.relocate(1440, 25);
-		
-		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				btn.setGraphic(MENU_HOVER.getImageView());
-			}
-		});
-		
-		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				btn.setGraphic(MENU.getImageView());
-			}
-		});
-		
-		btn.setOnAction(new EventHandler<ActionEvent>(){
-
-			@Override
-			public void handle(ActionEvent event) {
-				igmenuroot.getChildren().add(TITLE_SCREEN.getImageView());
-				igmenuroot.getChildren().add(menuButton());
-				thestage.setScene(igmenu);
-				gameLoop.stop();
-			}
-
-		});
-		return btn;
-	}
+//	private Button igMenuButton(){
+//		Button btn = new Button("", MENU.getImageView());
+//		btn.setBackground(new Background(transparent));
+//		btn.relocate(1440, 25);
+//		
+//		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				btn.setGraphic(MENU_HOVER.getImageView());
+//			}
+//		});
+//		
+//		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				btn.setGraphic(MENU.getImageView());
+//			}
+//		});
+//		
+//		btn.setOnAction(new EventHandler<ActionEvent>(){
+//
+//			@Override
+//			public void handle(ActionEvent event) {
+//				igmenuroot.getChildren().add(TITLE_SCREEN.getImageView());
+//				igmenuroot.getChildren().add(menuButton());
+//				thestage.setScene(igmenu);
+//				gameLoop.stop();
+//			}
+//
+//		});
+//		return btn;
+//	}
 
 	private Button igControl(){
 		Button btn = new Button("", CONTROL.getImageView());
@@ -448,39 +531,39 @@ public class Platformer extends Application implements Images {
 		return btn;
 	}
 	// creates button to reach menu
-	private Button menuButton() {
-		Button btn = new Button("", MENU.getImageView());
-		btn.setBackground(new Background(transparent));
-		btn.relocate((WIDTH/2) - 94, 575);
-		
-		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				btn.setGraphic(MENU_HOVER.getImageView());
-			}
-		});
-		
-		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				btn.setGraphic(MENU.getImageView());
-			}
-		});
-
-		btn.setOnAction(new EventHandler<ActionEvent>() {
-
-			// action for the start button
-			// sets button to false and creates a rectangle that appears after
-			@Override
-			public void handle(ActionEvent event) {
-				menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
-				thestage.setTitle("Spookeo and Fariette");
-				thestage.setScene(menuScene);
-
-			}
-		});
-		return btn;
-	}
+//	private Button menuButton() {
+//		Button btn = new Button("", MENU.getImageView());
+//		btn.setBackground(new Background(transparent));
+//		btn.relocate((WIDTH/2) - 94, 575);
+//		
+//		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				btn.setGraphic(MENU_HOVER.getImageView());
+//			}
+//		});
+//		
+//		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				btn.setGraphic(MENU.getImageView());
+//			}
+//		});
+//
+//		btn.setOnAction(new EventHandler<ActionEvent>() {
+//
+//			// action for the start button
+//			// sets button to false and creates a rectangle that appears after
+//			@Override
+//			public void handle(ActionEvent event) {
+//				menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
+//				thestage.setTitle("Spookeo and Fariette");
+//				thestage.setScene(menuScene);
+//
+//			}
+//		});
+//		return btn;
+//	}
 //	private Button igMenuButton2(){
 //		Button btn = new Button("Go back");
 //		btn.relocate(810, 600);
@@ -493,39 +576,39 @@ public class Platformer extends Application implements Images {
 //		});
 //		return btn;
 //	}
-	private Button resumeButton() {
-		Button btn = new Button("", RESUME.getImageView());
-		btn.setBackground(new Background(transparent));
-		btn.relocate(810, 500);
-		
-		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				btn.setGraphic(RESUME_HOVER.getImageView());
-			}
-		});
-		
-		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				btn.setGraphic(RESUME.getImageView());
-			}
-		});
-
-		btn.setOnAction(new EventHandler<ActionEvent>() {
-
-			// action for the start button
-			// sets button to false and creates a rectangle that appears after
-			@Override
-			public void handle(ActionEvent event) {
-				igmenuroot.getChildren().remove(TITLE_SCREEN.getImageView());
-				gameRoot.getChildren().add(igMenuButton());
-				thestage.setScene(gameScene);
-				gameLoop.start();
-			}
-		});
-		return btn;
-	}
+//	private Button resumeButton() {
+//		Button btn = new Button("", RESUME.getImageView());
+//		btn.setBackground(new Background(transparent));
+//		btn.relocate(810, 500);
+//		
+//		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				btn.setGraphic(RESUME_HOVER.getImageView());
+//			}
+//		});
+//		
+//		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				btn.setGraphic(RESUME.getImageView());
+//			}
+//		});
+//
+//		btn.setOnAction(new EventHandler<ActionEvent>() {
+//
+//			// action for the start button
+//			// sets button to false and creates a rectangle that appears after
+//			@Override
+//			public void handle(ActionEvent event) {
+//				igmenuroot.getChildren().remove(TITLE_SCREEN.getImageView());
+//				gameRoot.getChildren().add(igMenuButton());
+//				thestage.setScene(gameScene);
+//				gameLoop.start();
+//			}
+//		});
+//		return btn;
+//	}
 	// ---------------------- Methods for moving/Colliding
 	// --------------------------------------------------//
 
