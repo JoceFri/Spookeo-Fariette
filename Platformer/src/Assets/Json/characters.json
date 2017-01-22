@@ -16,5 +16,14 @@
 		"height": "64",
 		"frameNumber": "8",
 		"duration": "600"
+	},
+	"fariette_idle": {
+		"spriteSheet": "Fariette_IDLE",
+		"xOffset": "0",
+		"yOffset": "0",
+		"width": "64",
+		"height": "64",
+		"frameNumber":"8",
+		"duration": "600"
 	}
 }

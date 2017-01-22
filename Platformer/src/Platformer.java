@@ -1,3 +1,4 @@
+
 //imports
 import java.io.IOException;
 import java.net.URL;
@@ -32,6 +33,10 @@ public class Platformer extends Application implements Images {
 	// resolution
 	private static final double HEIGHT = 704.0;
 	private static final double WIDTH = 1600.0;
+	private static final double TOTALWIDTH = 6400;
+
+	// Offset for scrolling
+	public double xOffset = 0;
 
 	// movement modifiers
 	public static final double acceleration = 8;
@@ -39,6 +44,7 @@ public class Platformer extends Application implements Images {
 	private int cooldown = 120;
 	private boolean jumpPress = false;
 	private boolean bottom = false;
+	private boolean farietteAdded = false;
 	private boolean top = false;
 	boolean right = false;
 	boolean left = false;
@@ -48,11 +54,13 @@ public class Platformer extends Application implements Images {
 	private Sounds jumpSound = new Sounds();
 
 	private Stage thestage;
-	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols;
-	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot;
+	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols, winScene;
+	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot, winRoot;
 
 	private Player hero = new Player(300, 200, 65, 64, SPOOKEO_IDLE.getImageView(), 300, 200, 65, 64);
-	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new ImageView("Assets/Art/pushable_box.png"), 500, HEIGHT - 100, 100, 100);
+	private Actor fairy = new Actor(1408, 512, 64, 64, new ImageView("Assets/Art/triforce.png"), 1408, 512, 64, 64);
+	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new ImageView("Assets/Art/pushable_box.png"), 500,
+			HEIGHT - 100, 100, 100);
 	final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
 
 	BackgroundFill menuBG = new BackgroundFill(Color.BLACK, null, null);
@@ -67,13 +75,15 @@ public class Platformer extends Application implements Images {
 	MapLoader m = new MapLoader();
 
 	ImageView bg = new ImageView("Assets/Art/BackGround.png");
-//	Image title = new Image("Assets/Art/titlescreen.png");
+	Image winScreen = new Image("Assets/Art/endgame_pic.png");
+	// Image title = new Image("Assets/Art/titlescreen.png");
 
 	AnimationTimer gameLoop;
 	URL url = getClass().getResource("Assets/Json/characters.json");
 
 	Canvas gameCanvas = new Canvas(WIDTH, HEIGHT);
 	GraphicsContext gc = gameCanvas.getGraphicsContext2D();
+	Collision win = new Collision(hero, fairy);
 
 	public Platformer() throws IOException {
 	}
@@ -104,9 +114,9 @@ public class Platformer extends Application implements Images {
 	private void load() {
 		bg.setFitHeight(HEIGHT);
 		bg.setFitWidth(WIDTH * 2);
-		bg.setScaleX(-1);
+		bg.setX(-xOffset / 4);
 		// Load Map
-		m.readIn(WIDTH, HEIGHT, "map.txt");
+		m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
 
 		// Get nonmoveable objects
 		nmo = m.getNMO();
@@ -114,10 +124,23 @@ public class Platformer extends Application implements Images {
 		// Get moveable objects
 		mo = m.getMO();
 
+		gc.clearRect(0, 0, WIDTH, HEIGHT);
+
+		for (int i = 0; i < mo.size(); i++) {
+			gc.drawImage(mo.get(i).getImageView().getImage(), mo.get(i).getX(), mo.get(i).getY());
+		}
+
+		for (int i = 0; i < nmo.size(); i++) {
+			gc.drawImage(nmo.get(i).getImageView().getImage(), nmo.get(i).getX(), nmo.get(i).getY());
+			// gc.fillRect(nmo.get(i).getHBX(), nmo.get(i).getHBY(),
+			// nmo.get(i).getHBWidth(), nmo.get(i).getHBHeight());
+		}
+
 		// Load title screen animation
-//		System.out.println("WIDTH/2 = " + WIDTH/2);
-		TITLE_SCREEN.getImageView().setX((WIDTH/2) - 170);
+		// System.out.println("WIDTH/2 = " + WIDTH/2);
+		TITLE_SCREEN.getImageView().setX((WIDTH / 2) - 170);
 		TITLE_SCREEN.getImageView().setY(100);
+
 	}
 
 	private void animation() {
@@ -125,27 +148,17 @@ public class Platformer extends Application implements Images {
 
 			@Override
 			public void handle(long now) {
-
-				gc.clearRect(0, 0, WIDTH, HEIGHT);
-
-				for (int i = 0; i < mo.size(); i++) {
-					if (mo.get(i).isAnimated()) {
-						
-					}
-					gc.drawImage(mo.get(i).getImageView().getImage(), mo.get(i).getX(), mo.get(i).getY());
-				}
-
-				for (int i = 0; i < nmo.size(); i++) {
-					gc.drawImage(nmo.get(i).getImageView().getImage(), nmo.get(i).getX(), nmo.get(i).getY());
-				}
-
+				winCheck(gameLoop);
 				resetCollision();
 				collisionCheck();
-				if(!top){
+				if (!top) {
 					gravity(rectangle, hero.getImageView());
 				}
 				jump(rectangle, hero.getImageView());
-
+				if(xOffset>4600 && !farietteAdded){
+					gameRoot.getChildren().add(fairy.getImageView());
+					farietteAdded = true;
+				}
 				cooldown++;
 
 			}
@@ -161,33 +174,39 @@ public class Platformer extends Application implements Images {
 	}
 
 	private void sound() {
-		bgNoise.loadSound("Assets/Sound/background.wav");
+		bgNoise.loadSound("Assets/Sound/Main_Theme.wav");
 		jumpSound.loadSound("Assets/Sound/jump1.wav");
-		bgNoise.runLoop();		
+		bgNoise.runLoop();
 	}
 
 	private void draw() {
-
+		Canvas winCanvas = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext wc = winCanvas.getGraphicsContext2D();
+		wc.drawImage(winScreen, 0, 0);
+		
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
-//		mc.drawImage(title, 500, 100);
+		// mc.drawImage(title, 500, 100);
 
 		Canvas iGMCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext igmc = iGMCanvas.getGraphicsContext2D();
-//		igmc.drawImage(title, 500, 100);
+		// igmc.drawImage(title, 500, 100);
 
 		Canvas controlCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext cc = controlCanvas.getGraphicsContext2D();
-//		cc.drawImage(title, 500, 100);
+		// cc.drawImage(title, 500, 100);
 
 		Canvas iGCCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext igcc = iGCCanvas.getGraphicsContext2D();
-//		igcc.drawImage(title, 500, 100);
-
+		// igcc.drawImage(title, 500, 100);
 
 		// -------- Menu ----------//
-
+		// make win scene
+		winRoot = new Pane();
+		winRoot.getChildren().add(winCanvas);
+		winRoot.getChildren().add(winMenuButton());
+		winScene = new Scene(winRoot, WIDTH, HEIGHT);
 		// make control
 		controlRoot = new Pane();
 		controlRoot.setBackground(new Background(controlBG));
@@ -202,26 +221,26 @@ public class Platformer extends Application implements Images {
 		menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
 		menuRoot.getChildren().add(menuCanvas);
 		menuRoot.getChildren().add(startButton());
-//		menuRoot.getChildren().add(controlButton());
+		// menuRoot.getChildren().add(controlButton());
 		menuScene = new Scene(menuRoot, WIDTH, HEIGHT);
 
 		// ---------- Game ----------//
 
-		//in game menu
+		// in game menu
 		igmenuroot = new Pane();
 		igmenuroot.setBackground(new Background(igMenuBG));
 		igmenuroot.getChildren().add(iGMCanvas);
 		igmenuroot.getChildren().add(resetButton());
 		igmenuroot.getChildren().add(menuButton());
 		igmenuroot.getChildren().add(resumeButton());
-//		igmenuroot.getChildren().add(igControl());
+		// igmenuroot.getChildren().add(igControl());
 		igmenu = new Scene(igmenuroot, WIDTH, HEIGHT);
 
-		//in game controls
+		// in game controls
 		igcontrolroot = new Pane();
 		igcontrolroot.setBackground(new Background(igControlBG));
 		igcontrolroot.getChildren().add(iGCCanvas);
-//		igcontrolroot.getChildren().add(igMenuButton2());
+		// igcontrolroot.getChildren().add(igMenuButton2());
 		igcontrolroot.getChildren().add(resumeButton());
 		igcontrols = new Scene(igcontrolroot, WIDTH, HEIGHT);
 
@@ -233,16 +252,15 @@ public class Platformer extends Application implements Images {
 		gameRoot.getChildren().add(rectangle);
 		gameRoot.getChildren().add(igMenuButton());
 		gameRoot.getChildren().add(hero.getImageView());
-		gameRoot.getChildren().add(SPOOKEO_PUSH.getImageView());
+		// gameRoot.getChildren().add(SPOOKEO_PUSH.getImageView());
 		gameScene = new Scene(gameRoot, WIDTH, HEIGHT);
 
 		c = new Collision(hero, box);
 		moveRectangleOnKeyPress(gameScene, rectangle, hero.getImageView());
 
-		if (zzzz) {
-			mo.remove(1);
-			count++;
-		}
+		/*
+		 * if (zzzz) { mo.remove(1); count++; }
+		 */
 	}
 
 	// ----------------------- Creating Objects
@@ -262,7 +280,7 @@ public class Platformer extends Application implements Images {
 		Button btn = new Button("", START.getImageView());
 		btn.setBackground(new Background(transparent));
 
-		btn.relocate((WIDTH/2) - 88, 500);
+		btn.relocate((WIDTH / 2) - 88, 500);
 
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
@@ -270,14 +288,14 @@ public class Platformer extends Application implements Images {
 				btn.setGraphic(Images.START_HOVER.getImageView());
 			}
 		});
-		
+
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				btn.setGraphic(Images.START.getImageView());
 			}
 		});
-		
+
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 
 			// action for the start button
@@ -292,79 +310,125 @@ public class Platformer extends Application implements Images {
 		});
 		return btn;
 	}
-	private Button resetButton(){
+	private Button winMenuButton(){
+		Button btn = new Button("", MENU.getImageView());
+		btn.setBackground(new Background(transparent));
+		btn.relocate((WIDTH / 2) - 94, 575);
+
+		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				btn.setGraphic(MENU_HOVER.getImageView());
+			}
+		});
+
+		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				btn.setGraphic(MENU.getImageView());
+			}
+		});
+
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+
+			// action for the start button
+			// sets button to false and creates a rectangle that appears after
+			@Override
+			public void handle(ActionEvent event) {
+				gameRoot.getChildren().remove(hero.getImageView());
+				gameRoot.getChildren().remove(rectangle);
+				xOffset = 0;
+				m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
+				hero.setX(300);
+				hero.setHBX(300);
+				hero.getImageView().setX(300);
+				rectangle.setX(300);
+				farietteAdded = false;
+				gameRoot.getChildren().add(hero.getImageView());
+				gameRoot.getChildren().add(rectangle);
+
+				/*
+				 * for(int i = 0; i<= mo.size(); i++){ mo.remove(i);
+				 * box.setX(500); box.getImageView().setX(500); }
+				 * //mo.remove(1);
+				 */
+				thestage.hide();
+				load();
+				start(thestage);
+				thestage.setScene(menuScene);
+
+			}
+		});
+		return btn;
+	}
+	private Button resetButton() {
 		Button btn = new Button("", RESET.getImageView());
 		btn.setBackground(new Background(transparent));
 		btn.relocate(610, 500);
-		
+
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				btn.setGraphic(RESET_HOVER.getImageView());
 			}
 		});
-		
+
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				btn.setGraphic(RESET.getImageView());
 			}
 		});
-		btn.setOnAction(new EventHandler<ActionEvent>(){
+		btn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
-				if (count == 0) {
-					zzzz = true; 
-					
-				}
-				else {
-					zzzz = false;
-				}
-				
-				isTrue(zzzz);
+
+				// isTrue(zzzz);
 				gameRoot.getChildren().remove(hero.getImageView());
 				gameRoot.getChildren().remove(rectangle);
-
+				xOffset = 0;
+				m.readIn(WIDTH, HEIGHT, "map.txt", xOffset);
 				hero.setX(300);
+				hero.setHBX(300);
 				hero.getImageView().setX(300);
 				rectangle.setX(300);
-
+				farietteAdded = false;
 				gameRoot.getChildren().add(hero.getImageView());
 				gameRoot.getChildren().add(rectangle);
 
-
-				for(int i = 1; i<= mo.size(); i++){
-					mo.remove(i);
-					box.setX(500);
-					box.getImageView().setX(500);
-				}
-				mo.remove(1);
-
+				/*
+				 * for(int i = 0; i<= mo.size(); i++){ mo.remove(i);
+				 * box.setX(500); box.getImageView().setX(500); }
+				 * //mo.remove(1);
+				 */
 				thestage.hide();
+				load();
 				start(thestage);
 				thestage.setScene(gameScene);
 			}
 		});
 		return btn;
 	}
+
 	private boolean isTrue(boolean b) {
 		return b;
 	}
+
 	// creates button to reach controls screen
 	private Button controlButton() {
 		Button btn = new Button("", CONTROL.getImageView());
 		btn.setBackground(new Background(transparent));
-		
+
 		btn.relocate(850, 500);
-		
+
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				btn.setGraphic(CONTROL_HOVER.getImageView());
 			}
 		});
-		
+
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -385,26 +449,26 @@ public class Platformer extends Application implements Images {
 		return btn;
 	}
 
-	private Button igMenuButton(){
+	private Button igMenuButton() {
 		Button btn = new Button("", MENU.getImageView());
 		btn.setBackground(new Background(transparent));
 		btn.relocate(1440, 25);
-		
+
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				btn.setGraphic(MENU_HOVER.getImageView());
 			}
 		});
-		
+
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				btn.setGraphic(MENU.getImageView());
 			}
 		});
-		
-		btn.setOnAction(new EventHandler<ActionEvent>(){
+
+		btn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
@@ -418,26 +482,26 @@ public class Platformer extends Application implements Images {
 		return btn;
 	}
 
-	private Button igControl(){
+	private Button igControl() {
 		Button btn = new Button("", CONTROL.getImageView());
 		btn.setBackground(new Background(transparent));
 		btn.relocate(810, 600);
-		
+
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				btn.setGraphic(CONTROL_HOVER.getImageView());
 			}
 		});
-		
+
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				btn.setGraphic(CONTROL.getImageView());
 			}
 		});
-		
-		btn.setOnAction(new EventHandler<ActionEvent>(){
+
+		btn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -447,19 +511,20 @@ public class Platformer extends Application implements Images {
 		});
 		return btn;
 	}
+
 	// creates button to reach menu
 	private Button menuButton() {
 		Button btn = new Button("", MENU.getImageView());
 		btn.setBackground(new Background(transparent));
-		btn.relocate((WIDTH/2) - 94, 575);
-		
+		btn.relocate((WIDTH / 2) - 94, 575);
+
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				btn.setGraphic(MENU_HOVER.getImageView());
 			}
 		});
-		
+
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -476,35 +541,37 @@ public class Platformer extends Application implements Images {
 				menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
 				thestage.setTitle("Spookeo and Fariette");
 				thestage.setScene(menuScene);
+			
 
 			}
 		});
 		return btn;
 	}
-//	private Button igMenuButton2(){
-//		Button btn = new Button("Go back");
-//		btn.relocate(810, 600);
-//		btn.setOnAction(new EventHandler<ActionEvent>(){
-//
-//			@Override
-//			public void handle(ActionEvent event) {
-//				thestage.setScene(igmenu);
-//			}
-//		});
-//		return btn;
-//	}
+
+	// private Button igMenuButton2(){
+	// Button btn = new Button("Go back");
+	// btn.relocate(810, 600);
+	// btn.setOnAction(new EventHandler<ActionEvent>(){
+	//
+	// @Override
+	// public void handle(ActionEvent event) {
+	// thestage.setScene(igmenu);
+	// }
+	// });
+	// return btn;
+	// }
 	private Button resumeButton() {
 		Button btn = new Button("", RESUME.getImageView());
 		btn.setBackground(new Background(transparent));
 		btn.relocate(810, 500);
-		
+
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				btn.setGraphic(RESUME_HOVER.getImageView());
 			}
 		});
-		
+
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
@@ -549,7 +616,7 @@ public class Platformer extends Application implements Images {
 
 			if (cooldown >= 120) {
 				jumpSound.run();
-				jumpmax = rectangle.getY() - 175;
+				jumpmax = rectangle.getY() - 185;
 				canJump = true;
 			}
 			if (canJump) {
@@ -566,13 +633,11 @@ public class Platformer extends Application implements Images {
 						hero.setHBY(rectangle.getY());
 					}
 
-
 				}
 			}
 
 		}
 	}
-
 
 	// Reset collision variables
 	public void resetCollision() {
@@ -581,6 +646,7 @@ public class Platformer extends Application implements Images {
 		left = false;
 		right = false;
 	}
+
 	// Checks for collision with all objects
 	public void collisionCheck() {
 
@@ -611,7 +677,7 @@ public class Platformer extends Application implements Images {
 			c.isColliding();
 			boolean boxLeft = false;
 			boolean boxRight = false;
-			
+
 			if (em instanceof Box && c.isColliding()) {
 				for (Nonmoveable nm : nmo) {
 					Collision c2 = new Collision(em, nm);
@@ -642,14 +708,14 @@ public class Platformer extends Application implements Images {
 				if (c.right()) {
 					int l = em.getHBHeight();
 					em.getImageView().setImage(hero.getImageView().getImage());
-					
+
 					em.getImageView().setRotate(90);
 					em.setHBHeight(em.getHBWidth());
 					em.setHBWidth(l);
 				}
-				
+
 			}
-			
+
 		}
 
 	}
@@ -664,60 +730,94 @@ public class Platformer extends Application implements Images {
 				if (event.getCode().equals(KeyCode.D) || event.getCode().equals(KeyCode.RIGHT)) {
 					if (!left) {
 						hero.getImageView().setScaleX(1);
-						righty = true;
+						// righty = true;
+						// Check for right scrolling
+						scrollCheckRight(hero.getHBX());
 						moveRight(rectangle, image, righty);
+
 					}
 				}
 
 				if (event.getCode().equals(KeyCode.W) || event.getCode().equals(KeyCode.UP)) {
 					jumpPress = true;
 
-
 				}
 
 				if (event.getCode().equals(KeyCode.A) || event.getCode().equals(KeyCode.LEFT)) {
-					if (!right) {	
-						lefty = true;
-						moveLeft(rectangle, image, lefty);
+					if (!right) {
 						hero.getImageView().setScaleX(-1);
+						// lefty = true;
+						// Check for left scrolling
+						scrollCheckLeft(hero.getHBX());
+						moveLeft(rectangle, image, lefty);
+
 					}
 				}
 
 			}
-
-
-
-
 		});
 
 	}
-	private boolean moveRight(Rectangle rectangle, ImageView image, Boolean rights) {
-		if (rights == false) {
-			return righty;
-		}
-		else if (!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)) {
-			rectangle.setX(rectangle.getX() + acceleration);
-			image.setX(rectangle.getX());
-			hero.setHBX(rectangle.getX());
 
-		}
+	// Scrolling
+	public void scrollCheckLeft(double x) {
 
-		return righty;
-	}
-	private boolean moveLeft(Rectangle rectangle, ImageView image, Boolean lefts) {
-		if (lefts == false) {
-			return lefty;
+		if (x <= (0.2 * WIDTH) && xOffset - acceleration > 0) {
+			xOffset = xOffset - acceleration;
+			hero.setHBX(0.2 * WIDTH);
+			rectangle.setX(hero.getHBX());
+			hero.getImageView().setX(hero.getHBX());
+			hero.setX(hero.getHBX());
+			lefty = false;
+			load();
+			thestage.setScene(gameScene);
+		} else {
+			lefty = true;
 		}
-		else if (!(rectangle.getX() - acceleration <= 0)) {
-			rectangle.setX(rectangle.getX() - acceleration);
-			image.setX(rectangle.getX());
-			hero.setHBX(rectangle.getX());
-		}
-
-
-		return lefty;
 	}
 
+	public void scrollCheckRight(double x) {
 
+		if (x >= (0.6 * WIDTH) && xOffset + acceleration < (0.76 * TOTALWIDTH)) {
+			
+			xOffset = xOffset + acceleration;
+			hero.setHBX(0.6 * WIDTH);
+			rectangle.setX(hero.getHBX());
+			hero.getImageView().setX(hero.getHBX());
+			hero.setX(hero.getHBX());
+			righty = false;
+			load();
+			thestage.setScene(gameScene);
+		}
 
+		else {
+			righty = true;
+		}
+	}
+
+	private void moveRight(Rectangle rectangle, ImageView image, Boolean rights) {
+		if (rights == true) {
+			if (!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)) {
+				rectangle.setX(rectangle.getX() + acceleration);
+				image.setX(rectangle.getX());
+				hero.setHBX(rectangle.getX());
+			}
+		}
+	}
+
+	private void moveLeft(Rectangle rectangle, ImageView image, Boolean lefts) {
+		if (lefts == true) {
+			if (!(rectangle.getX() - acceleration <= 0)) {
+				rectangle.setX(rectangle.getX() - acceleration);
+				image.setX(rectangle.getX());
+				hero.setHBX(rectangle.getX());
+			}
+		}
+	}
+	public void winCheck(AnimationTimer loop) {
+		if(win.isColliding()) {
+			loop.stop();
+			thestage.setScene(winScene);
+		}
+	}
 }
