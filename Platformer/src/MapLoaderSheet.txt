@@ -1,0 +1,35 @@
+Normal World:
+
+dirt1 -- full grass block (j - off + 1, height - k + 20, 62, 42) -- a
+dirt2 -- left edge grass block (j - off + 30, height - k + 20, 32, 42) -- b
+dirt3 -- right edge grass block (j - off + 2, height - k + 20, 36, 42) -- c
+dirt4 -- full dirt block (j - off + 1, height - k, 62, 62) -- d
+dirt5 -- left edge dirt block (j - off + 30, height - k, 32, 62) -- e
+dirt6 -- right edge dirt block (j - off + 2, height - k, 36, 62) -- f
+dirt7 -- left corner block (j - off + 1, height - k + 28, 62, 32) -- g
+dirt8 -- right corner block (j - off + 1, height - k + 28, 62, 32) -- h
+
+Transition:
+
+dirt9 -- transition top block (grass to spooky, same HB as dirt1) -- i
+dirt10 -- transition bottom block (grass to spooky, same HB as dirt4) -- j
+dirt11 -- transition top block (spooky to grass, same HB as dirt1) -- k
+dirt12 -- transition bottom block (spooky tol grass, same HB as dirt4) -- l
+
+Spooky:
+
+dirt13 -- full grass block (same HB as dirt1) -- m
+dirt14 -- left edge grass block (same HB as dirt2) -- n
+dirt15 -- right edge grass block (same HB as dirt3) -- p
+dirt16 -- full dirt block -- (same HB as dirt4) q
+dirt17 -- left edge dirt block (same HB as dirt5) -- r
+dirt18 -- right edge dirt block (same HB as dirt6) -- s
+dirt19 -- left corner block (same HB as dirt7) -- t
+dirt20 -- right corner block (same HB as dirt8) -- u
+
+
+Other:
+box -- box -- x
+rock -- rock -- y
+flower -- flower -- z
+air (empty) -- o
