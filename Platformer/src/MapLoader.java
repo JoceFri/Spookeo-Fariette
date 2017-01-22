@@ -27,21 +27,24 @@ public class MapLoader {
 	//trasition
 	ImageView dirt9 = new ImageView("Assets/Art/midtrans1.png");
 	ImageView dirt10 = new ImageView("Assets/Art/midtrans1_bottom.png");
+	ImageView dirt11 = new ImageView("Assets/Art/midtrans2.png");
+	ImageView dirt12 = new ImageView("Assets/Art/midtrans2_bottom.png");
 
 	// spooky
-	ImageView dirt11 = new ImageView("Assets/Art/rightdirtbottom_spooky.png");	
-	ImageView dirt12 = new ImageView("Assets/Art/leftdirttop_spooky.png");
-	ImageView dirt13 = new ImageView("Assets/Art/leftcorner_spooky.png");
-	ImageView dirt14 = new ImageView("Assets/Art/leftdirtbottom_spooky.png");
-	ImageView dirt15 = new ImageView("Assets/Art/rightdirttop_spooky.png");
-	ImageView dirt16 = new ImageView("Assets/Art/rightcorner_spooky.png");
-	ImageView dirt17 = new ImageView("Assets/Art/middirtop_spooky.png");
-	ImageView dirt18 = new ImageView("Assets/Art/fulldirt_spooky.png");
 	
+	ImageView dirt13 = new ImageView("Assets/Art/middirtop_spooky.png");
+	ImageView dirt14 = new ImageView("Assets/Art/leftdirttop_spooky.png");
+	ImageView dirt15 = new ImageView("Assets/Art/rightdirttop_spooky.png");
+	ImageView dirt16 = new ImageView("Assets/Art/fulldirt_spooky.png");	
+	ImageView dirt17 = new ImageView("Assets/Art/leftdirtbottom_spooky.png");
+	ImageView dirt18 = new ImageView("Assets/Art/rightdirtbottom_spooky.png");
+	ImageView dirt19 = new ImageView("Assets/Art/leftcorner_spooky.png");
+	ImageView dirt20 = new ImageView("Assets/Art/rightcorner_spooky.png");
+
+	// movable stuff
 	ImageView box = new ImageView("Assets/Art/pushable_box.png");
-	ImageView hero = new ImageView("Assets/Art/ghost_same.png");
 	ImageView rock = new ImageView("Assets/Art/skinny rock.png");
-	ImageView flower = new ImageView("Assets/Art/tippableflower (1).png");
+	ImageView flower = new ImageView("Assets/Art/tippableflower.png");
 	
 	// Store all elements into either list of nonmoveables or moveables
 	ArrayList<Nonmoveable> nmo;
@@ -97,103 +100,110 @@ public class MapLoader {
 				}
 				for (int i = start; i < end; i++) {
 
-					// ground left edge
+					//------------------------------------HAPPY MEADOWS--------------------------------------------------------------//
+					// ground block
 					if (line[i] == 'a') {
-						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt2, j - off + 32, height - k + 21, 32, 43));
+						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt1, j - off + 1, height - k + 20, 62, 42));
+					}
+					
+					// ground left edge
+					else if (line[i] == 'b') {
+						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt2, j - off + 30, height - k + 20, 32, 42));
 					}
 
 					// ground right edge
-					else if (line[i] == 'b') {
-						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt3, j - off, height - k + 21, 32, 43));
-					}
-
-					// ground block
 					else if (line[i] == 'c') {
-						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt1, j - off, height - k + 21, 64, 43));
-					}
-
-					// dirt left edge
-					else if (line[i] == 'd') {
-						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt5, j - off, height - k, 64, 64));
-					}
-
-					// dirt right edge
-					else if (line[i] == 'e') {
-						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt6, j - off, height - k, 64, 64));
+						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt3, j - off + 2, height - k + 20, 36, 42));
 					}
 
 					// dirt block
+					else if (line[i] == 'd') {
+						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt4, j - off + 1, height - k, 62, 62));
+					}
+					
+					// dirt left edge
+					else if (line[i] == 'e') {
+						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt5, j - off + 30, height - k, 32, 62));
+					}
+
+					// dirt right edge
 					else if (line[i] == 'f') {
-						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt4, j - off, height - k, 64, 64));
+						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt6, j - off + 2, height - k, 36, 62));
 					} 
 					
 					// left corner
 					else if (line[i] == 'g') {
-						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt7, j - off, height - k, 32, 64));
+						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt7, j - off + 1, height - k + 28, 62, 32));
 					} 
 					
 					// right corner
 					else if (line[i] == 'h') {
-						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt8, j - off, height - k, 32, 64));
+						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt8, j - off + 1, height - k + 28, 62, 32));
 					} 
 					
+					
+					//------------------------------------TRANSITIONS---------------------------------------------------------------//
 					// transition top
 					else if (line[i] == 'i') {
-						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt9, j - off, height - k, 32, 64));
+						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt9, j - off + 1, height - k + 20, 62, 42));
 					} 
 					
 					// transition dirt
 					else if (line[i] == 'j') {
-						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt10, j - off, height - k, 32, 64));
+						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt10, j - off + 1, height - k, 62, 62));
+					}
+					
+					else if (line[i] == 'k') {
+						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt11, j - off + 1, height - k + 20, 62, 42));
+					} 
+					
+					// transition dirt
+					else if (line[i] == 'l') {
+						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt12, j - off + 1, height - k, 62, 62));
+					}
+					
+					
+					//------------------------------------SPOOKY FOREST-------------------------------------------------------------//
+					
+					// ground block spooky
+					else if (line[i] == 'm') {
+						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt13, j - off + 1, height - k + 20, 62, 42));
 					}
 					
 					// ground left edge spooky
-					if (line[i] == 'k') {
-						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt12, j - off + 32, height - k + 21, 32, 43));
+					else if (line[i] == 'n') {
+						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt14, j - off + 30, height - k + 20, 32, 42));
 					}
 
 					// ground right edge spooky
-					else if (line[i] == 'l') {
-						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt15, j - off, height - k + 21, 32, 43));
-					}
-
-					// ground block spooky
-					else if (line[i] == 'm') {
-						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt17, j - off, height - k + 21, 64, 43));
-					}
+					else if (line[i] == 'p') {
+						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt15, j - off + 2, height - k + 20, 36, 42));
+					}	
+					
+					// dirt block spooky
+					else if (line[i] == 'q') {
+						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt16, j - off + 1, height - k, 62, 62));
+					} 
 
 					// dirt left edge spooky
-					else if (line[i] == 'n') {
-						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt14, j - off, height - k, 64, 64));
+					else if (line[i] == 'r') {
+						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt17, j - off + 30, height - k, 32, 62));
 					}
 
 					// dirt right edge spooky
-					else if (line[i] == 'p') {
-						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt11, j - off, height - k, 64, 64));
+					else if (line[i] == 's') {
+						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt18, j - off + 2, height - k, 36, 62));
 					}
-
-					// dirt block spooky
-					else if (line[i] == 'q') {
-						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt18, j - off, height - k, 64, 64));
-					} 
-					
+				
 					// left corner spooky
-					else if (line[i] == 'r') {
-						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt13, j - off, height - k, 32, 64));
+					else if (line[i] == 't') {
+						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt19, j - off + 1, height - k + 28, 62, 32));
 					} 
 					
 					// right corner spooky
-					else if (line[i] == 's') {
-						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt16, j - off, height - k, 32, 64));
+					else if (line[i] == 'u') {
+						nmo.add(new Nonmoveable(j - off, height - k, 32, 64, dirt20, j - off + 1, height - k + 28, 62, 32));
 					} 
-					
-//					else if (line[i] == 'm') {
-//						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt9, j - off + 32, height - k, 32, 64));
-//					} else if (line[i] == 'n') {
-//						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt10, j - off + 32, height - k, 32, 64));
-//					} else if (line[i] == 'p') {
-//						nmo.add(new Nonmoveable(j - off, height - k, 64, 64, dirt11, j - off, height - k, 32, 64));
-//					} 
 					else {
 					}
 
