@@ -57,7 +57,7 @@ public class Platformer extends Application implements Images {
 	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols, winScene;
 	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot, winRoot;
 
-	private Player hero = new Player(300, 200, 65, 64, SPOOKEO_IDLE.getImageView(), 300, 200, 65, 64);
+	private Player hero = new Player(300, 200, 65, 64, SPOOKEO_IDLE.getImageView(), 300, 200, 64, 64);
 	private Actor fairy = new Actor(1408, 512, 64, 64, new ImageView("Assets/Art/triforce.png"), 1408, 512, 64, 64);
 	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new ImageView("Assets/Art/pushable_box.png"), 500,
 			HEIGHT - 100, 100, 100);
