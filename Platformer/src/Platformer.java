@@ -48,6 +48,9 @@ public class Platformer extends Application implements Images {
 	private boolean top = false;
 	boolean right = false;
 	boolean left = false;
+	boolean movingLeft = false;
+	boolean movingRight = false;
+	boolean movingUp = false;
 	private Collision c;
 
 	private Sounds bgNoise = new Sounds();
@@ -148,19 +151,29 @@ public class Platformer extends Application implements Images {
 
 			@Override
 			public void handle(long now) {
-				winCheck(gameLoop);
 				resetCollision();
+				winCheck(gameLoop);
+				
 				collisionCheck();
+				
 				if (!top) {
 					gravity(rectangle, hero.getImageView());
 				}
-				jump(rectangle, hero.getImageView());
+				if(movingRight){
+					moveRight(rectangle, hero.getImageView());
+				} 
+				if(movingLeft){
+					moveLeft(rectangle, hero.getImageView());
+				}
+				if(movingUp){
+					jump(rectangle, hero.getImageView());
+				}
 				if(xOffset>4600 && !farietteAdded){
 					gameRoot.getChildren().add(fairy.getImageView());
 					farietteAdded = true;
 				}
 				cooldown++;
-
+				
 			}
 
 		};
@@ -625,7 +638,7 @@ public class Platformer extends Application implements Images {
 					jumpPress = false;
 				}
 				if (canJump) {
-					// jumping = true;
+					//jumping = true;
 					cooldown = 0;
 
 					if (rectangle.getY() >= jumpmax) {
@@ -722,7 +735,7 @@ public class Platformer extends Application implements Images {
 
 	// makes shape move....
 	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, final ImageView image) {
-		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+		scene.setOnKeyPressed( new EventHandler<KeyEvent>() {
 
 			@Override
 			public void handle(KeyEvent event) {
@@ -730,31 +743,49 @@ public class Platformer extends Application implements Images {
 				if (event.getCode().equals(KeyCode.D) || event.getCode().equals(KeyCode.RIGHT)) {
 					if (!left) {
 						hero.getImageView().setScaleX(1);
-						// righty = true;
+						movingRight = true;
 						// Check for right scrolling
 						scrollCheckRight(hero.getHBX());
-						moveRight(rectangle, image, righty);
+						//moveRight(rectangle, image, righty);
+						
 
 					}
 				}
 
 				if (event.getCode().equals(KeyCode.W) || event.getCode().equals(KeyCode.UP)) {
 					jumpPress = true;
+					movingUp = true;
 
 				}
 
 				if (event.getCode().equals(KeyCode.A) || event.getCode().equals(KeyCode.LEFT)) {
 					if (!right) {
 						hero.getImageView().setScaleX(-1);
-						// lefty = true;
+						movingLeft = true;
 						// Check for left scrolling
 						scrollCheckLeft(hero.getHBX());
-						moveLeft(rectangle, image, lefty);
+						//moveLeft(rectangle, image, lefty);
 
 					}
 				}
 
 			}
+		});
+		scene.setOnKeyReleased(new EventHandler<KeyEvent>(){
+
+			@Override
+			public void handle(KeyEvent event) {
+				if(event.getCode().equals(KeyCode.D) || event.getCode().equals(KeyCode.RIGHT)){
+					movingRight = false;
+				}
+				if(event.getCode().equals(KeyCode.A) || event.getCode().equals(KeyCode.LEFT)){
+					movingLeft = false;
+				}
+				if(event.getCode().equals(KeyCode.W) || event.getCode().equals(KeyCode.UP)){
+					movingUp = false;
+				}
+			}
+			
 		});
 
 	}
@@ -795,24 +826,20 @@ public class Platformer extends Application implements Images {
 		}
 	}
 
-	private void moveRight(Rectangle rectangle, ImageView image, Boolean rights) {
-		if (rights == true) {
-			if (!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)) {
-				rectangle.setX(rectangle.getX() + acceleration);
+	private void moveRight(Rectangle rectangle, ImageView image) {
+			if (!(rectangle.getX() + acceleration/5 + rectangle.getWidth() >= WIDTH)) {
+				rectangle.setX(rectangle.getX() + acceleration/5);
 				image.setX(rectangle.getX());
 				hero.setHBX(rectangle.getX());
-			}
 		}
 	}
 
-	private void moveLeft(Rectangle rectangle, ImageView image, Boolean lefts) {
-		if (lefts == true) {
-			if (!(rectangle.getX() - acceleration <= 0)) {
-				rectangle.setX(rectangle.getX() - acceleration);
+	private void moveLeft(Rectangle rectangle, ImageView image) {
+			if (!(rectangle.getX() - acceleration/5 <= 0)) {
+				rectangle.setX(rectangle.getX() - acceleration/5);
 				image.setX(rectangle.getX());
 				hero.setHBX(rectangle.getX());
 			}
-		}
 	}
 	public void winCheck(AnimationTimer loop) {
 		if(win.isColliding()) {
