@@ -44,7 +44,7 @@ public class MapLoader {
 	// movable stuff
 	ImageView box = new ImageView("Assets/Art/pushable_box.png");
 	ImageView rock = new ImageView("Assets/Art/skinny rock.png");
-	ImageView flower = new ImageView("Assets/Art/tippableflower.png");
+	//ImageView flower = new ImageView("Assets/Art/tippableflower.png");
 	
 	// Store all elements into either list of nonmoveables or moveables
 	ArrayList<Nonmoveable> nmo;
@@ -58,13 +58,13 @@ public class MapLoader {
 			mo = new ArrayList<Moveable>();
 		}
 		int start = 0;
-		double j = -64;
-		int off = 0;
+		double j = 0;
+		int off = (int) (xOffset % 64);
 		// Figure out which "chunk" to load
 
 		if (xOffset >= 64) {
-			off = (int) (xOffset % 64);
-			start = (int) (xOffset / 64) - 1;
+		
+			start = (int) (xOffset / 64);
 		}
 
 		int end = start + 26;
@@ -93,7 +93,7 @@ public class MapLoader {
 
 						// flower
 						else if (line[i] == 'z') {
-							mo.add(new Flower(j, height - k + 28, 64, 192, flower, j, height - k + 28, 64, 192));
+							//mo.add(new Flower(j, height - k + 28, 64, 192, flower, j, height - k + 28, 64, 192));
 						}
 						j += 64;
 					}
