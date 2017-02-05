@@ -42,6 +42,7 @@ public class Platformer extends Application implements Images {
 	public static final double acceleration = 2.0;
 	private static final double gravity = 2.0;
 	private int cooldown = 120;
+	private int loadCount = 0;
 	private boolean jumpPress = false;
 	private boolean bottom = false;
 	private boolean farietteAdded = false;
@@ -51,6 +52,8 @@ public class Platformer extends Application implements Images {
 	boolean movingLeft = false;
 	boolean movingRight = false;
 	boolean movingUp = false;
+	boolean boxLeft = false;
+	boolean boxRight = false;
 	private Collision c;
 	
 
@@ -121,17 +124,18 @@ public class Platformer extends Application implements Images {
 		bg.setX(-xOffset / 4);
 		// Load Map
 		m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
-
-		// Get nonmoveable objects
-		nmo = m.getNMO();
-
-		// Get moveable objects
-		mo = m.getMO();
-
 		gc.clearRect(0, 0, WIDTH, HEIGHT);
 
+		if (loadCount < 1) {
+			// Get moveable objects
+			mo = m.getMO();
+		}
+		
+		// Get nonmoveable objects
+		nmo = m.getNMO();
+		
 		for (int i = 0; i < mo.size(); i++) {
-			gc.drawImage(mo.get(i).getImageView().getImage(), mo.get(i).getX(), mo.get(i).getY());
+			gc.drawImage(mo.get(i).getImageView().getImage(), mo.get(i).getX() - xOffset, mo.get(i).getY());
 		}
 
 		for (int i = 0; i < nmo.size(); i++) {
@@ -386,6 +390,9 @@ public class Platformer extends Application implements Images {
 				gameRoot.getChildren().remove(hero.getImageView());
 				gameRoot.getChildren().remove(rectangle);
 				xOffset = 0;
+				movingLeft = false;
+				movingRight = false;
+				movingUp = false;
 				m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
 				hero.setX(300);
 				hero.setHBX(300);
@@ -394,7 +401,7 @@ public class Platformer extends Application implements Images {
 				farietteAdded = false;
 				gameRoot.getChildren().add(hero.getImageView());
 				gameRoot.getChildren().add(rectangle);
-
+				m = new MapLoader();
 				/*
 				 * for(int i = 0; i<= mo.size(); i++){ mo.remove(i);
 				 * box.setX(500); box.getImageView().setX(500); }
@@ -436,7 +443,9 @@ public class Platformer extends Application implements Images {
 				gameRoot.getChildren().remove(hero.getImageView());
 				gameRoot.getChildren().remove(rectangle);
 				xOffset = 0;
-				m.readIn(WIDTH, HEIGHT, "map.txt", xOffset);
+				
+				m = new MapLoader();
+				
 				hero.setX(300);
 				hero.setHBX(300);
 				hero.getImageView().setX(300);
@@ -445,11 +454,14 @@ public class Platformer extends Application implements Images {
 				gameRoot.getChildren().add(hero.getImageView());
 				gameRoot.getChildren().add(rectangle);
 
-				/*
-				 * for(int i = 0; i<= mo.size(); i++){ mo.remove(i);
-				 * box.setX(500); box.getImageView().setX(500); }
-				 * //mo.remove(1);
-				 */
+				
+				//mo.remove(1);
+				//mo = m.getMO();
+				for (int i = 0; i < mo.size(); i++) {
+					gc.drawImage(mo.get(i).getImageView().getImage(), mo.get(i).getX() - xOffset, mo.get(i).getY());
+				}
+				//System.out.println(m.getMO());
+				loadCount = 0;
 				thestage.hide();
 				load();
 				start(thestage);
@@ -725,6 +737,7 @@ public class Platformer extends Application implements Images {
 		top = false;
 		left = false;
 		right = false;
+		
 	}
 
 	// Checks for collision with all objects
@@ -755,37 +768,44 @@ public class Platformer extends Application implements Images {
 		for (Moveable em : mo) {
 			c.setObjs(hero, em);
 			c.isColliding();
-			boolean boxLeft = false;
-			boolean boxRight = false;
-			//System.out.println(c.isColliding());
-
-			if (em instanceof Box && c.isColliding()) {
-				System.out.println("Collision");
-				for (Nonmoveable nm : nmo) {
-					Collision c2 = new Collision(em, nm);
-					c2.isColliding();
-					if (c2.left()) {
-						boxLeft = true;
-						break;
-					}
-					if (c2.right()) {
-						boxRight = true;
-						break;
-					}
-				}
-				if (!boxLeft && !boxRight) {
-					c.moveObject();
-				}
-
-				if (boxLeft) {
-					left = true;
-				}
-
-				if (boxRight) {
-					right = true;
-				}
+			c.setObjs(hero, em);
+			c.isColliding();
+			if (c.bottom()) {
+				bottom = true;
+			}
+			if (c.top()) {
+				top = true;
 
 			}
+			if (c.left()) {
+				left = true;
+			}
+			if (c.right()) {
+				right = true;
+			}
+			
+			if(em instanceof Box && (left || right)){
+				for (Nonmoveable nm : nmo) {
+					Collision c2 = new Collision(em, nm);
+					if(c2.left()){
+						boxLeft = true;
+					}
+					if(c2.right()){
+						boxRight = true;
+					}
+					
+				}
+				if(!boxLeft && !boxRight){
+					c.moveObject();
+				}
+			}
+			//System.out.println(c.isColliding());
+
+
+				
+
+				
+
 			if (em instanceof Rock && c.isColliding()) {
 				if (c.right()) {
 					int l = em.getHBHeight();
@@ -801,6 +821,7 @@ public class Platformer extends Application implements Images {
 		}
 
 	}
+
 
 	// makes shape move....
 	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, final ImageView image) {
