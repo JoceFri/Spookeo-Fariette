@@ -43,6 +43,7 @@ public class Platformer extends Application implements Images {
 	private static final double gravity = 2.0;
 	private int cooldown = 120;
 	private int loadCount = 0;
+	private int lives = 3;
 	private boolean jumpPress = false;
 	private boolean bottom = false;
 	private boolean farietteAdded = false;
@@ -62,8 +63,8 @@ public class Platformer extends Application implements Images {
 	private Sounds jumpSound = new Sounds();
 
 	private Stage thestage;
-	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols, winScene, nextLevel;
-	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot, winRoot, nextLevelroot;
+	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols, winScene, nextLevel, deathScene;;
+	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot, winRoot, nextLevelroot, deathRoot;
 
 	private Player hero = new Player(300, 200, 65, 64, SPOOKEO_IDLE.getImageView(), 300, 200, 64, 64);
 	private Actor fairy = new Actor(1408, 512, 64, 64, new ImageView("Assets/Art/triforce.png"), 1408, 512, 64, 64);
@@ -85,7 +86,8 @@ public class Platformer extends Application implements Images {
 	ImageView bg = new ImageView("Assets/Art/BackGround.png");
 	Image winScreen = new Image("Assets/Art/endgame_pic.png");
 	Image controls = new Image("Assets/Art/controls_sheet2.png");
-
+	Image gameover = new Image("Assets/Art/gameover.png");
+	
 	AnimationTimer gameLoop;
 	URL url = getClass().getResource("Assets/Json/characters.json");
 
@@ -160,7 +162,7 @@ public class Platformer extends Application implements Images {
 			public void handle(long now) {
 				resetCollision();
 				winCheck(gameLoop);
-				
+				deathCheck(gameLoop);
 				collisionCheck();
 				
 				if (!top) {
@@ -209,6 +211,10 @@ public class Platformer extends Application implements Images {
 		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
 		//mc.drawImage(controls, 0, 100);
 
+		Canvas deathCanvas = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext dc = deathCanvas.getGraphicsContext2D();
+		dc.drawImage(gameover, 0, 100);
+		
 		Canvas iGMCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext igmc = iGMCanvas.getGraphicsContext2D();
 		//igmc.drawImage(controls, 0, 100);
@@ -227,6 +233,13 @@ public class Platformer extends Application implements Images {
 		winRoot.getChildren().add(winCanvas);
 		winRoot.getChildren().add(winMenuButton());
 		winScene = new Scene(winRoot, WIDTH, HEIGHT);
+		
+		// make death scene
+		deathRoot = new Pane();
+		deathRoot.getChildren().add(deathCanvas);
+		deathRoot.getChildren().add(menuButton());
+		deathScene = new Scene(deathRoot, WIDTH, HEIGHT);
+		
 		// make control
 		controlRoot = new Pane();
 		controlRoot.setBackground(new Background(controlBG));
@@ -328,6 +341,8 @@ public class Platformer extends Application implements Images {
 			public void handle(ActionEvent event) {
 				menuRoot.getChildren().remove(TITLE_SCREEN.getImageView());
 				start(thestage);
+				reset();
+				lives = 3;
 				thestage.setTitle("Spookeo's Journey Yo");
 				thestage.setScene(gameScene);
 				
@@ -420,21 +435,8 @@ public class Platformer extends Application implements Images {
 			// sets button to false and creates a rectangle that appears after
 			@Override
 			public void handle(ActionEvent event) {
-				gameRoot.getChildren().remove(hero.getImageView());
-				gameRoot.getChildren().remove(rectangle);
-				xOffset = 0;
-				movingLeft = false;
-				movingRight = false;
-				movingUp = false;
-				m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
-				hero.setX(300);
-				hero.setHBX(300);
-				hero.getImageView().setX(300);
-				rectangle.setX(300);
-				farietteAdded = false;
-				gameRoot.getChildren().add(hero.getImageView());
-				gameRoot.getChildren().add(rectangle);
-				m = new MapLoader();
+				reset();
+				lives = 3;
 				/*
 				 * for(int i = 0; i<= mo.size(); i++){ mo.remove(i);
 				 * box.setX(500); box.getImageView().setX(500); }
@@ -472,22 +474,8 @@ public class Platformer extends Application implements Images {
 			@Override
 			public void handle(ActionEvent event) {
 
-				// isTrue(zzzz);
-				gameRoot.getChildren().remove(hero.getImageView());
-				gameRoot.getChildren().remove(rectangle);
-				xOffset = 0;
-				
-				m = new MapLoader();
-				
-				hero.setX(300);
-				hero.setHBX(300);
-				hero.getImageView().setX(300);
-				rectangle.setX(300);
-				farietteAdded = false;
-				gameRoot.getChildren().add(hero.getImageView());
-				gameRoot.getChildren().add(rectangle);
-
-				
+				reset();
+				lives = 3;
 				//mo.remove(1);
 				//mo = m.getMO();
 				for (int i = 0; i < mo.size(); i++) {
@@ -723,6 +711,13 @@ public class Platformer extends Application implements Images {
 
 	// Method for implementing gravity
 	private void gravity(final Rectangle rectangle, final ImageView image) {
+		
+		if (rectangle.getY() + rectangle.getHeight() + gravity >= HEIGHT) {
+			lives--;
+			reset();
+			
+		}
+		
 		if (!(rectangle.getY() + gravity + rectangle.getHeight() >= HEIGHT)) {
 			rectangle.setY(rectangle.getY() + gravity);
 			image.setY(rectangle.getY());
@@ -761,6 +756,15 @@ public class Platformer extends Application implements Images {
 				}
 			}
 
+		}
+	}
+	
+	// Check for death
+	public void deathCheck(AnimationTimer loop) {
+		if (lives <= 0) {
+			loop.stop();
+			thestage.setScene(deathScene);
+			lives = 3;
 		}
 	}
 
@@ -1011,5 +1015,26 @@ public class Platformer extends Application implements Images {
 		} else if (cur == 8){
 			
 		} 
+	}
+	
+	// Reset game
+	public void reset() {
+		
+		gameRoot.getChildren().remove(hero.getImageView());
+		gameRoot.getChildren().remove(rectangle);
+		xOffset = 0;	
+		m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
+		load();
+		hero.setX(300);
+		hero.setY(300);
+		hero.setHBX(300);
+		hero.setHBY(300);
+		hero.getImageView().setX(300);
+		hero.getImageView().setY(300);
+		rectangle.setX(300);
+		rectangle.setY(300);
+		farietteAdded = false;
+		gameRoot.getChildren().add(hero.getImageView());
+		gameRoot.getChildren().add(rectangle);
 	}
 }
