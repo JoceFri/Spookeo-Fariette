@@ -55,14 +55,15 @@ public class Platformer extends Application implements Images {
 	boolean boxLeft = false;
 	boolean boxRight = false;
 	private Collision c;
+	int cur = 0;
 	
 
 	private Sounds bgNoise = new Sounds();
 	private Sounds jumpSound = new Sounds();
 
 	private Stage thestage;
-	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols, winScene;
-	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot, winRoot;
+	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols, winScene, nextLevel;
+	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot, winRoot, nextLevelroot;
 
 	private Player hero = new Player(300, 200, 65, 64, SPOOKEO_IDLE.getImageView(), 300, 200, 64, 64);
 	private Actor fairy = new Actor(1408, 512, 64, 64, new ImageView("Assets/Art/triforce.png"), 1408, 512, 64, 64);
@@ -123,7 +124,8 @@ public class Platformer extends Application implements Images {
 		bg.setFitWidth(WIDTH * 2);
 		bg.setX(-xOffset / 4);
 		// Load Map
-		m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
+		LevelBuilder();
+		//m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
 		gc.clearRect(0, 0, WIDTH, HEIGHT);
 
 		if (loadCount < 1) {
@@ -241,7 +243,11 @@ public class Platformer extends Application implements Images {
 		menuRoot.getChildren().add(startButton2());
 		menuRoot.getChildren().add(controlButton());
 		menuScene = new Scene(menuRoot, WIDTH, HEIGHT);
-
+		//next
+		nextLevelroot = new Pane();
+		nextLevelroot.getChildren().add(nextButton());
+		nextLevelroot.setBackground(new Background(menuBG));
+		nextLevel = new Scene(nextLevelroot, WIDTH, HEIGHT);
 		// ---------- Game ----------//
 
 		// in game menu
@@ -324,6 +330,7 @@ public class Platformer extends Application implements Images {
 				start(thestage);
 				thestage.setTitle("Spookeo's Journey Yo");
 				thestage.setScene(gameScene);
+				
 			}
 		});
 		return btn;
@@ -361,6 +368,32 @@ public class Platformer extends Application implements Images {
 			}
 		});
 		return btn;
+	}
+	private Button nextButton(){
+		Button btn = new Button("NEXT");
+			btn.setOnAction(new EventHandler<ActionEvent>(){
+
+				@Override
+				public void handle(ActionEvent event) {
+					cur++;
+					gameRoot.getChildren().remove(hero.getImageView());
+					gameRoot.getChildren().remove(rectangle);
+					gameRoot.getChildren().remove(fairy.getImageView());
+					farietteAdded = false;
+					xOffset = 0;
+					movingLeft = false;
+					movingRight = false;
+					movingUp = false;
+					start(thestage);
+					thestage.setScene(gameScene);
+					hero.setX(300);
+					hero.setHBX(300);
+					hero.getImageView().setX(300);
+					rectangle.setX(300);
+				}
+				
+			});
+			return btn;
 	}
 	private Button winMenuButton(){
 		Button btn = new Button("", MENU.getImageView());
@@ -950,8 +983,33 @@ public class Platformer extends Application implements Images {
 	}
 	public void winCheck(AnimationTimer loop) {
 		if(win.isColliding()) {
-			loop.stop();
-			thestage.setScene(winScene);
+			thestage.setScene(nextLevel);
+			//farietteAdded = false;
+			load();
+			if(cur == 3 || cur == 8){
+				gameLoop.stop();
+				thestage.setScene(winScene);
+			}
 		}
+	}
+	public void LevelBuilder(){
+		if(cur == 0){
+			m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
+		}
+		else if(cur == 1){
+			m.readIn(WIDTH, HEIGHT, "Assets/Json/map2.txt", xOffset);
+		} else if(cur == 2){
+			m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
+		} else if (cur == 3){
+			m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
+		} else if (cur == 5){
+			
+		} else if (cur == 6){
+			
+		} else if (cur == 7){
+			
+		} else if (cur == 8){
+			
+		} 
 	}
 }
