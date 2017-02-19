@@ -56,7 +56,6 @@ public class Platformer extends Application implements Images {
 	boolean boxRight = false;
 	private Collision c;
 	int cur = 0;
-	
 
 	private Sounds bgNoise = new Sounds();
 	private Sounds jumpSound = new Sounds();
@@ -125,25 +124,27 @@ public class Platformer extends Application implements Images {
 		bg.setX(-xOffset / 4);
 		// Load Map
 		LevelBuilder();
-		//m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
+		// m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
 		gc.clearRect(0, 0, WIDTH, HEIGHT);
 
 		mo = m.getMO();
-		
+
 		// Get nonmoveable objects
 		nmo = m.getNMO();
-		
+
 		for (int i = 0; i < mo.size(); i++) {
 			gc.drawImage(mo.get(i).getImageView().getImage(), mo.get(i).getX() - xOffset, mo.get(i).getY());
-		//	gc.drawImage(mo.get(i).getImageView().getImage(), mo.get(i).getHBX() - xOffset, mo.get(i).getHBY());
-		//	gc.fillRect(mo.get(i).getHBX(), mo.get(i).getHBY(), mo.get(i).getHBWidth(), mo.get(i).getHBHeight());
-		
+			// gc.drawImage(mo.get(i).getImageView().getImage(),
+			// mo.get(i).getHBX() - xOffset, mo.get(i).getHBY());
+			// gc.fillRect(mo.get(i).getHBX(), mo.get(i).getHBY(),
+			// mo.get(i).getHBWidth(), mo.get(i).getHBHeight());
+
 		}
 
 		for (int i = 0; i < nmo.size(); i++) {
 			gc.drawImage(nmo.get(i).getImageView().getImage(), nmo.get(i).getX(), nmo.get(i).getY());
 			// gc.fillRect(nmo.get(i).getHBX(), nmo.get(i).getHBY(),
-			 //nmo.get(i).getHBWidth(), nmo.get(i).getHBHeight());
+			// nmo.get(i).getHBWidth(), nmo.get(i).getHBHeight());
 		}
 
 		// Load title screen animation
@@ -160,31 +161,32 @@ public class Platformer extends Application implements Images {
 			public void handle(long now) {
 				resetCollision();
 				winCheck(gameLoop);
-				
+
 				collisionCheck();
-				
+
 				if (!top) {
 					gravity(rectangle, hero.getImageView());
 				}
-				if(top){
-					//cooldown = 120;
+				if (top) {
+					jumping = false;
+					cooldown = 120;
 				}
-				if(movingRight && !left){
+				if (movingRight && !left) {
 					moveRight(rectangle, hero.getImageView());
-				} 
-				if(movingLeft && !right){
+				}
+				if (movingLeft && !right) {
 					moveLeft(rectangle, hero.getImageView());
 				}
-				if(movingUp){
+				if (movingUp) {
 					jump(rectangle, hero.getImageView());
 				}
-				if(xOffset>4600 && !farietteAdded){
+				if (xOffset > 4600 && !farietteAdded) {
 					gameRoot.getChildren().add(fairy.getImageView());
 					farietteAdded = true;
 				}
 				cooldown++;
-				//System.out.println(cooldown);
-				
+			//	System.out.println(cooldown);
+
 			}
 
 		};
@@ -207,15 +209,15 @@ public class Platformer extends Application implements Images {
 		Canvas winCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext wc = winCanvas.getGraphicsContext2D();
 		wc.drawImage(winScreen, 0, 0);
-		
+
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
-		//mc.drawImage(controls, 0, 100);
+		// mc.drawImage(controls, 0, 100);
 
 		Canvas iGMCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext igmc = iGMCanvas.getGraphicsContext2D();
-		//igmc.drawImage(controls, 0, 100);
+		// igmc.drawImage(controls, 0, 100);
 
 		Canvas controlCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext cc = controlCanvas.getGraphicsContext2D();
@@ -247,7 +249,7 @@ public class Platformer extends Application implements Images {
 		menuRoot.getChildren().add(startButton2());
 		menuRoot.getChildren().add(controlButton());
 		menuScene = new Scene(menuRoot, WIDTH, HEIGHT);
-		//next
+		// next
 		nextLevelroot = new Pane();
 		nextLevelroot.getChildren().add(nextButton());
 		nextLevelroot.setBackground(new Background(menuBG));
@@ -280,7 +282,7 @@ public class Platformer extends Application implements Images {
 		gameRoot.getChildren().add(rectangle);
 		gameRoot.getChildren().add(igMenuButton());
 		gameRoot.getChildren().add(hero.getImageView());
-		//gameRoot.getChildren().add(SPOOKEO_PUSH.getImageView());
+		// gameRoot.getChildren().add(SPOOKEO_PUSH.getImageView());
 		gameScene = new Scene(gameRoot, WIDTH, HEIGHT);
 
 		c = new Collision(hero, box);
@@ -334,11 +336,12 @@ public class Platformer extends Application implements Images {
 				start(thestage);
 				thestage.setTitle("Spookeo's Journey Yo");
 				thestage.setScene(gameScene);
-				
+
 			}
 		});
 		return btn;
 	}
+
 	private Button startButton2() {
 		Button btn = new Button("", START.getImageView());
 		btn.setBackground(new Background(transparent));
@@ -373,33 +376,35 @@ public class Platformer extends Application implements Images {
 		});
 		return btn;
 	}
-	private Button nextButton(){
-		Button btn = new Button("NEXT");
-			btn.setOnAction(new EventHandler<ActionEvent>(){
 
-				@Override
-				public void handle(ActionEvent event) {
-					cur++;
-					gameRoot.getChildren().remove(hero.getImageView());
-					gameRoot.getChildren().remove(rectangle);
-					gameRoot.getChildren().remove(fairy.getImageView());
-					farietteAdded = false;
-					xOffset = 0;
-					movingLeft = false;
-					movingRight = false;
-					movingUp = false;
-					start(thestage);
-					thestage.setScene(gameScene);
-					hero.setX(300);
-					hero.setHBX(300);
-					hero.getImageView().setX(300);
-					rectangle.setX(300);
-				}
-				
-			});
-			return btn;
+	private Button nextButton() {
+		Button btn = new Button("NEXT");
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				cur++;
+				gameRoot.getChildren().remove(hero.getImageView());
+				gameRoot.getChildren().remove(rectangle);
+				gameRoot.getChildren().remove(fairy.getImageView());
+				farietteAdded = false;
+				xOffset = 0;
+				movingLeft = false;
+				movingRight = false;
+				movingUp = false;
+				start(thestage);
+				thestage.setScene(gameScene);
+				hero.setX(300);
+				hero.setHBX(300);
+				hero.getImageView().setX(300);
+				rectangle.setX(300);
+			}
+
+		});
+		return btn;
 	}
-	private Button winMenuButton(){
+
+	private Button winMenuButton() {
 		Button btn = new Button("", MENU.getImageView());
 		btn.setBackground(new Background(transparent));
 		btn.relocate((WIDTH / 2) - 94, 575);
@@ -453,6 +458,7 @@ public class Platformer extends Application implements Images {
 		});
 		return btn;
 	}
+
 	private Button resetButton() {
 		Button btn = new Button("", RESET.getImageView());
 		btn.setBackground(new Background(transparent));
@@ -480,9 +486,9 @@ public class Platformer extends Application implements Images {
 				gameRoot.getChildren().remove(hero.getImageView());
 				gameRoot.getChildren().remove(rectangle);
 				xOffset = 0;
-				
+
 				m = new MapLoader();
-				
+
 				hero.setX(300);
 				hero.setHBX(300);
 				hero.getImageView().setX(300);
@@ -491,13 +497,12 @@ public class Platformer extends Application implements Images {
 				gameRoot.getChildren().add(hero.getImageView());
 				gameRoot.getChildren().add(rectangle);
 
-				
-				//mo.remove(1);
-				//mo = m.getMO();
+				// mo.remove(1);
+				// mo = m.getMO();
 				for (int i = 0; i < mo.size(); i++) {
 					gc.drawImage(mo.get(i).getImageView().getImage(), mo.get(i).getX() - xOffset, mo.get(i).getY());
 				}
-				//System.out.println(m.getMO());
+				// System.out.println(m.getMO());
 				loadCount = 0;
 				thestage.hide();
 				load();
@@ -507,7 +512,6 @@ public class Platformer extends Application implements Images {
 		});
 		return btn;
 	}
-
 
 	// creates button to reach controls screen
 	private Button controlButton() {
@@ -631,10 +635,9 @@ public class Platformer extends Application implements Images {
 			// sets button to false and creates a rectangle that appears after
 			@Override
 			public void handle(ActionEvent event) {
-				//menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
+				// menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
 				thestage.setTitle("Spookeo and Fariette");
 				thestage.setScene(menuScene);
-			
 
 			}
 		});
@@ -666,29 +669,28 @@ public class Platformer extends Application implements Images {
 			// sets button to false and creates a rectangle that appears after
 			@Override
 			public void handle(ActionEvent event) {
-				//menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
+				// menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
 				thestage.setTitle("Spookeo and Fariette");
 				thestage.setScene(menuScene);
-			
 
 			}
 		});
 		return btn;
 	}
 
-	
-	 private Button igMenuButton2(){
-	 Button btn = new Button("Go back");
-	 btn.relocate(550, 500);
-	 btn.setOnAction(new EventHandler<ActionEvent>(){
-	
-	 @Override
-	 public void handle(ActionEvent event) {
-	 thestage.setScene(igmenu);
-	 }
-	 });
-	 return btn;
-	 }
+	private Button igMenuButton2() {
+		Button btn = new Button("Go back");
+		btn.relocate(550, 500);
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				thestage.setScene(igmenu);
+			}
+		});
+		return btn;
+	}
+
 	private Button resumeButton() {
 		Button btn = new Button("", RESUME.getImageView());
 		btn.setBackground(new Background(transparent));
@@ -737,37 +739,42 @@ public class Platformer extends Application implements Images {
 	// jump
 	double jumpmax = 0;
 	boolean canJump = false;
+	boolean jumping = false;
 	boolean lefty = false;
 	boolean righty = false;
 
 	private void jump(final Rectangle rectangle, final ImageView image) {
-		if (jumpPress) {
-
-			if (cooldown >= 120) {
+		//if (jumpPress) {
+		System.out.println(jumping);
+			if (cooldown >= 120) { //Stop the jump
 				jumpSound.run();
 				jumpmax = rectangle.getY() - 185;
-				canJump = true;
+				if (top) {
+					canJump = true;
+					jumping = false;
+				}
 			}
 			
-			if (canJump) {
-				if (rectangle.getY() <= jumpmax || bottom) {
-					canJump = false;
-					jumpPress = false;
-				}
-				if (canJump) {
-					//jumping = true;
-					
-
-					if (rectangle.getY() >= jumpmax) {
-						rectangle.setY(rectangle.getY() - acceleration*4);
-						hero.setHBY(rectangle.getY());
-					}
-				
-				}
+			if (canJump) { //First frame of Jump
 				cooldown = 0;
+				canJump = false;
+				jumping = true;
 			}
 
-		}
+			if (jumping) { //Every other frame of jump
+				if (rectangle.getY() <= jumpmax || bottom) {
+					//jumpPress = false;
+					jumping = false;
+				}
+
+				if (rectangle.getY() >= jumpmax) {
+					//jumping = true;
+					rectangle.setY(rectangle.getY() - acceleration * 4);
+					hero.setHBY(rectangle.getY());
+				}
+			}
+
+		//}
 	}
 
 	// Reset collision variables
@@ -776,7 +783,7 @@ public class Platformer extends Application implements Images {
 		top = false;
 		left = false;
 		right = false;
-		
+
 	}
 
 	// Checks for collision with all objects
@@ -822,28 +829,25 @@ public class Platformer extends Application implements Images {
 			if (c.right()) {
 				right = true;
 			}
-			
-			if(em instanceof Box && (left || right)){
+
+			if (em instanceof Box && (left || right)) {
 				for (Nonmoveable nm : nmo) {
 					Collision c2 = new Collision(em, nm);
-					if(c2.left()){
+					c2.isColliding();
+					if (c2.left()) {
 						boxLeft = true;
 					}
-					if(c2.right()){
+					if (c2.right()) {
 						boxRight = true;
 					}
-					
+
 				}
-				if(!boxLeft && !boxRight){
+				System.out.println(boxLeft);
+				if (!boxLeft && !boxRight) {
 					c.moveObject();
 				}
 			}
-			//System.out.println(c.isColliding());
-
-
-				
-
-				
+			// System.out.println(c.isColliding());
 
 			if (em instanceof Rock && c.isColliding()) {
 				if (c.right()) {
@@ -861,10 +865,9 @@ public class Platformer extends Application implements Images {
 
 	}
 
-
 	// makes shape move....
 	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, final ImageView image) {
-		scene.setOnKeyPressed( new EventHandler<KeyEvent>() {
+		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 
 			@Override
 			public void handle(KeyEvent event) {
@@ -875,15 +878,16 @@ public class Platformer extends Application implements Images {
 						movingRight = true;
 						// Check for right scrolling
 						scrollCheckRight(hero.getHBX());
-						//moveRight(rectangle, image, righty);
-						
+						// moveRight(rectangle, image, righty);
 
 					}
 				}
 
 				if (event.getCode().equals(KeyCode.W) || event.getCode().equals(KeyCode.UP)) {
+					if(!jumping){
 					jumpPress = true;
 					movingUp = true;
+					}
 
 				}
 
@@ -893,28 +897,31 @@ public class Platformer extends Application implements Images {
 						movingLeft = true;
 						// Check for left scrolling
 						scrollCheckLeft(hero.getHBX());
-						//moveLeft(rectangle, image, lefty);
+						// moveLeft(rectangle, image, lefty);
 
 					}
 				}
 
 			}
 		});
-		scene.setOnKeyReleased(new EventHandler<KeyEvent>(){
+		scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
 
 			@Override
 			public void handle(KeyEvent event) {
-				if(event.getCode().equals(KeyCode.D) || event.getCode().equals(KeyCode.RIGHT)){
+				if (event.getCode().equals(KeyCode.D) || event.getCode().equals(KeyCode.RIGHT)) {
 					movingRight = false;
 				}
-				if(event.getCode().equals(KeyCode.A) || event.getCode().equals(KeyCode.LEFT)){
+				if (event.getCode().equals(KeyCode.A) || event.getCode().equals(KeyCode.LEFT)) {
 					movingLeft = false;
 				}
-				if(event.getCode().equals(KeyCode.W) || event.getCode().equals(KeyCode.UP)){
-					movingUp = false;
+				if (event.getCode().equals(KeyCode.W) || event.getCode().equals(KeyCode.UP)) {
+					if (movingUp) {
+						movingUp = false;
+						jumpPress = false;
+					}
 				}
 			}
-			
+
 		});
 
 	}
@@ -924,11 +931,11 @@ public class Platformer extends Application implements Images {
 
 		if (x <= (0.2 * WIDTH) && xOffset - acceleration > 0) {
 			xOffset = xOffset - acceleration;
-			//hero.setHBX(0.2 * WIDTH);
-			//rectangle.setX(hero.getHBX());
-			//hero.getImageView().setX(hero.getHBX());
-			//hero.setX(hero.getHBX());
-			
+			// hero.setHBX(0.2 * WIDTH);
+			// rectangle.setX(hero.getHBX());
+			// hero.getImageView().setX(hero.getHBX());
+			// hero.setX(hero.getHBX());
+
 			lefty = false;
 			load();
 			thestage.setScene(gameScene);
@@ -940,12 +947,12 @@ public class Platformer extends Application implements Images {
 	public void scrollCheckRight(double x) {
 
 		if (x >= (0.6 * WIDTH) && xOffset + acceleration < (0.76 * TOTALWIDTH)) {
-			
+
 			xOffset = xOffset + acceleration;
-			//hero.setHBX(0.6 * WIDTH);
-			//rectangle.setX(hero.getHBX());
-			//hero.getImageView().setX(hero.getHBX());
-			//hero.setX(hero.getHBX());
+			// hero.setHBX(0.6 * WIDTH);
+			// rectangle.setX(hero.getHBX());
+			// hero.getImageView().setX(hero.getHBX());
+			// hero.setX(hero.getHBX());
 			righty = false;
 			load();
 			thestage.setScene(gameScene);
@@ -957,28 +964,26 @@ public class Platformer extends Application implements Images {
 	}
 
 	private void moveRight(Rectangle rectangle, ImageView image) {
-			if(hero.getHBX() > 0.8*WIDTH && xOffset + acceleration < (0.76 *TOTALWIDTH)){
-				xOffset = xOffset + acceleration;
-				//System.out.println(xOffset + " " + acceleration);
-				load();
-			}
-			else {
-				if (!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)) {
+		if (hero.getHBX() > 0.8 * WIDTH && xOffset + acceleration < (0.76 * TOTALWIDTH)) {
+			xOffset = xOffset + acceleration;
+			// System.out.println(xOffset + " " + acceleration);
+			load();
+		} else {
+			if (!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)) {
 				rectangle.setX(rectangle.getX() + acceleration);
-				//System.out.println(rectangle.getX() + " " + acceleration);
+				// System.out.println(rectangle.getX() + " " + acceleration);
 				image.setX(rectangle.getX());
 				hero.setHBX(rectangle.getX());
-		}
 			}
+		}
 	}
 
 	private void moveLeft(Rectangle rectangle, ImageView image) {
-		if(hero.getHBX() < 0.2*WIDTH && xOffset - acceleration > 0){
+		if (hero.getHBX() < 0.2 * WIDTH && xOffset - acceleration > 0) {
 			xOffset = xOffset - acceleration;
-			//System.out.println(xOffset + " " + acceleration);
+			// System.out.println(xOffset + " " + acceleration);
 			load();
-		}
-		else{ 
+		} else {
 			if (!(rectangle.getX() - acceleration <= 0)) {
 				rectangle.setX(rectangle.getX() - acceleration);
 
@@ -987,36 +992,37 @@ public class Platformer extends Application implements Images {
 			}
 		}
 	}
+
 	public void winCheck(AnimationTimer loop) {
-		if(win.isColliding()) {
+		if (win.isColliding()) {
 			gameLoop.stop();
 			thestage.setScene(nextLevel);
-			//farietteAdded = false;
+			// farietteAdded = false;
 			load();
-			if(cur == 3 || cur == 8){
+			if (cur == 3 || cur == 8) {
 				gameLoop.stop();
 				thestage.setScene(winScene);
 			}
 		}
 	}
-	public void LevelBuilder(){
-		if(cur == 0){
+
+	public void LevelBuilder() {
+		if (cur == 0) {
 			m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
-		}
-		else if(cur == 1){
+		} else if (cur == 1) {
 			m.readIn(WIDTH, HEIGHT, "Assets/Json/map2.txt", xOffset);
-		} else if(cur == 2){
+		} else if (cur == 2) {
 			m.readIn(WIDTH, HEIGHT, "Assets/Json/map3.txt", xOffset);
-		} else if (cur == 3){
+		} else if (cur == 3) {
 			m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
-		} else if (cur == 5){
-			
-		} else if (cur == 6){
-			
-		} else if (cur == 7){
-			
-		} else if (cur == 8){
-			
-		} 
+		} else if (cur == 5) {
+
+		} else if (cur == 6) {
+
+		} else if (cur == 7) {
+
+		} else if (cur == 8) {
+
+		}
 	}
 }
