@@ -1,0 +1,15 @@
+*ROCK
+*
+sprite_sheet		:=rock.png;
+size_x			:=128;
+size_y			:=128;
+padding_x		:=0;
+padding_y		:=0;
+num_rows		:=3;
+action			:=UP;
+columns			:=1;
+action			:=FALLING;
+columns			:=7;
+action			:=DOWN;
+columns			:=1;
+END

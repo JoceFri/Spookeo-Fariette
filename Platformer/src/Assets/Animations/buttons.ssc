@@ -1,0 +1,26 @@
+*BUTTONS
+*
+*
+sprite_sheet	:=buttons.png;
+size_x          :=156;
+size_y          :=32;
+padding_x       :=0;
+padding_y       :=0;
+num_rows        :=8;
+action          :=CONTROLS;
+columns         :=2;
+action			:=MENU;
+columns			:=2;
+action			:=PLAY;
+columns			:=2;
+action			:=RESUME;
+columns			:=2;
+action			:=RESET;
+columns			:=2;
+action			:=LEVEL;
+columns			:=2;
+action			:=JOEY;
+columns			:=2;
+action			:=ALICIA;
+columns			:=2;
+END
