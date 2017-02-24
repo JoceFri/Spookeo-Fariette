@@ -1,4 +1,3 @@
-
 //imports
 import java.io.IOException;
 import java.net.URL;
@@ -86,7 +85,7 @@ public class Platformer extends Application implements Images {
 	ImageView bg = new ImageView("Assets/Art/BackGround.png");
 	Image winScreen = new Image("Assets/Art/endgame_pic.png");
 	Image controls = new Image("Assets/Art/controls_sheet2.png");
-	Image gameover = new Image("Assets/Art/gameover.png");
+	Image gameover = new Image("Assets/Art/game_over.png");
 	Image fariette = new Image("Assets/Animations/Fariette_IDLE.png");
 	Image spookeo = new Image("Assets/Art/Spookeo_IDLE.png");
 
@@ -164,7 +163,7 @@ public class Platformer extends Application implements Images {
 			public void handle(long now) {
 				resetCollision();
 				winCheck(gameLoop);
-
+				deathCheck(gameLoop);
 				collisionCheck();
 
 				if (!top) {
@@ -220,7 +219,8 @@ public class Platformer extends Application implements Images {
 
 		Canvas deathCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext dc = deathCanvas.getGraphicsContext2D();
-		dc.drawImage(gameover, 0, 100);
+		dc.drawImage(gameover, WIDTH / 2 - 250, HEIGHT / 2 - 250);
+		
 
 		Canvas iGMCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext igmc = iGMCanvas.getGraphicsContext2D();
@@ -243,6 +243,7 @@ public class Platformer extends Application implements Images {
 
 		// make death scene
 		deathRoot = new Pane();
+		deathRoot.setBackground(new Background(menuBG));
 		deathRoot.getChildren().add(deathCanvas);
 		deathRoot.getChildren().add(menuButton());
 		deathScene = new Scene(deathRoot, WIDTH, HEIGHT);
