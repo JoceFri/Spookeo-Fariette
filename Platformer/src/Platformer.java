@@ -78,9 +78,11 @@ public class Platformer extends Application implements Images {
 	BackgroundFill igMenuBG = new BackgroundFill(Color.BLACK, null, null);
 	BackgroundFill transparent = new BackgroundFill(null, null, null);
 
-	ArrayList<Nonmoveable> nmo = new ArrayList<Nonmoveable>();
-	ArrayList<Moveable> mo = new ArrayList<Moveable>();
 	MapLoader m = new MapLoader();
+	Moveable[][] mo = null;
+	Nonmoveable[][] nmo = null;
+	Canvas gameCanvas = null;
+	GraphicsContext gc = null;
 
 	ImageView bg = new ImageView("Assets/Art/BackGround.png");
 	Image winScreen = new Image("Assets/Art/endgame_pic.png");
@@ -92,8 +94,6 @@ public class Platformer extends Application implements Images {
 	AnimationTimer gameLoop;
 	URL url = getClass().getResource("Assets/Json/characters.json");
 
-	Canvas gameCanvas = new Canvas(WIDTH, HEIGHT);
-	GraphicsContext gc = gameCanvas.getGraphicsContext2D();
 	Collision win = new Collision(hero, fairy);
 
 	public Platformer() throws IOException {
@@ -110,6 +110,12 @@ public class Platformer extends Application implements Images {
 	@Override
 	public void start(Stage primaryStage) {
 		thestage = primaryStage;
+		m.readIn("Assets/Json/map2.txt");
+		mo = m.getMO();
+		nmo = m.getNMO();
+		
+		gameCanvas = new Canvas(m.getWidth(), m.getHeight());
+		gc = gameCanvas.getGraphicsContext2D();
 		load();
 
 		// make backgrounds
@@ -124,36 +130,29 @@ public class Platformer extends Application implements Images {
 
 	private void load() {
 		bg.setFitHeight(HEIGHT);
-		bg.setFitWidth(WIDTH * 2);
-		bg.setX(-xOffset / 4);
+		bg.setFitWidth(WIDTH *);
+		
 		// Load Map
 		LevelBuilder();
-		//m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
-		gc.clearRect(0, 0, WIDTH, HEIGHT);
 
-		if (loadCount < 1) {
-			// Get moveable objects
-			mo = m.getMO();
-		}
-
-		// Get nonmoveable objects
-		nmo = m.getNMO();
-
-		for (int i = 0; i < mo.size(); i++) {
-			gc.drawImage(mo.get(i).getImageView().getImage(), mo.get(i).getX() - xOffset, mo.get(i).getY());
-		}
-
-		for (int i = 0; i < nmo.size(); i++) {
-			gc.drawImage(nmo.get(i).getImageView().getImage(), nmo.get(i).getX(), nmo.get(i).getY());
-			// gc.fillRect(nmo.get(i).getHBX(), nmo.get(i).getHBY(),
-			// nmo.get(i).getHBWidth(), nmo.get(i).getHBHeight());
-		}
-
-		// Load title screen animation
-		// System.out.println("WIDTH/2 = " + WIDTH/2);
 		TITLE_SCREEN.getImageView().setX((WIDTH / 2) - 170);
 		TITLE_SCREEN.getImageView().setY(100);
 
+	for (int i = 0; i < nmo.length; i++) {
+			for(int j = 0; j < nmo[i].length; j++) {
+				if (nmo[i][j] != null) {
+					gc.drawImage(nmo[i][j].getImageView().getImage(), nmo[i][j].getX(), nmo[i][j].getY());
+				}
+			}
+		}
+		for (int i = 0; i < mo.length; i++) {
+			for(int j = 0; j < mo[i].length; j++) {
+				if (mo[i][j] != null) {
+					gc.drawImage(mo[i][j].getImageView().getImage(), mo[i][j].getX(), mo[i][j].getY());
+				}	
+			}		
+		}
+	}		
 	}
 
 	private void animation() {
@@ -165,6 +164,7 @@ public class Platformer extends Application implements Images {
 				winCheck(gameLoop);
 				deathCheck(gameLoop);
 				collisionCheck();
+				cameraScroll(xOffset, 0);
 
 				if (!top) {
 					gravity(rectangle, hero.getImageView());
@@ -999,13 +999,13 @@ public class Platformer extends Application implements Images {
 
 		if (x <= (0.2 * WIDTH) && xOffset - acceleration > 0) {
 			xOffset = xOffset - acceleration;
+			hero.setAbsX(hero.getAbsX() - acceleration);	
 			//hero.setHBX(0.2 * WIDTH);
 			//rectangle.setX(hero.getHBX());
 			//hero.getImageView().setX(hero.getHBX());
 			//hero.setX(hero.getHBX());
 
 			lefty = false;
-			load();
 			thestage.setScene(gameScene);
 		} else {
 			lefty = true;
@@ -1017,12 +1017,12 @@ public class Platformer extends Application implements Images {
 		if (x >= (0.6 * WIDTH) && xOffset + acceleration < (0.76 * TOTALWIDTH)) {
 
 			xOffset = xOffset + acceleration;
+			hero.setAbsX(hero.getAbsX() + acceleration);	
 			//hero.setHBX(0.6 * WIDTH);
 			//rectangle.setX(hero.getHBX());
 			//hero.getImageView().setX(hero.getHBX());
 			//hero.setX(hero.getHBX());
 			righty = false;
-			load();
 			thestage.setScene(gameScene);
 		}
 
@@ -1034,13 +1034,13 @@ public class Platformer extends Application implements Images {
 	private void moveRight(Rectangle rectangle, ImageView image) {
 		if(hero.getHBX() > 0.8*WIDTH && xOffset + acceleration < (0.76 *TOTALWIDTH)){
 			xOffset = xOffset + acceleration;
+			hero.setAbsX(hero.getAbsX() + acceleration);	
 			//System.out.println(xOffset + " " + acceleration);
-			load();
 		}
 		else {
 			if (!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)) {
 				rectangle.setX(rectangle.getX() + acceleration);
-				//System.out.println(rectangle.getX() + " " + acceleration);
+				hero.setAbsX(hero.getAbsX() + acceleration);	
 				image.setX(rectangle.getX());
 				hero.setHBX(rectangle.getX());
 			}
@@ -1050,13 +1050,12 @@ public class Platformer extends Application implements Images {
 	private void moveLeft(Rectangle rectangle, ImageView image) {
 		if(hero.getHBX() < 0.2*WIDTH && xOffset - acceleration > 0){
 			xOffset = xOffset - acceleration;
-			//System.out.println(xOffset + " " + acceleration);
-			load();
+			hero.setAbsX(hero.getAbsX() - acceleration);	
 		}
 		else{ 
 			if (!(rectangle.getX() - acceleration <= 0)) {
 				rectangle.setX(rectangle.getX() - acceleration);
-
+				hero.setAbsX(hero.getAbsX() - acceleration);	
 				image.setX(rectangle.getX());
 				hero.setHBX(rectangle.getX());
 			}
@@ -1067,7 +1066,6 @@ public class Platformer extends Application implements Images {
 			gameLoop.stop();
 			thestage.setScene(nextLevel);
 			//farietteAdded = false;
-			load();
 			if(cur == 3 || cur == 8){
 				gameLoop.stop();
 				thestage.setScene(winScene);
