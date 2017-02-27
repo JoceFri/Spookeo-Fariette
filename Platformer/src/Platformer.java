@@ -130,7 +130,7 @@ public class Platformer extends Application implements Images {
 
 	private void load() {
 		bg.setFitHeight(HEIGHT);
-		bg.setFitWidth(WIDTH *);
+		bg.setFitWidth(WIDTH);
 		
 		// Load Map
 		LevelBuilder();
@@ -153,8 +153,9 @@ public class Platformer extends Application implements Images {
 			}		
 		}
 	}		
+	private void cameraScroll(double xOffset, double yOffset) {
+		gameCanvas.setTranslateX(-xOffset);
 	}
-
 	private void animation() {
 		gameLoop = new AnimationTimer() {
 
@@ -1074,16 +1075,16 @@ public class Platformer extends Application implements Images {
 	}
 	public void LevelBuilder(){
 		if(cur == 0){
-			m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
+			m.readIn("Assets/Json/map.txt");
 		}
 		else if(cur == 1){
-			m.readIn(WIDTH, HEIGHT, "Assets/Json/map2.txt", xOffset);
+			m.readIn("Assets/Json/map2.txt");
 		} else if(cur == 2){
-			m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
+			m.readIn("Assets/Json/map.txt");
 		} else if (cur == 3){
-			m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
+			m.readIn("Assets/Json/map.txt");
 		} else if (cur == 5){
-			m.readIn(WIDTH, HEIGHT, "Assets/Json/map4.txt", xOffset);
+			m.readIn("Assets/Json/map4.txt");
 		} else if (cur == 6){
 
 		} else if (cur == 7){
@@ -1099,7 +1100,7 @@ public class Platformer extends Application implements Images {
 		gameRoot.getChildren().remove(hero.getImageView());
 		gameRoot.getChildren().remove(rectangle);
 		xOffset = 0;	
-		m.readIn(WIDTH, HEIGHT, "Assets/Json/map.txt", xOffset);
+		m.readIn("Assets/Json/map.txt");
 		movingUp = false;
 		movingRight = false;
 		movingLeft = false;
@@ -1122,7 +1123,7 @@ public class Platformer extends Application implements Images {
 		gameRoot.getChildren().remove(hero.getImageView());
 		gameRoot.getChildren().remove(rectangle);
 		xOffset = 0;	
-		m.readIn(WIDTH, HEIGHT, "Assets/Json/map4.txt", xOffset);
+		m.readIn("Assets/Json/map4.txt");
 		movingUp = false;
 		movingRight = false;
 		movingLeft = false;
