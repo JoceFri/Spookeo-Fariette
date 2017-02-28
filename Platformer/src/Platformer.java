@@ -1015,7 +1015,7 @@ public class Platformer extends Application implements Images {
 
 	public void scrollCheckRight(double x) {
 
-		if (x >= (0.6 * WIDTH) && xOffset + acceleration < (0.76 * TOTALWIDTH)) {
+		if (x >= (0.6 * WIDTH) && xOffset + acceleration < (0.76 * m.getWidth())) {
 
 			xOffset = xOffset + acceleration;
 			hero.setAbsX(hero.getAbsX() + acceleration);	
@@ -1033,7 +1033,7 @@ public class Platformer extends Application implements Images {
 	}
 
 	private void moveRight(Rectangle rectangle, ImageView image) {
-		if(hero.getHBX() > 0.8*WIDTH && xOffset + acceleration < (0.76 *TOTALWIDTH)){
+		if(hero.getHBX() > 0.8*WIDTH && xOffset + acceleration < (0.76 * m.getWidth())){
 			xOffset = xOffset + acceleration;
 			hero.setAbsX(hero.getAbsX() + acceleration);	
 			//System.out.println(xOffset + " " + acceleration);
