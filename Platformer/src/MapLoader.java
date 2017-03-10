@@ -13,7 +13,6 @@ public class MapLoader {
 	int count = 0;
 
 	// load all ImageViews once
-	// load all ImageViews once
 	// grass
 	ImageView dirt1 = new ImageView("Assets/Art/2side_ground.png");
 	ImageView dirt2 = new ImageView("Assets/Art/leftedge_ground.png");
@@ -44,12 +43,14 @@ public class MapLoader {
 	// movable stuff
 	ImageView box = new ImageView("Assets/Art/pushable_box.png");
 	ImageView rock = new ImageView("Assets/Art/skinny rock.png");
-	// ImageView flower = new ImageView("Assets/Art/tippableflower.png");
+	ImageView flower = new ImageView("Assets/Art/tippableflower (1).png");
+	ImageView winner = new ImageView("Assets/Art/triforce.png");
 
 	Nonmoveable[][] nmo = null;
 	Moveable[][] mo = null;
 	int width = 0;
 	int height = 0;
+	winBox win = null;
 
 	public void readIn(String path) {
 
@@ -75,17 +76,17 @@ public class MapLoader {
 					// MEADOWS--------------------------------------------------------------//
 					// ground block
 					if (line[i] == 'a') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt1, i * 64, j * 64, 62, 42);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt1, i * 64, j * 64 + 30, 62, 42);
 					}
 
 					// ground left edge
 					else if (line[i] == 'b') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt2, i * 64, j * 64, 32, 42);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt2, i * 64 + 32, j * 64 + 30, 32, 42);
 					}
 
 					// ground right edge
 					else if (line[i] == 'c') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt3, i * 64, j * 64, 36, 42);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt3, i * 64, j * 64 + 30, 36, 42);
 					}
 
 					// dirt block
@@ -95,7 +96,7 @@ public class MapLoader {
 
 					// dirt left edge
 					else if (line[i] == 'e') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt5, i * 64, j * 64, 32, 42);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt5, i * 64 + 32, j * 64, 32, 42);
 					}
 
 					// dirt right edge
@@ -105,18 +106,18 @@ public class MapLoader {
 
 					// left corner
 					else if (line[i] == 'g') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt7, i * 64, j * 64, 62, 32);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt7, i * 64, j * 64 + 32, 32, 32);
 					}
 
 					// right corner
 					else if (line[i] == 'h') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt8, i * 64, j * 64, 62, 32);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt8, i * 64 + 32, j * 64 + 32, 32, 32);
 					}
 
 					// ------------------------------------TRANSITIONS---------------------------------------------------------------//
 					// transition top
 					else if (line[i] == 'i') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt9, i * 64, j * 64, 62, 42);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt9, i * 64, j * 64 + 30, 62, 42);
 					}
 
 					// transition dirt
@@ -125,12 +126,12 @@ public class MapLoader {
 					}
 
 					else if (line[i] == 'k') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt11, i * 64, j * 64, 62, 32);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt11, i * 64, j * 64 + 30, 62, 42);
 					}
 
 					// transition dirt
 					else if (line[i] == 'l') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt12, i * 64, j * 64, 62, 42);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt12, i * 64, j * 64, 62, 62);
 					}
 
 					// ------------------------------------SPOOKY
@@ -138,27 +139,27 @@ public class MapLoader {
 
 					// ground block spooky
 					else if (line[i] == 'm') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt13, i * 64, j * 64, 62, 42);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt13, i * 64, j * 64 + 30, 62, 42);
 					}
 
 					// ground left edge spooky
 					else if (line[i] == 'n') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt14, i * 64, j * 64, 62, 42);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt14, i * 64 + 32, j * 64 + 30, 32, 42);
 					}
 
 					// ground right edge spooky
 					else if (line[i] == 'p') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt15, i * 64, j * 64, 62, 42);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt15, i * 64, j * 64 + 30, 36, 42);
 					}
 
 					// dirt block spooky
 					else if (line[i] == 'q') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt16, i * 64, j * 64, 62, 32);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt16, i * 64, j * 64, 62, 62);
 					}
 
 					// dirt left edge spooky
 					else if (line[i] == 'r') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt17, i * 64, j * 64, 32, 62);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt17, i * 64 + 32, j * 64, 32, 42);
 					}
 
 					// dirt right edge spooky
@@ -168,16 +169,21 @@ public class MapLoader {
 
 					// left corner spooky
 					else if (line[i] == 't') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt19, i * 64, j * 64, 62, 32);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt19, i * 64, j * 64 + 32, 32, 32);
 					}
 
 					// right corner spooky
 					else if (line[i] == 'u') {
-						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt20, i * 64, j * 64, 62, 32);
+						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt20, i * 64, j * 64 + 32, 32, 32);
+					}
+					// winBox
+					else if (line[i] == 'w') {
+						System.out.println("added" + " " + i + " " + j);
+						nmo[i][j] = new winBox(i * 64, j * 64, 64, 64, winner, i * 64, j * 64, 64, 64);
 					}
 					// box
 					else if (line[i] == 'x') {
-						mo[i][j] = new Box(i * 64, j * 64, 64, 64, box, i * 64, j * 64, 62, 62);
+						mo[i][j] = new Box(i * 64, j * 64 + 32, 64, 64, box, i * 64, j * 64 + 32, 62, 62);
 					}
 
 					// rock
@@ -187,7 +193,7 @@ public class MapLoader {
 
 					// flower
 					else if (line[i] == 'z') {
-						mo[i][j] = new Flower(i * 64, j * 64, 64, 64, dirt20, i * 64, j * 64, 64, 192);
+						mo[i][j] = new Flower(i * 64, j * 64, 64, 64, flower, i * 64, j * 64, 64, 192);
 					} else {
 					}
 
