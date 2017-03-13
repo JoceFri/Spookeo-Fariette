@@ -1,3 +1,4 @@
+
 //imports
 import java.io.IOException;
 import java.net.URL;
@@ -71,7 +72,6 @@ public class Platformer extends Application implements Images {
 			characterRoot;
 
 	private Player hero = new Player(300, 200, 65, 64, new ImageView("Assets/Art/triforce.png"), 300, 200, 64, 64);
-	private Actor fairy = new Actor(1408, 512, 64, 64, new ImageView("Assets/Art/triforce.png"), 1408, 512, 64, 64);
 	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new ImageView("Assets/Art/pushable_box.png"), 500,
 			HEIGHT - 100, 100, 100);
 	final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
@@ -104,8 +104,6 @@ public class Platformer extends Application implements Images {
 	AnimationTimer gameLoop;
 	URL url = getClass().getResource("Assets/Json/characters.json");
 
-	Collision win = new Collision(hero, fairy);
-
 	Animator heroAnimation = new Animator("src/Assets/Animations/fariette.png", "src/Assets/Animations/fariette.ssc");;
 	FrameSetter heroFrame = new FrameSetter(9);
 
@@ -132,9 +130,6 @@ public class Platformer extends Application implements Images {
 	@Override
 	public void start(Stage primaryStage) {
 		thestage = primaryStage;
-		m.readIn("Assets/Json/map2.txt");
-		mo = m.getMO();
-		nmo = m.getNMO();
 
 		gameCanvas = new Canvas(m.getWidth(), m.getHeight());
 		gc = gameCanvas.getGraphicsContext2D();
@@ -147,7 +142,6 @@ public class Platformer extends Application implements Images {
 
 		farietteSelect.startActionAnimation("IDLE");
 		farietteImage.getImageView().setImage(farietteFrame.getFrame(farietteSelect, "IDLE"));
-
 		load();
 
 		// make backgrounds
@@ -166,6 +160,8 @@ public class Platformer extends Application implements Images {
 
 		// Load Map
 		LevelBuilder();
+		mo = m.getMO();
+		nmo = m.getNMO();
 
 		TITLE_SCREEN.getImageView().setX((WIDTH / 2) - 170);
 		TITLE_SCREEN.getImageView().setY(100);
@@ -191,7 +187,7 @@ public class Platformer extends Application implements Images {
 
 			@Override
 			public void handle(long now) {
-
+				System.out.println(hero.getAbsX() + " " + hero.getHBX());
 				if (gameState == 1) {
 					animations();
 					chc.clearRect(0, 0, WIDTH, HEIGHT);
@@ -204,7 +200,6 @@ public class Platformer extends Application implements Images {
 
 				if (gameState == 2) {
 					resetCollision();
-					winCheck(gameLoop);
 					deathCheck(gameLoop);
 					collisionCheck();
 					cameraScroll(xOffset, 0);
@@ -226,10 +221,6 @@ public class Platformer extends Application implements Images {
 					}
 					if (movingUp) {
 						jump(rectangle, hero.getImageView());
-					}
-					if (xOffset > 4600 && !farietteAdded) {
-						gameRoot.getChildren().add(fairy.getImageView());
-						farietteAdded = true;
 					}
 					cooldown++;
 				}
@@ -269,7 +260,7 @@ public class Platformer extends Application implements Images {
 			}
 		}
 	}
-	
+
 	private void sound() {
 		bgNoise.loadSound("Assets/Sound/Main_Theme.wav");
 		jumpSound.loadSound("Assets/Sound/jump1.wav");
@@ -525,20 +516,9 @@ public class Platformer extends Application implements Images {
 			@Override
 			public void handle(ActionEvent event) {
 				cur++;
-				gameRoot.getChildren().remove(hero.getImageView());
-				gameRoot.getChildren().remove(rectangle);
-				gameRoot.getChildren().remove(fairy.getImageView());
-				farietteAdded = false;
-				xOffset = 0;
-				movingLeft = false;
-				movingRight = false;
-				movingUp = false;
+				reset();
 				start(thestage);
 				thestage.setScene(gameScene);
-				hero.setX(300);
-				hero.setHBX(300);
-				hero.getImageView().setX(300);
-				rectangle.setX(300);
 
 			}
 
@@ -945,13 +925,13 @@ public class Platformer extends Application implements Images {
 								mo[i][j].setX(hero.getAbsX() + hero.getWidth() + 1);
 								mo[i][j].setHBX(mo[i][j].getX());
 								mo[i][j].getImageView().setX(mo[i][j].getX());
-								//System.out.println("LEFT HIT");
+								// System.out.println("LEFT HIT");
 							}
 							if (c.right()) {
 								mo[i][j].setX(hero.getAbsX() - mo[i][j].getWidth() - 1);
 								mo[i][j].setHBX(mo[i][j].getX());
 								mo[i][j].getImageView().setX(mo[i][j].getX());
-								//System.out.println("RIGHT HIT");
+								// System.out.println("RIGHT HIT");
 							}
 						}
 					}
@@ -1066,12 +1046,13 @@ public class Platformer extends Application implements Images {
 		if (hero.getHBX() > 0.8 * WIDTH && xOffset + acceleration < (0.76 * m.getWidth())) {
 			xOffset = xOffset + acceleration;
 			hero.setAbsX(hero.getAbsX() + acceleration);
+			hero.setHBX(hero.getAbsX());
 		} else {
 			if (!(rectangle.getX() + acceleration + rectangle.getWidth() >= WIDTH)) {
 				rectangle.setX(rectangle.getX() + acceleration);
 				hero.setAbsX(hero.getAbsX() + acceleration);
 				image.setX(rectangle.getX());
-				hero.setHBX(rectangle.getX());
+				hero.setHBX(hero.getAbsX());
 			}
 		}
 	}
@@ -1080,25 +1061,24 @@ public class Platformer extends Application implements Images {
 		if (hero.getHBX() < 0.2 * WIDTH && xOffset - acceleration > 0) {
 			xOffset = xOffset - acceleration;
 			hero.setAbsX(hero.getAbsX() - acceleration);
+			hero.setHBX(hero.getAbsX());
 		} else {
 			if (!(rectangle.getX() - acceleration <= 0)) {
 				rectangle.setX(rectangle.getX() - acceleration);
 				hero.setAbsX(hero.getAbsX() - acceleration);
 				image.setX(rectangle.getX());
-				hero.setHBX(rectangle.getX());
+				hero.setHBX(hero.getAbsX());
 			}
 		}
 	}
 
 	public void winCheck(AnimationTimer loop) {
-		if (win.isColliding()) {
+		gameLoop.stop();
+		thestage.setScene(nextLevel);
+		// farietteAdded = false;
+		if (cur == 3 || cur == 8) {
 			gameLoop.stop();
-			thestage.setScene(nextLevel);
-			// farietteAdded = false;
-			if (cur == 3 || cur == 8) {
-				gameLoop.stop();
-				thestage.setScene(winScene);
-			}
+			thestage.setScene(winScene);
 		}
 	}
 
@@ -1137,6 +1117,7 @@ public class Platformer extends Application implements Images {
 		hero.setY(300);
 		hero.setHBX(300);
 		hero.setHBY(300);
+		hero.setAbsX(300);
 		hero.getImageView().setX(300);
 		hero.getImageView().setY(300);
 		rectangle.setX(300);
@@ -1160,6 +1141,7 @@ public class Platformer extends Application implements Images {
 		hero.setY(300);
 		hero.setHBX(300);
 		hero.setHBY(300);
+		hero.setAbsX(300);
 		hero.getImageView().setX(300);
 		hero.getImageView().setY(300);
 		rectangle.setX(300);
