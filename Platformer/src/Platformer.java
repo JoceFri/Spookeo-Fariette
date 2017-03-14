@@ -1,11 +1,6 @@
 
 //imports
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-
-import com.sun.javafx.scene.control.skin.TitledPaneSkin;
-
 import DavidMohrhardt.animator.Animator;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -45,10 +40,8 @@ public class Platformer extends Application implements Images {
 	public static final double acceleration = 2.0;
 	private static final double gravity = 2.0;
 	private int cooldown = 120;
-	private int loadCount = 0;
 	private int lives = 3;
 	private int gameState = 0;
-	private boolean jumpPress = false;
 	private boolean bottom = false;
 	private boolean farietteAdded = false;
 	private boolean top = false;
@@ -61,13 +54,14 @@ public class Platformer extends Application implements Images {
 	boolean boxRight = false;
 	private Collision c;
 	int cur = 0;
+	private String keyCheck = "";
 
 	private Sounds bgNoise = new Sounds();
 	private Sounds jumpSound = new Sounds();
 
 	private Stage thestage;
 	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols, winScene, nextLevel, deathScene,
-			characterScene;;
+			characterScene;
 	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot, winRoot, nextLevelroot, deathRoot,
 			characterRoot;
 
@@ -91,9 +85,6 @@ public class Platformer extends Application implements Images {
 	Canvas charCanvas = new Canvas(WIDTH, HEIGHT);
 	GraphicsContext chc = charCanvas.getGraphicsContext2D();
 
-	private boolean isSpookeo = false;
-	private boolean isFariette = false;
-
 	ImageView bg = new ImageView("Assets/Art/BackGround.png");
 	Image winScreen = new Image("Assets/Art/endgame_pic.png");
 	Image controls = new Image("Assets/Art/controls_sheet2.png");
@@ -115,9 +106,6 @@ public class Platformer extends Application implements Images {
 			"src/Assets/Animations/Spookeo.ssc");
 	FrameSetter spookeoFrame = new FrameSetter(9);
 	Actor spookeoImage = new Actor(450, 252, 192, 192, new ImageView("Assets/Art/joey.png"), 450, 252, 192, 192);
-
-	public Platformer() throws IOException {
-	}
 
 	// --------------------------- Methods to run everything
 	// -----------------------------//
@@ -187,7 +175,7 @@ public class Platformer extends Application implements Images {
 
 			@Override
 			public void handle(long now) {
-				System.out.println(hero.getAbsX() + " " + hero.getHBX());
+
 				if (gameState == 1) {
 					animations();
 					chc.clearRect(0, 0, WIDTH, HEIGHT);
@@ -274,16 +262,14 @@ public class Platformer extends Application implements Images {
 
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
-		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
-		// mc.drawImage(controls, 0, 100);
+		menuCanvas.getGraphicsContext2D();
 
 		Canvas deathCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext dc = deathCanvas.getGraphicsContext2D();
 		dc.drawImage(gameover, WIDTH / 2 - 250, HEIGHT / 2 - 250);
 
 		Canvas iGMCanvas = new Canvas(WIDTH, HEIGHT);
-		GraphicsContext igmc = iGMCanvas.getGraphicsContext2D();
-		// igmc.drawImage(controls, 0, 100);
+		iGMCanvas.getGraphicsContext2D();
 
 		Canvas controlCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext cc = controlCanvas.getGraphicsContext2D();
@@ -519,7 +505,6 @@ public class Platformer extends Application implements Images {
 				reset();
 				start(thestage);
 				thestage.setScene(gameScene);
-
 			}
 
 		});
@@ -593,7 +578,6 @@ public class Platformer extends Application implements Images {
 
 				reset();
 				lives = 3;
-				loadCount = 0;
 				thestage.hide();
 				load();
 				start(thestage);
@@ -948,9 +932,13 @@ public class Platformer extends Application implements Images {
 			public void handle(KeyEvent event) {
 
 				if (event.getCode().equals(KeyCode.D) || event.getCode().equals(KeyCode.RIGHT)) {
-					heroAnimation.startActionAnimation("IDLE");
-					heroFrame.changeCount(9);
-					action = "IDLE";
+					if (!keyCheck.equals(event.getText())) {
+						heroAnimation.startActionAnimation("IDLE");
+						heroFrame.changeCount(9);
+						action = "IDLE";
+					}
+
+					keyCheck = event.getText();
 					if (!left) {
 						hero.getImageView().setScaleX(1);
 						movingRight = true;
@@ -962,21 +950,27 @@ public class Platformer extends Application implements Images {
 				}
 
 				if (event.getCode().equals(KeyCode.W) || event.getCode().equals(KeyCode.UP)) {
-					heroAnimation.startActionAnimation("JUMP");
-					heroFrame.changeCount(7);
-					action = "JUMP";
+					if (!keyCheck.equals(event.getText())) {
+						heroAnimation.startActionAnimation("IDLE");
+						heroFrame.changeCount(7);
+						action = "JUMP";
+					}
+
+					keyCheck = event.getText();
 					if (!jumping) {
-						jumpPress = true;
 						movingUp = true;
 					}
 
 				}
 
 				if (event.getCode().equals(KeyCode.A) || event.getCode().equals(KeyCode.LEFT)) {
-					heroAnimation.startActionAnimation("IDLE");
-					heroFrame.changeCount(9);
-					action = "IDLE";
+					if (!keyCheck.equals(event.getText())) {
+						heroAnimation.startActionAnimation("IDLE");
+						heroFrame.changeCount(9);
+						action = "IDLE";
+					}
 
+					keyCheck = event.getText();
 					if (!right) {
 						hero.getImageView().setScaleX(-1);
 						movingLeft = true;
@@ -988,9 +982,14 @@ public class Platformer extends Application implements Images {
 				}
 
 				if (event.getCode().equals(KeyCode.S) || event.getCode().equals(KeyCode.DOWN)) {
-					heroAnimation.startActionAnimation("PUSH");
-					heroFrame.changeCount(7);
-					action = "PUSH";
+					if (!keyCheck.equals(event.getText())) {
+
+						heroAnimation.startActionAnimation("PUSH");
+						heroFrame.changeCount(7);
+						action = "PUSH";
+					}
+
+					keyCheck = event.getText();
 				}
 
 			}
@@ -1017,7 +1016,7 @@ public class Platformer extends Application implements Images {
 	// Scrolling
 	public void scrollCheckLeft(double x) {
 
-		if (x <= (0.2 * WIDTH) && xOffset - acceleration > 0) {
+		if (x <= (0.5 * WIDTH) && xOffset - acceleration > 0) {
 			xOffset = xOffset - acceleration;
 			hero.setAbsX(hero.getAbsX() - acceleration);
 			lefty = false;
@@ -1029,7 +1028,7 @@ public class Platformer extends Application implements Images {
 
 	public void scrollCheckRight(double x) {
 
-		if (x >= (0.6 * WIDTH) && xOffset + acceleration < (0.76 * m.getWidth())) {
+		if (x >= (0.5 * WIDTH) && xOffset + acceleration < (0.76 * m.getWidth())) {
 
 			xOffset = xOffset + acceleration;
 			hero.setAbsX(hero.getAbsX() + acceleration);
@@ -1043,7 +1042,7 @@ public class Platformer extends Application implements Images {
 	}
 
 	private void moveRight(Rectangle rectangle, ImageView image) {
-		if (hero.getHBX() > 0.8 * WIDTH && xOffset + acceleration < (0.76 * m.getWidth())) {
+		if (hero.getHBX() > 0.5 * WIDTH && xOffset + acceleration < (0.76 * m.getWidth())) {
 			xOffset = xOffset + acceleration;
 			hero.setAbsX(hero.getAbsX() + acceleration);
 			hero.setHBX(hero.getAbsX());
@@ -1058,7 +1057,7 @@ public class Platformer extends Application implements Images {
 	}
 
 	private void moveLeft(Rectangle rectangle, ImageView image) {
-		if (hero.getHBX() < 0.2 * WIDTH && xOffset - acceleration > 0) {
+		if (hero.getX() < 0.5 * WIDTH && xOffset - acceleration > 0) {
 			xOffset = xOffset - acceleration;
 			hero.setAbsX(hero.getAbsX() - acceleration);
 			hero.setHBX(hero.getAbsX());
@@ -1075,7 +1074,6 @@ public class Platformer extends Application implements Images {
 	public void winCheck(AnimationTimer loop) {
 		gameLoop.stop();
 		thestage.setScene(nextLevel);
-		// farietteAdded = false;
 		if (cur == 3 || cur == 8) {
 			gameLoop.stop();
 			thestage.setScene(winScene);
