@@ -43,7 +43,6 @@ public class Platformer extends Application implements Images {
 	private int lives = 3;
 	private int gameState = 0;
 	private boolean bottom = false;
-	private boolean farietteAdded = false;
 	private boolean top = false;
 	boolean right = false;
 	boolean left = false;
@@ -54,7 +53,6 @@ public class Platformer extends Application implements Images {
 	boolean boxRight = false;
 	private Collision c;
 	int cur = 0;
-	private String keyCheck = "";
 
 	private Sounds bgNoise = new Sounds();
 	private Sounds jumpSound = new Sounds();
@@ -932,13 +930,11 @@ public class Platformer extends Application implements Images {
 			public void handle(KeyEvent event) {
 
 				if (event.getCode().equals(KeyCode.D) || event.getCode().equals(KeyCode.RIGHT)) {
-					if (!keyCheck.equals(event.getText())) {
+					if (!action.equals("IDLE")) {
 						heroAnimation.startActionAnimation("IDLE");
 						heroFrame.changeCount(9);
 						action = "IDLE";
 					}
-
-					keyCheck = event.getText();
 					if (!left) {
 						hero.getImageView().setScaleX(1);
 						movingRight = true;
@@ -950,13 +946,11 @@ public class Platformer extends Application implements Images {
 				}
 
 				if (event.getCode().equals(KeyCode.W) || event.getCode().equals(KeyCode.UP)) {
-					if (!keyCheck.equals(event.getText())) {
-						heroAnimation.startActionAnimation("IDLE");
+					if (!action.equals("JUMP")) {
+						heroAnimation.startActionAnimation("JUMP");
 						heroFrame.changeCount(7);
 						action = "JUMP";
 					}
-
-					keyCheck = event.getText();
 					if (!jumping) {
 						movingUp = true;
 					}
@@ -964,13 +958,11 @@ public class Platformer extends Application implements Images {
 				}
 
 				if (event.getCode().equals(KeyCode.A) || event.getCode().equals(KeyCode.LEFT)) {
-					if (!keyCheck.equals(event.getText())) {
+					if (!action.equals("IDLE")) {
 						heroAnimation.startActionAnimation("IDLE");
 						heroFrame.changeCount(9);
 						action = "IDLE";
 					}
-
-					keyCheck = event.getText();
 					if (!right) {
 						hero.getImageView().setScaleX(-1);
 						movingLeft = true;
@@ -982,14 +974,11 @@ public class Platformer extends Application implements Images {
 				}
 
 				if (event.getCode().equals(KeyCode.S) || event.getCode().equals(KeyCode.DOWN)) {
-					if (!keyCheck.equals(event.getText())) {
-
+					if (!action.equals("PUSH")) {
 						heroAnimation.startActionAnimation("PUSH");
 						heroFrame.changeCount(7);
 						action = "PUSH";
 					}
-
-					keyCheck = event.getText();
 				}
 
 			}
@@ -1120,7 +1109,6 @@ public class Platformer extends Application implements Images {
 		hero.getImageView().setY(300);
 		rectangle.setX(300);
 		rectangle.setY(300);
-		farietteAdded = false;
 		gameRoot.getChildren().add(hero.getImageView());
 		gameRoot.getChildren().add(rectangle);
 	}
@@ -1144,7 +1132,6 @@ public class Platformer extends Application implements Images {
 		hero.getImageView().setY(300);
 		rectangle.setX(300);
 		rectangle.setY(300);
-		farietteAdded = false;
 		gameRoot.getChildren().add(hero.getImageView());
 		gameRoot.getChildren().add(rectangle);
 	}
