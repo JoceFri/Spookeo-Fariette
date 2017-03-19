@@ -48,6 +48,10 @@ public class Platformer extends Application implements Images {
 	boolean movingLeft = false;
 	boolean movingRight = false;
 	boolean movingUp = false;
+	boolean flipped = false;
+	boolean flowerFlip = false;
+	boolean leftFlowerFlip = false;
+	boolean rightFlowerFlip = false;
 	boolean boxLeft = false;
 	boolean boxRight = false;
 	private Collision c;
@@ -240,6 +244,7 @@ public class Platformer extends Application implements Images {
 			for (int j = 0; j < mo[i].length; j++) {
 				if (mo[i][j] != null) {
 					gc.drawImage(mo[i][j].getImageView().getImage(), mo[i][j].getX(), mo[i][j].getY());
+					gc.fillRect(mo[i][j].getHBX(), mo[i][j].getHBY(), mo[i][j].getHBWidth(), mo[i][j].getHBHeight());
 				}
 			}
 		}
@@ -952,6 +957,70 @@ public class Platformer extends Application implements Images {
 								}
 							}
 						}
+						if (mo[i][j] instanceof Rock) {
+							c.isColliding();
+							if (c.left() && !flipped) {
+								flipped = true;
+								int temp = mo[i][j].getHBHeight();
+								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+								mo[i][j].setHBWidth(temp);
+								mo[i][j].setHBX(mo[i][j].getHBX() + 64);
+								mo[i][j].setHBY(mo[i][j].getHBY() + 96);
+							}
+							if(c.right() && !flipped){
+								flipped = true;
+								int temp = mo[i][j].getHBHeight();
+								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+								mo[i][j].setHBWidth(temp);
+								mo[i][j].setHBX(mo[i][j].getHBX() - 64);
+								mo[i][j].setHBY(mo[i][j].getHBY() + 96);
+							}
+							if(c.top()){
+								top = true;
+							}
+						}
+						if(mo[i][j] instanceof Flower){
+							c.isColliding();
+							if(c.left() && !flowerFlip){
+								flowerFlip = true;
+								leftFlowerFlip = true;
+								int temp = mo[i][j].getHBHeight();
+								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+								mo[i][j].setHBWidth(temp);
+								mo[i][j].setHBX(mo[i][j].getHBX() + 64);
+								mo[i][j].setHBY(mo[i][j].getHBY() + 148);
+							}
+							if(c.right() && !flowerFlip){
+								flowerFlip = true;
+								rightFlowerFlip = true;
+								int temp = mo[i][j].getHBHeight();
+								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+								mo[i][j].setHBWidth(temp);
+								mo[i][j].setHBX(mo[i][j].getHBX() - 32);
+								mo[i][j].setHBY(mo[i][j].getHBY() + 148);
+							}
+							if(!c.isColliding() && leftFlowerFlip){
+								flowerFlip = false;
+								rightFlowerFlip = false;
+								int temp = mo[i][j].getHBHeight();
+								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+								mo[i][j].setHBWidth(temp);
+								mo[i][j].setHBX(mo[i][j].getHBX() - 64);
+								mo[i][j].setHBY(mo[i][j].getHBY() - 148);
+							}
+							if(!c.isColliding() && rightFlowerFlip){
+								flowerFlip = false;
+								rightFlowerFlip = false;
+								int temp = mo[i][j].getHBHeight();
+								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+								mo[i][j].setHBWidth(temp);
+								mo[i][j].setHBX(mo[i][j].getHBX() + 32);
+								mo[i][j].setHBY(mo[i][j].getHBY() - 148);
+							}
+							if(c.top()){
+								top = true;
+							}
+						}
 					}
 				}
 			}
@@ -1142,6 +1211,7 @@ public class Platformer extends Application implements Images {
 		movingUp = false;
 		movingRight = false;
 		movingLeft = false;
+		flipped = false;
 		load();
 		hero.setX(300);
 		hero.setY(300);
@@ -1165,6 +1235,7 @@ public class Platformer extends Application implements Images {
 		movingUp = false;
 		movingRight = false;
 		movingLeft = false;
+		flipped = false;
 		load();
 		hero.setX(300);
 		hero.setY(300);
