@@ -51,6 +51,7 @@ public class Platformer extends Application implements Images {
 	boolean boxLeft = false;
 	boolean boxRight = false;
 	private Collision c;
+	private Collision c2;
 	int cur = 0;
 	private Sounds bgNoise = new Sounds();
 	private Sounds jumpSound = new Sounds();
@@ -929,6 +930,26 @@ public class Platformer extends Application implements Images {
 							}
 							if (c.top()) {
 								top = true;
+							}
+							for (int k = 0; k < nmo.length; k++) {
+								for (int l = 0; l < nmo[i].length; l++) {
+									if (nmo[k][l] != null) {
+										c.setObjs(mo[i][j], nmo[k][l]);
+										c.isColliding();
+										if (c.left()) {
+											left = true;
+										}
+										if (c.right()) {
+											right = true;
+										}
+										if (c.top()) {
+											top = true;
+										}
+										if (c.bottom()) {
+											bottom = true;
+										}
+									}
+								}
 							}
 						}
 					}
