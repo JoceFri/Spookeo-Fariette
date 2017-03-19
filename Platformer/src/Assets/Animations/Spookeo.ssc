@@ -1,6 +1,6 @@
 *SPOOKEO
 *
-sprite_sheet	:=spookeo_sheet.png;
+sprite_sheet	:=spookeosheet.png;
 size_x          :=64;
 size_y          :=64;
 padding_x       :=0;
