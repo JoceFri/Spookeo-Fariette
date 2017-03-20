@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 public class MapLoader {
 
 	int count = 0;
+	int type = 0;
 
 	// load all ImageViews once
 	// grass
@@ -60,6 +61,7 @@ public class MapLoader {
 			
 			width = in.nextInt();
 			height = in.nextInt();
+			type = in.nextInt();
 			in.nextLine();
 			nmo = new Nonmoveable[width][height];
 			mo = new Moveable[width][height];
@@ -222,6 +224,10 @@ public class MapLoader {
 	
 	public double getHeight() {
 		return (double) 64 * height;
+	}
+	
+	public int getType() {
+		return type;
 	}
 
 	private static File getResourceAsFile(String resourcePath) {
