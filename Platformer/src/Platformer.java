@@ -106,6 +106,9 @@ public class Platformer extends Application implements Images {
 	ImageView midTrees2 = new ImageView("Assets/Art/midgroundTREES.png");
 	ImageView foreTrees = new ImageView("Assets/Art/foregroundTREES.png");
 	ImageView foreTrees2 = new ImageView("Assets/Art/foregroundTREES.png");
+	// Transition
+	ImageView trans = new ImageView("Assets/Art/transition.png");
+	
 	// Tracker
 	double check = 0.0;
 
@@ -279,6 +282,8 @@ public class Platformer extends Application implements Images {
 
 			foreTrees.setX(foreTrees.getX() - .5);
 			foreTrees2.setX(foreTrees2.getX() - .5);
+			
+			trans.setX(trans.getX() - .5);
 		}
 
 		if (check > xOffset) {
@@ -303,6 +308,8 @@ public class Platformer extends Application implements Images {
 
 			foreTrees.setX(foreTrees.getX() + .5);
 			foreTrees2.setX(foreTrees2.getX() + .5);
+			
+			trans.setX(trans.getX() + .5);
 		}
 		check = xOffset;
 	}
@@ -441,7 +448,17 @@ public class Platformer extends Application implements Images {
 			gameRoot.getChildren().add(midTrees2);
 			gameRoot.getChildren().add(foreTrees);
 			gameRoot.getChildren().add(foreTrees2);
-		}
+		} else if (m.getType() == 3) {
+			trans.setScaleX(1);
+			gameRoot.getChildren().add(clouds);
+			gameRoot.getChildren().add(clouds2);
+			gameRoot.getChildren().add(trans);
+		} else if (m.getType() == 4) {
+			trans.setScaleX(-1);
+			gameRoot.getChildren().add(clouds);
+			gameRoot.getChildren().add(clouds2);
+			gameRoot.getChildren().add(trans);
+		}	
 		gameRoot.getChildren().add(gameCanvas);
 		gameRoot.getChildren().add(rectangle);
 		gameRoot.getChildren().add(igMenuButton());
@@ -1326,6 +1343,7 @@ public class Platformer extends Application implements Images {
 		midTrees2.setX(1800);
 		foreTrees.setX(0);
 		foreTrees2.setX(2000);
+		trans.setX(0);
 		gameRoot.getChildren().add(hero.getImageView());
 		gameRoot.getChildren().add(rectangle);
 	}
@@ -1355,6 +1373,7 @@ public class Platformer extends Application implements Images {
 		midTrees2.setX(1800);
 		foreTrees.setX(0);
 		foreTrees2.setX(2000);
+		trans.setX(0);
 		gameRoot.getChildren().add(hero.getImageView());
 		gameRoot.getChildren().add(rectangle);
 	}
