@@ -122,7 +122,7 @@ public class Platformer extends Application implements Images {
 	FrameSetter farietteFrame = new FrameSetter(9);
 	Actor farietteImage = new Actor(1000, 252, 192, 192, new ImageView("Assets/Art/k.png"), 1000, 252, 192, 192);
 
-	Animator spookeoSelect = new Animator("src/Assets/Animations/spookeosheet.png",
+	Animator spookeoSelect = new Animator("src/Assets/Animations/spookeo_sheet.png",
 			"src/Assets/Animations/Spookeo.ssc");
 	FrameSetter spookeoFrame = new FrameSetter(9);
 	Actor spookeoImage = new Actor(450, 252, 192, 192, new ImageView("Assets/Art/joey.png"), 450, 252, 192, 192);
