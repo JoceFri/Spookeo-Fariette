@@ -16,6 +16,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -85,6 +86,7 @@ public class Platformer extends Application implements Images {
 	GraphicsContext gc = null;
 	Canvas charCanvas = new Canvas(WIDTH, HEIGHT);
 	GraphicsContext chc = charCanvas.getGraphicsContext2D();
+	Background gameBack = null;
 
 	ImageView bg = new ImageView("Assets/Art/BackGround.png");
 	Image winScreen = new Image("Assets/Art/endgame_pic.png");
@@ -92,6 +94,20 @@ public class Platformer extends Application implements Images {
 	Image gameover = new Image("Assets/Art/game_over.png");
 	Image fariette = new Image("Assets/Animations/Fariette_IDLE.png");
 	Image spookeo = new Image("Assets/Art/Spookeo_IDLE.png");
+
+	// Load all the backgrounds
+	// Meadows
+	ImageView meadows = new ImageView("Assets/Art/happy_meadows.png");
+	ImageView clouds = new ImageView("Assets/Art/clouds.png");
+	ImageView clouds2 = new ImageView("Assets/Art/clouds.png");
+	// Forest
+	ImageView backTrees = new ImageView("Assets/Art/backgroundTREES.png");
+	ImageView midTrees = new ImageView("Assets/Art/midgroundTREES.png");
+	ImageView midTrees2 = new ImageView("Assets/Art/midgroundTREES.png");
+	ImageView foreTrees = new ImageView("Assets/Art/foregroundTREES.png");
+	ImageView foreTrees2 = new ImageView("Assets/Art/foregroundTREES.png");
+	// Tracker
+	double check = 0.0;
 
 	AnimationTimer gameLoop;
 	URL url = getClass().getResource("Assets/Json/characters.json");
@@ -103,7 +119,7 @@ public class Platformer extends Application implements Images {
 	FrameSetter farietteFrame = new FrameSetter(9);
 	Actor farietteImage = new Actor(1000, 252, 192, 192, new ImageView("Assets/Art/k.png"), 1000, 252, 192, 192);
 
-	Animator spookeoSelect = new Animator("src/Assets/Animations/spookeo_sheet.png",
+	Animator spookeoSelect = new Animator("src/Assets/Animations/spookeosheet.png",
 			"src/Assets/Animations/Spookeo.ssc");
 	FrameSetter spookeoFrame = new FrameSetter(9);
 	Actor spookeoImage = new Actor(450, 252, 192, 192, new ImageView("Assets/Art/joey.png"), 450, 252, 192, 192);
@@ -119,6 +135,14 @@ public class Platformer extends Application implements Images {
 	@Override
 	public void start(Stage primaryStage) {
 		thestage = primaryStage;
+
+		// Set background positions
+		clouds.setX(0);
+		clouds2.setX(1800);
+		midTrees.setX(0);
+		midTrees2.setX(1800);
+		foreTrees.setX(0);
+		foreTrees2.setX(2000);
 
 		gameCanvas = new Canvas(m.getWidth(), m.getHeight());
 		gc = gameCanvas.getGraphicsContext2D();
@@ -193,6 +217,7 @@ public class Platformer extends Application implements Images {
 					cameraScroll(xOffset, 0);
 					animations();
 					update();
+					backgroundHelper();
 
 					if (!top) {
 						gravity(rectangle, hero.getImageView());
@@ -221,6 +246,67 @@ public class Platformer extends Application implements Images {
 		thestage.show();
 	}
 
+	public void backgroundHelper() {
+
+		if (clouds.getX() % 1800 == 0 && clouds.getX() < 0) {
+			clouds.setX(1800);
+		}
+		if (clouds2.getX() % 1800 == 0 && clouds2.getX() < 0) {
+			clouds2.setX(1800);
+		}
+		clouds.setX(clouds.getX() - .25);
+		clouds2.setX(clouds2.getX() - .25);
+
+		if (check < xOffset) {
+			if (midTrees.getX() % 1800 == 0 && midTrees.getX() < 0) {
+				midTrees.setX(1800);
+			}
+
+			if (midTrees2.getX() % 1800 == 0 && midTrees2.getX() < 0) {
+				midTrees2.setX(1800);
+			}
+
+			midTrees.setX(midTrees.getX() - .2);
+			midTrees2.setX(midTrees2.getX() - .2);
+
+			if (foreTrees.getX() % 2000 == 0 && foreTrees.getX() < 0) {
+				foreTrees.setX(2000);
+			}
+
+			if (foreTrees2.getX() % 2000 == 0 && foreTrees.getX() < 0) {
+				foreTrees2.setX(2000);
+			}
+
+			foreTrees.setX(foreTrees.getX() - .5);
+			foreTrees2.setX(foreTrees2.getX() - .5);
+		}
+
+		if (check > xOffset) {
+			if (midTrees.getX() % 1800 == 0 && midTrees.getX() > 0) {
+				midTrees.setX(-1800);
+			}
+
+			if (midTrees2.getX() % 1800 == 0 && midTrees2.getX() < 0) {
+				midTrees2.setX(-1800);
+			}
+
+			midTrees.setX(midTrees.getX() + .2);
+			midTrees2.setX(midTrees2.getX() + .2);
+
+			if (foreTrees.getX() % 2000 == 0 && foreTrees.getX() > 0) {
+				foreTrees.setX(-2000);
+			}
+
+			if (foreTrees2.getX() % 2000 == 0 && foreTrees.getX() > 0) {
+				foreTrees2.setX(-2000);
+			}
+
+			foreTrees.setX(foreTrees.getX() + .5);
+			foreTrees2.setX(foreTrees2.getX() + .5);
+		}
+		check = xOffset;
+	}
+
 	public void animations() {
 		hero.getImageView().setImage(heroFrame.getFrame(heroAnimation, action));
 		spookeoImage.getImageView().setImage(spookeoFrame.getFrame(spookeoSelect, "IDLE"));
@@ -244,7 +330,6 @@ public class Platformer extends Application implements Images {
 			for (int j = 0; j < mo[i].length; j++) {
 				if (mo[i][j] != null) {
 					gc.drawImage(mo[i][j].getImageView().getImage(), mo[i][j].getX(), mo[i][j].getY());
-					gc.fillRect(mo[i][j].getHBX(), mo[i][j].getHBY(), mo[i][j].getHBWidth(), mo[i][j].getHBHeight());
 				}
 			}
 		}
@@ -346,8 +431,17 @@ public class Platformer extends Application implements Images {
 
 		// make game
 		gameRoot = new Pane();
-		gameRoot.setBackground(new Background(gameBG));
-		gameRoot.getChildren().add(bg);
+		if (m.getType() == 1) {
+			gameRoot.getChildren().add(clouds);
+			gameRoot.getChildren().add(clouds2);
+			gameRoot.getChildren().add(meadows);
+		} else if (m.getType() == 2) {
+			gameRoot.getChildren().add(backTrees);
+			gameRoot.getChildren().add(midTrees);
+			gameRoot.getChildren().add(midTrees2);
+			gameRoot.getChildren().add(foreTrees);
+			gameRoot.getChildren().add(foreTrees2);
+		}
 		gameRoot.getChildren().add(gameCanvas);
 		gameRoot.getChildren().add(rectangle);
 		gameRoot.getChildren().add(igMenuButton());
@@ -879,158 +973,158 @@ public class Platformer extends Application implements Images {
 	}
 
 	// Checks for collision with all objects
-	public void collisionCheck() {
-		for (int i = 0; i < nmo.length; i++) {
-			for (int j = 0; j < nmo[i].length; j++) {
-				if (nmo[i][j] != null) {
-					c.setObjs(hero, nmo[i][j]);
-					c.isColliding();
-					if (c.left()) {
-						left = true;
-					}
-					if (c.right()) {
-						right = true;
-					}
-					if (c.top()) {
-						top = true;
-					}
-					if (c.bottom()) {
-						bottom = true;
-					}
-					if (c.isColliding() && nmo[i][j] instanceof winBox) {
-						winCheck(gameLoop);
+		public void collisionCheck() {
+			for (int i = 0; i < nmo.length; i++) {
+				for (int j = 0; j < nmo[i].length; j++) {
+					if (nmo[i][j] != null) {
+						c.setObjs(hero, nmo[i][j]);
+						c.isColliding();
+						if (c.left()) {
+							left = true;
+						}
+						if (c.right()) {
+							right = true;
+						}
+						if (c.top()) {
+							top = true;
+						}
+						if (c.bottom()) {
+							bottom = true;
+						}
+						if (c.isColliding() && nmo[i][j] instanceof winBox) {
+							winCheck(gameLoop);
+						}
 					}
 				}
 			}
-		}
 
-		for (int i = 0; i < mo.length; i++) {
-			for (int j = 0; j < mo[i].length; j++) {
-				if (mo[i][j] != null) {
-					c.setObjs(hero, mo[i][j]);
-					if (c.isColliding()) {
-						if (mo[i][j] instanceof Box) {
-							// System.out.println("BOOP");
-							if (c.left()) {
-								mo[i][j].setX(hero.getAbsX() + hero.getWidth() + 1);
-								mo[i][j].setHBX(mo[i][j].getX());
-								mo[i][j].getImageView().setX(mo[i][j].getX());
-								if (!action.equals("PUSH")) {
-									heroAnimation.startActionAnimation("PUSH");
-									heroFrame.changeCount(7);
-									action = "PUSH";
+			for (int i = 0; i < mo.length; i++) {
+				for (int j = 0; j < mo[i].length; j++) {
+					if (mo[i][j] != null) {
+						c.setObjs(hero, mo[i][j]);
+						if (c.isColliding()) {
+							if (mo[i][j] instanceof Box) {
+								// System.out.println("BOOP");
+								if (c.left()) {
+									mo[i][j].setX(hero.getAbsX() + hero.getWidth() + 1);
+									mo[i][j].setHBX(mo[i][j].getX());
+									mo[i][j].getImageView().setX(mo[i][j].getX());
+									if (!action.equals("PUSH")) {
+										heroAnimation.startActionAnimation("PUSH");
+										heroFrame.changeCount(7);
+										action = "PUSH";
+									}
+									// System.out.println("LEFT HIT");
 								}
-								// System.out.println("LEFT HIT");
-							}
-							if (c.right()) {
-								mo[i][j].setX(hero.getAbsX() - mo[i][j].getWidth() - 1);
-								mo[i][j].setHBX(mo[i][j].getX());
-								mo[i][j].getImageView().setX(mo[i][j].getX());
-								if (!action.equals("PUSH")) {
-									heroAnimation.startActionAnimation("PUSH");
-									heroFrame.changeCount(7);
-									action = "PUSH";
+								if (c.right()) {
+									mo[i][j].setX(hero.getAbsX() - mo[i][j].getWidth() - 1);
+									mo[i][j].setHBX(mo[i][j].getX());
+									mo[i][j].getImageView().setX(mo[i][j].getX());
+									if (!action.equals("PUSH")) {
+										heroAnimation.startActionAnimation("PUSH");
+										heroFrame.changeCount(7);
+										action = "PUSH";
+									}
+									// System.out.println("RIGHT HIT");
 								}
-								// System.out.println("RIGHT HIT");
-							}
-							if (c.top()) {
-								top = true;
-							}
-							for (int k = 0; k < nmo.length; k++) {
-								for (int l = 0; l < nmo[i].length; l++) {
-									if (nmo[k][l] != null) {
-										c.setObjs(mo[i][j], nmo[k][l]);
-										c.isColliding();
-										if (c.left()) {
-											left = true;
-										}
-										if (c.right()) {
-											right = true;
-										}
-										if (c.top()) {
-											top = true;
-										}
-										if (c.bottom()) {
-											bottom = true;
+								if (c.top()) {
+									top = true;
+								}
+								for (int k = 0; k < nmo.length; k++) {
+									for (int l = 0; l < nmo[i].length; l++) {
+										if (nmo[k][l] != null) {
+											c.setObjs(mo[i][j], nmo[k][l]);
+											c.isColliding();
+											if (c.left()) {
+												left = true;
+											}
+											if (c.right()) {
+												right = true;
+											}
+											if (c.top()) {
+												top = true;
+											}
+											if (c.bottom()) {
+												bottom = true;
+											}
 										}
 									}
 								}
 							}
-						}
-						if (mo[i][j] instanceof Rock) {
-							c.isColliding();
-							if (c.left() && !flipped) {
-								flipped = true;
-								int temp = mo[i][j].getHBHeight();
-								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
-								mo[i][j].setHBWidth(temp);
-								mo[i][j].setHBX(mo[i][j].getHBX() + 64);
-								mo[i][j].setHBY(mo[i][j].getHBY() + 96);
-							}
-							if(c.right() && !flipped){
-								flipped = true;
-								int temp = mo[i][j].getHBHeight();
-								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
-								mo[i][j].setHBWidth(temp);
-								mo[i][j].setHBX(mo[i][j].getHBX() - 64);
-								mo[i][j].setHBY(mo[i][j].getHBY() + 96);
-							}
-							if(c.top()){
-								top = true;
-							}
-						}
-						flipped = false;
-						if(mo[i][j] instanceof Flower){
-							c.isColliding();
-							if(c.left() && !flowerFlip){
-								flowerFlip = true;
-								leftFlowerFlip = true;
-								int temp = mo[i][j].getHBHeight();
-								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
-								mo[i][j].setHBWidth(temp);
-								//mo[i][j].setHBX(mo[i][j].getHBX() + 64);
-								mo[i][j].setHBY(mo[i][j].getHBY() + 148);
+							if (mo[i][j] instanceof Rock) {
+								c.isColliding();
+								if (c.left() && !flipped) {
+									flipped = true;
+									int temp = mo[i][j].getHBHeight();
+									mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+									mo[i][j].setHBWidth(temp);
+									mo[i][j].setHBX(mo[i][j].getHBX() + 64);
+									mo[i][j].setHBY(mo[i][j].getHBY() + 96);
+								}
+								if(c.right() && !flipped){
+									flipped = true;
+									int temp = mo[i][j].getHBHeight();
+									mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+									mo[i][j].setHBWidth(temp);
+									mo[i][j].setHBX(mo[i][j].getHBX() - 64);
+									mo[i][j].setHBY(mo[i][j].getHBY() + 96);
+								}
 								if(c.top()){
 									top = true;
 								}
 							}
-							if(c.right() && !flowerFlip){
-								flowerFlip = true;
-								rightFlowerFlip = true;
-								int temp = mo[i][j].getHBHeight();
-								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
-								mo[i][j].setHBWidth(temp);
-								//mo[i][j].setHBX(mo[i][j].getHBX() - 64);
-								mo[i][j].setHBY(mo[i][j].getHBY() + 148);
-								if(c.top()){
-									top = true;
+							flipped = false;
+							if(mo[i][j] instanceof Flower){
+								c.isColliding();
+								if(c.left() && !flowerFlip){
+									flowerFlip = true;
+									leftFlowerFlip = true;
+									int temp = mo[i][j].getHBHeight();
+									mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+									mo[i][j].setHBWidth(temp);
+									//mo[i][j].setHBX(mo[i][j].getHBX() + 64);
+									mo[i][j].setHBY(mo[i][j].getHBY() + 148);
+									if(c.top()){
+										top = true;
+									}
 								}
+								if(c.right() && !flowerFlip){
+									flowerFlip = true;
+									rightFlowerFlip = true;
+									int temp = mo[i][j].getHBHeight();
+									mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+									mo[i][j].setHBWidth(temp);
+									//mo[i][j].setHBX(mo[i][j].getHBX() - 64);
+									mo[i][j].setHBY(mo[i][j].getHBY() + 148);
+									if(c.top()){
+										top = true;
+									}
+								}
+								/*if(!c.isColliding() && leftFlowerFlip){
+									flowerFlip = false;
+									rightFlowerFlip = false;
+									int temp = mo[i][j].getHBHeight();
+									mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+									mo[i][j].setHBWidth(temp);
+									//mo[i][j].setHBX(mo[i][j].getHBX() - 64);
+									mo[i][j].setHBY(mo[i][j].getHBY() - 148);
+								}
+								if(!c.isColliding() && rightFlowerFlip){
+									flowerFlip = false;
+									rightFlowerFlip = false;
+									int temp = mo[i][j].getHBHeight();
+									mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+									mo[i][j].setHBWidth(temp);
+									//mo[i][j].setHBX(mo[i][j].getHBX() + 64);
+									mo[i][j].setHBY(mo[i][j].getHBY() - 148);
+								}*/
+								
 							}
-							/*if(!c.isColliding() && leftFlowerFlip){
-								flowerFlip = false;
-								rightFlowerFlip = false;
-								int temp = mo[i][j].getHBHeight();
-								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
-								mo[i][j].setHBWidth(temp);
-								//mo[i][j].setHBX(mo[i][j].getHBX() - 64);
-								mo[i][j].setHBY(mo[i][j].getHBY() - 148);
-							}
-							if(!c.isColliding() && rightFlowerFlip){
-								flowerFlip = false;
-								rightFlowerFlip = false;
-								int temp = mo[i][j].getHBHeight();
-								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
-								mo[i][j].setHBWidth(temp);
-								//mo[i][j].setHBX(mo[i][j].getHBX() + 64);
-								mo[i][j].setHBY(mo[i][j].getHBY() - 148);
-							}*/
-							
 						}
 					}
 				}
 			}
 		}
-	}
 
 	// makes shape move....
 	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, final ImageView image) {
@@ -1198,7 +1292,7 @@ public class Platformer extends Application implements Images {
 		} else if (cur == 5) {
 			m.readIn("Assets/Json/map4.txt");
 		} else if (cur == 6) {
-			m.readIn("Assets/Json/map6.txt");
+
 		} else if (cur == 7) {
 
 		} else if (cur == 8) {
@@ -1216,7 +1310,6 @@ public class Platformer extends Application implements Images {
 		movingUp = false;
 		movingRight = false;
 		movingLeft = false;
-		flipped = false;
 		load();
 		hero.setX(300);
 		hero.setY(300);
@@ -1227,6 +1320,12 @@ public class Platformer extends Application implements Images {
 		hero.getImageView().setY(300);
 		rectangle.setX(300);
 		rectangle.setY(300);
+		clouds.setX(0);
+		clouds2.setX(1800);
+		midTrees.setX(0);
+		midTrees2.setX(1800);
+		foreTrees.setX(0);
+		foreTrees2.setX(2000);
 		gameRoot.getChildren().add(hero.getImageView());
 		gameRoot.getChildren().add(rectangle);
 	}
@@ -1240,7 +1339,6 @@ public class Platformer extends Application implements Images {
 		movingUp = false;
 		movingRight = false;
 		movingLeft = false;
-		flipped = false;
 		load();
 		hero.setX(300);
 		hero.setY(300);
@@ -1251,6 +1349,12 @@ public class Platformer extends Application implements Images {
 		hero.getImageView().setY(300);
 		rectangle.setX(300);
 		rectangle.setY(300);
+		clouds.setX(0);
+		clouds2.setX(1800);
+		midTrees.setX(0);
+		midTrees2.setX(1800);
+		foreTrees.setX(0);
+		foreTrees2.setX(2000);
 		gameRoot.getChildren().add(hero.getImageView());
 		gameRoot.getChildren().add(rectangle);
 	}
