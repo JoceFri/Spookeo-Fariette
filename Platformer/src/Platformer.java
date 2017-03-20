@@ -979,6 +979,7 @@ public class Platformer extends Application implements Images {
 								top = true;
 							}
 						}
+						flipped = false;
 						if(mo[i][j] instanceof Flower){
 							c.isColliding();
 							if(c.left() && !flowerFlip){
@@ -987,8 +988,11 @@ public class Platformer extends Application implements Images {
 								int temp = mo[i][j].getHBHeight();
 								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
 								mo[i][j].setHBWidth(temp);
-								mo[i][j].setHBX(mo[i][j].getHBX() + 64);
+								//mo[i][j].setHBX(mo[i][j].getHBX() + 64);
 								mo[i][j].setHBY(mo[i][j].getHBY() + 148);
+								if(c.top()){
+									top = true;
+								}
 							}
 							if(c.right() && !flowerFlip){
 								flowerFlip = true;
@@ -996,16 +1000,19 @@ public class Platformer extends Application implements Images {
 								int temp = mo[i][j].getHBHeight();
 								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
 								mo[i][j].setHBWidth(temp);
-								mo[i][j].setHBX(mo[i][j].getHBX() - 32);
+								//mo[i][j].setHBX(mo[i][j].getHBX() - 64);
 								mo[i][j].setHBY(mo[i][j].getHBY() + 148);
+								if(c.top()){
+									top = true;
+								}
 							}
-							if(!c.isColliding() && leftFlowerFlip){
+							/*if(!c.isColliding() && leftFlowerFlip){
 								flowerFlip = false;
 								rightFlowerFlip = false;
 								int temp = mo[i][j].getHBHeight();
 								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
 								mo[i][j].setHBWidth(temp);
-								mo[i][j].setHBX(mo[i][j].getHBX() - 64);
+								//mo[i][j].setHBX(mo[i][j].getHBX() - 64);
 								mo[i][j].setHBY(mo[i][j].getHBY() - 148);
 							}
 							if(!c.isColliding() && rightFlowerFlip){
@@ -1014,12 +1021,10 @@ public class Platformer extends Application implements Images {
 								int temp = mo[i][j].getHBHeight();
 								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
 								mo[i][j].setHBWidth(temp);
-								mo[i][j].setHBX(mo[i][j].getHBX() + 32);
+								//mo[i][j].setHBX(mo[i][j].getHBX() + 64);
 								mo[i][j].setHBY(mo[i][j].getHBY() - 148);
-							}
-							if(c.top()){
-								top = true;
-							}
+							}*/
+							
 						}
 					}
 				}
@@ -1193,7 +1198,7 @@ public class Platformer extends Application implements Images {
 		} else if (cur == 5) {
 			m.readIn("Assets/Json/map4.txt");
 		} else if (cur == 6) {
-
+			m.readIn("Assets/Json/map6.txt");
 		} else if (cur == 7) {
 
 		} else if (cur == 8) {
