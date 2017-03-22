@@ -4,8 +4,8 @@ sprite_sheet	:=title-screen.png;
 size_x		:=320;
 size_y		:=320;
 padding_x	:=0;
-padding_y	:0;
-num_rows	:1;
+padding_y	:=0;
+num_rows	:=1;
 action		:=FLASH;
-columns		:2;
+columns		:=2;
 END
