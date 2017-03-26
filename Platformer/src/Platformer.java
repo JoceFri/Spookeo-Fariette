@@ -1,3 +1,4 @@
+
 import java.net.URL;
 import DavidMohrhardt.animator.Animator;
 import javafx.animation.AnimationTimer;
@@ -204,6 +205,9 @@ public class Platformer extends Application {
 			for (int j = 0; j < mo[i].length; j++) {
 				if (mo[i][j] != null) {
 					gc.drawImage(mo[i][j].getImageView().getImage(), mo[i][j].getX(), mo[i][j].getY());
+					if (mo[i][j] instanceof Box) {
+						c2 = new Collision(mo[i][j], hero);
+					}
 				}
 			}
 		}
