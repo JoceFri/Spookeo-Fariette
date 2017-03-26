@@ -1211,16 +1211,16 @@ public class Platformer extends Application {
 
 						if (mo[i][j] instanceof Rock) {
 							c.isColliding();
-							if (c.left() && !flipped) {
-								flipped = true;
+							if (c.left() && !mo[i][j].getFlipped()) {
+								mo[i][j].setFlipped(true);
 								int temp = mo[i][j].getHBHeight();
 								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
 								mo[i][j].setHBWidth(temp);
 								mo[i][j].setHBX(mo[i][j].getHBX() + 64);
 								mo[i][j].setHBY(mo[i][j].getHBY() + 94);
 							}
-							if (c.right() && !flipped) {
-								flipped = true;
+							if (c.right() && !mo[i][j].getFlipped()) {
+								mo[i][j].setFlipped(true);
 								int temp = mo[i][j].getHBHeight();
 								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
 								mo[i][j].setHBWidth(temp);
