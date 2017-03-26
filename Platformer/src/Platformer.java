@@ -1,4 +1,3 @@
-
 import java.net.URL;
 import DavidMohrhardt.animator.Animator;
 import javafx.animation.AnimationTimer;
@@ -22,7 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-public class Platformer extends Application implements Images {
+public class Platformer extends Application {
 	boolean zzzz = false;
 	int count = 0;
 	// global variables
@@ -60,12 +59,14 @@ public class Platformer extends Application implements Images {
 	int cur = 0;
 	private Sounds bgNoise = new Sounds();
 	private Sounds jumpSound = new Sounds();
+	boolean checks = false;
+	boolean fachecks = false;
 
 	private Stage thestage;
 	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols, winScene, nextLevel, deathScene,
-			characterScene;
+	characterScene;
 	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot, winRoot, nextLevelroot, deathRoot,
-			characterRoot;
+	characterRoot;
 
 	private Player hero = new Player(300, 200, 65, 64, new ImageView("Assets/Art/triforce.png"), 300, 200, 64, 64);
 	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new ImageView("Assets/Art/pushable_box.png"), 500,
@@ -108,7 +109,7 @@ public class Platformer extends Application implements Images {
 	ImageView foreTrees2 = new ImageView("Assets/Art/foregroundTREES.png");
 	// Transition
 	ImageView trans = new ImageView("Assets/Art/transition.png");
-	
+
 	// Tracker
 	double check = 0.0;
 
@@ -126,6 +127,14 @@ public class Platformer extends Application implements Images {
 			"src/Assets/Animations/Spookeo.ssc");
 	FrameSetter spookeoFrame = new FrameSetter(9);
 	Actor spookeoImage = new Actor(450, 252, 192, 192, new ImageView("Assets/Art/joey.png"), 450, 252, 192, 192);
+
+	Animator startButton = new Animator("src/Assets/Animations/buttons.png", "src/Assets/Animations/buttons.ssc");
+	FrameSetter play = new FrameSetter(2);
+
+	Animator titleScreen = new Animator("src/Assets/Animations/title_screen.png", "src/Assets/Animations/title_screen.ssc");
+	FrameSetter title = new FrameSetter(2);
+	Actor titleImage = new Actor(1000, 252, 192, 192, new ImageView("Assets/Art/titlescreen.png"), 1000, 252, 192, 192);
+
 
 	// --------------------------- Methods to run everything
 	// -----------------------------//
@@ -158,6 +167,9 @@ public class Platformer extends Application implements Images {
 
 		farietteSelect.startActionAnimation("IDLE");
 		farietteImage.getImageView().setImage(farietteFrame.getFrame(farietteSelect, "IDLE"));
+
+		titleScreen.startActionAnimation("FLASH");
+		titleImage.getImageView().setImage(title.getFrame(titleScreen, "FLASH"));
 		load();
 
 		// make backgrounds
@@ -179,8 +191,7 @@ public class Platformer extends Application implements Images {
 		mo = m.getMO();
 		nmo = m.getNMO();
 
-		TITLE_SCREEN.getImageView().setX((WIDTH / 2) - 170);
-		TITLE_SCREEN.getImageView().setY(100);
+
 
 		for (int i = 0; i < nmo.length; i++) {
 			for (int j = 0; j < nmo[i].length; j++) {
@@ -204,6 +215,11 @@ public class Platformer extends Application implements Images {
 			@Override
 			public void handle(long now) {
 				deathCheck(gameLoop);
+				if (gameState == 0) {
+					animations();
+					chc.drawImage(titleImage.getImageView().getImage(), titleImage.getX(), titleImage.getY(), 
+							titleImage.getWidth(), titleImage.getHeight());
+				}
 				if (gameState == 1) {
 					animations();
 					chc.clearRect(0, 0, WIDTH, HEIGHT);
@@ -282,7 +298,7 @@ public class Platformer extends Application implements Images {
 
 			foreTrees.setX(foreTrees.getX() - .5);
 			foreTrees2.setX(foreTrees2.getX() - .5);
-			
+
 			trans.setX(trans.getX() - .5);
 		}
 
@@ -308,7 +324,7 @@ public class Platformer extends Application implements Images {
 
 			foreTrees.setX(foreTrees.getX() + .5);
 			foreTrees2.setX(foreTrees2.getX() + .5);
-			
+
 			trans.setX(trans.getX() + .5);
 		}
 		check = xOffset;
@@ -316,8 +332,22 @@ public class Platformer extends Application implements Images {
 
 	public void animations() {
 		hero.getImageView().setImage(heroFrame.getFrame(heroAnimation, action));
-		spookeoImage.getImageView().setImage(spookeoFrame.getFrame(spookeoSelect, "IDLE"));
-		farietteImage.getImageView().setImage(farietteFrame.getFrame(farietteSelect, "IDLE"));
+		if(checks) {
+			spookeoImage.getImageView().setImage(spookeoFrame.getFrame(spookeoSelect, "UNF"));
+
+		}
+		else {
+			spookeoImage.getImageView().setImage(spookeoFrame.getFrame(spookeoSelect, "IDLE"));
+		}
+
+		if (fachecks) {
+			farietteImage.getImageView().setImage(farietteFrame.getFrame(farietteSelect, "COFFEE_DRINK"));
+		}
+		else {
+			farietteImage.getImageView().setImage(farietteFrame.getFrame(farietteSelect, "IDLE"));
+		}
+		titleImage.getImageView().setImage(title.getFrame(titleScreen, "FLASH"));
+
 	}
 
 	private void cameraScroll(double xOffset, double yOffset) {
@@ -397,7 +427,8 @@ public class Platformer extends Application implements Images {
 		// make menu
 		menuRoot = new Pane();
 		menuRoot.setBackground(new Background(menuBG));
-		menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
+		menuRoot.getChildren().add(new ImageView(title.getFrame(titleScreen, "FLASH")));
+
 		menuRoot.getChildren().add(menuCanvas);
 		menuRoot.getChildren().add(startButton2());
 		menuRoot.getChildren().add(controlButton());
@@ -483,7 +514,8 @@ public class Platformer extends Application implements Images {
 
 	// creates start button
 	private Button startButton() {
-		Button btn = new Button("", START.getImageView());
+
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "PLAY")));
 		btn.setBackground(new Background(transparent));
 
 		btn.relocate((WIDTH / 2) - 88, 500);
@@ -491,14 +523,14 @@ public class Platformer extends Application implements Images {
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(Images.START_HOVER.getImageView());
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "PLAY2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(Images.START.getImageView());
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "PLAY")));
 			}
 		});
 
@@ -508,7 +540,7 @@ public class Platformer extends Application implements Images {
 			// sets button to false and creates a rectangle that appears after
 			@Override
 			public void handle(ActionEvent event) {
-				menuRoot.getChildren().remove(TITLE_SCREEN.getImageView());
+				//	menuRoot.getChildren().remove(TITLE_SCREEN.getImageView());
 				start(thestage);
 				reset();
 				lives = 3;
@@ -522,22 +554,24 @@ public class Platformer extends Application implements Images {
 
 	// start button for title
 	private Button startButton2() {
-		Button btn = new Button("", START.getImageView());
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "PLAY")));
 		btn.setBackground(new Background(transparent));
 
 		btn.relocate(550, 500);
-
+		startButton = new Animator("src/Assets/Animations/buttons.png",
+				"src/Assets/Animations/buttons.ssc");
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(Images.START_HOVER.getImageView());
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "PLAY2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(Images.START.getImageView());
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "PLAY")));
 			}
 		});
 
@@ -547,7 +581,7 @@ public class Platformer extends Application implements Images {
 			// sets button to false and creates a rectangle that appears after
 			@Override
 			public void handle(ActionEvent event) {
-				menuRoot.getChildren().remove(TITLE_SCREEN.getImageView());
+				//	menuRoot.getChildren().remove(TITLE_SCREEN.getImageView());
 				// start(thestage);
 				thestage.setTitle("Spookeo's Journey Yo");
 				gameState = 1;
@@ -560,12 +594,34 @@ public class Platformer extends Application implements Images {
 
 	// spookeo's character select button
 	private Button spookeoButton() {
-		Button btn = new Button("", new ImageView(spookeoFrame.getFrame(spookeoSelect, "IDLE")));
+
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "JOEY")));
+
+		btn.setBackground(new Background(transparent));
 		btn.relocate((WIDTH / 2) - 300, (HEIGHT / 2) + 128);
+		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "JOEY2")));
+				checks = true;
+
+
+			}
+		});
+
+		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				checks = false;
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "JOEY")));
+
+			}
+		});
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
+
 				cur = 0;
 				reset();
 				// hero.getImageView().setImage(spookeo);
@@ -578,18 +634,37 @@ public class Platformer extends Application implements Images {
 				thestage.setScene(gameScene);
 			}
 		});
+
 		return btn;
 	}
 
 	// fariette's character select button
 	private Button farietteButton() {
+		fachecks = false;
 		// Load animation as button
-		Button btn = new Button("", new ImageView(farietteFrame.getFrame(farietteSelect, "IDLE")));
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "ALICIA")));
+		btn.setBackground(new Background(transparent));
 		btn.relocate((WIDTH / 2) + 250, (HEIGHT / 2) + 128);
+		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				fachecks = true;
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "ALICIA2")));
+			}
+		});
+
+		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				fachecks = false;
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "ALICIA")));
+			}
+		});
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
+
 				cur = 5;
 				resetF();
 				// hero.getImageView().setImage(fariette);
@@ -607,12 +682,28 @@ public class Platformer extends Application implements Images {
 
 	// next level button
 	private Button nextButton() {
-		Button btn = new Button("NEXT LEVEL");
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "LEVEL")));
+		btn.setBackground(new Background(transparent));
 		btn.relocate(WIDTH / 2, HEIGHT / 2);
+		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "LEVEL2")));
+			}
+		});
+
+		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "LEVEL")));
+			}
+		});
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
+
 				cur++;
 				reset();
 				start(thestage);
@@ -624,21 +715,23 @@ public class Platformer extends Application implements Images {
 	}
 
 	private Button winMenuButton() {
-		Button btn = new Button("", MENU.getImageView());
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "MENU")));
 		btn.setBackground(new Background(transparent));
+		//btn.setBackground(new Background(transparent));
 		btn.relocate((WIDTH / 2) - 94, 575);
 
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(MENU_HOVER.getImageView());
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "MENU2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(MENU.getImageView());
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "MENU")));
 			}
 		});
 
@@ -666,23 +759,25 @@ public class Platformer extends Application implements Images {
 	}
 
 	private Button resetButton() {
-		Button btn = new Button("", RESET.getImageView());
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "RESET")));
 		btn.setBackground(new Background(transparent));
 		btn.relocate(610, 500);
 
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(RESET_HOVER.getImageView());
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESET2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(RESET.getImageView());
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESET")));
 			}
 		});
+
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -701,7 +796,7 @@ public class Platformer extends Application implements Images {
 
 	// creates button to reach controls screen
 	private Button controlButton() {
-		Button btn = new Button("", CONTROL.getImageView());
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "CONTROLS")));
 		btn.setBackground(new Background(transparent));
 
 		btn.relocate(850, 500);
@@ -709,14 +804,15 @@ public class Platformer extends Application implements Images {
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(CONTROL_HOVER.getImageView());
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "CONTROLS2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(CONTROL.getImageView());
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "CONTROLS")));
 			}
 		});
 
@@ -734,21 +830,22 @@ public class Platformer extends Application implements Images {
 	}
 
 	private Button igMenuButton() {
-		Button btn = new Button("", MENU.getImageView());
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "MENU")));
 		btn.setBackground(new Background(transparent));
 		btn.relocate(1440, 25);
 
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(MENU_HOVER.getImageView());
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "MENU2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(MENU.getImageView());
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "MENU")));
 			}
 		});
 
@@ -756,7 +853,7 @@ public class Platformer extends Application implements Images {
 
 			@Override
 			public void handle(ActionEvent event) {
-				igmenuroot.getChildren().add(TITLE_SCREEN.getImageView());
+				igmenuroot.getChildren().add(new ImageView(title.getFrame(titleScreen, "FLASH")));
 				igmenuroot.getChildren().add(menuButton());
 				thestage.setScene(igmenu);
 				gameLoop.stop();
@@ -767,24 +864,24 @@ public class Platformer extends Application implements Images {
 	}
 
 	private Button igControl() {
-		Button btn = new Button("", CONTROL.getImageView());
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "CONTROLS")));
 		btn.setBackground(new Background(transparent));
 		btn.relocate(810, 600);
 
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(CONTROL_HOVER.getImageView());
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "CONTROLS2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(CONTROL.getImageView());
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "CONTROLS")));
 			}
 		});
-
 		btn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent arg0) {
@@ -798,21 +895,22 @@ public class Platformer extends Application implements Images {
 
 	// creates button to reach menu
 	private Button menuButton() {
-		Button btn = new Button("", MENU.getImageView());
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "MENU")));
 		btn.setBackground(new Background(transparent));
 		btn.relocate((WIDTH / 2) - 94, 575);
 
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(MENU_HOVER.getImageView());
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "MENU2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(MENU.getImageView());
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "MENU")));
 			}
 		});
 
@@ -832,21 +930,22 @@ public class Platformer extends Application implements Images {
 	}
 
 	private Button menuButton2() {
-		Button btn = new Button("", MENU.getImageView());
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "MENU")));
 		btn.setBackground(new Background(transparent));
 		btn.relocate(550, 575);
 
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(MENU_HOVER.getImageView());
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "MENU2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(MENU.getImageView());
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "MENU")));
 			}
 		});
 
@@ -856,7 +955,7 @@ public class Platformer extends Application implements Images {
 			// sets button to false and creates a rectangle that appears after
 			@Override
 			public void handle(ActionEvent event) {
-				// menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
+				menuRoot.getChildren().add(new ImageView(title.getFrame(titleScreen, "FLASH")));
 				thestage.setTitle("Spookeo and Fariette");
 				thestage.setScene(menuScene);
 				reset();
@@ -881,21 +980,22 @@ public class Platformer extends Application implements Images {
 	}
 
 	private Button resumeButton() {
-		Button btn = new Button("", RESUME.getImageView());
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "RESUME")));
 		btn.setBackground(new Background(transparent));
 		btn.relocate(810, 500);
 
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(RESUME_HOVER.getImageView());
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(RESUME.getImageView());
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME")));
 			}
 		});
 
@@ -905,7 +1005,7 @@ public class Platformer extends Application implements Images {
 			// sets button to false and creates a rectangle that appears after
 			@Override
 			public void handle(ActionEvent event) {
-				igmenuroot.getChildren().remove(TITLE_SCREEN.getImageView());
+				igmenuroot.getChildren().remove(new ImageView(title.getFrame(titleScreen, "FLASH")));
 				gameRoot.getChildren().add(igMenuButton());
 				thestage.setScene(gameScene);
 				gameLoop.start();
@@ -990,134 +1090,134 @@ public class Platformer extends Application implements Images {
 	}
 
 	// Checks for collision with all objects
-		public void collisionCheck() {
-			for (int i = 0; i < nmo.length; i++) {
-				for (int j = 0; j < nmo[i].length; j++) {
-					if (nmo[i][j] != null) {
-						c.setObjs(hero, nmo[i][j]);
-						c.isColliding();
-						if (c.left()) {
-							left = true;
-						}
-						if (c.right()) {
-							right = true;
-						}
-						if (c.top()) {
-							top = true;
-						}
-						if (c.bottom()) {
-							bottom = true;
-						}
-						if (c.isColliding() && nmo[i][j] instanceof winBox) {
-							winCheck(gameLoop);
-						}
+	public void collisionCheck() {
+		for (int i = 0; i < nmo.length; i++) {
+			for (int j = 0; j < nmo[i].length; j++) {
+				if (nmo[i][j] != null) {
+					c.setObjs(hero, nmo[i][j]);
+					c.isColliding();
+					if (c.left()) {
+						left = true;
+					}
+					if (c.right()) {
+						right = true;
+					}
+					if (c.top()) {
+						top = true;
+					}
+					if (c.bottom()) {
+						bottom = true;
+					}
+					if (c.isColliding() && nmo[i][j] instanceof winBox) {
+						winCheck(gameLoop);
 					}
 				}
 			}
+		}
 
-			for (int i = 0; i < mo.length; i++) {
-				for (int j = 0; j < mo[i].length; j++) {
-					if (mo[i][j] != null) {
-						c.setObjs(hero, mo[i][j]);
-						if (c.isColliding()) {
-							if (mo[i][j] instanceof Box) {
-								// System.out.println("BOOP");
-								if (c.left()) {
-									mo[i][j].setX(hero.getAbsX() + hero.getWidth() + 1);
-									mo[i][j].setHBX(mo[i][j].getX());
-									mo[i][j].getImageView().setX(mo[i][j].getX());
-									if (!action.equals("PUSH")) {
-										heroAnimation.startActionAnimation("PUSH");
-										heroFrame.changeCount(7);
-										action = "PUSH";
-									}
-									// System.out.println("LEFT HIT");
+		for (int i = 0; i < mo.length; i++) {
+			for (int j = 0; j < mo[i].length; j++) {
+				if (mo[i][j] != null) {
+					c.setObjs(hero, mo[i][j]);
+					if (c.isColliding()) {
+						if (mo[i][j] instanceof Box) {
+							// System.out.println("BOOP");
+							if (c.left()) {
+								mo[i][j].setX(hero.getAbsX() + hero.getWidth() + 1);
+								mo[i][j].setHBX(mo[i][j].getX());
+								mo[i][j].getImageView().setX(mo[i][j].getX());
+								if (!action.equals("PUSH")) {
+									heroAnimation.startActionAnimation("PUSH");
+									heroFrame.changeCount(7);
+									action = "PUSH";
 								}
-								if (c.right()) {
-									mo[i][j].setX(hero.getAbsX() - mo[i][j].getWidth() - 1);
-									mo[i][j].setHBX(mo[i][j].getX());
-									mo[i][j].getImageView().setX(mo[i][j].getX());
-									if (!action.equals("PUSH")) {
-										heroAnimation.startActionAnimation("PUSH");
-										heroFrame.changeCount(7);
-										action = "PUSH";
-									}
-									// System.out.println("RIGHT HIT");
+								// System.out.println("LEFT HIT");
+							}
+							if (c.right()) {
+								mo[i][j].setX(hero.getAbsX() - mo[i][j].getWidth() - 1);
+								mo[i][j].setHBX(mo[i][j].getX());
+								mo[i][j].getImageView().setX(mo[i][j].getX());
+								if (!action.equals("PUSH")) {
+									heroAnimation.startActionAnimation("PUSH");
+									heroFrame.changeCount(7);
+									action = "PUSH";
 								}
-								if (c.top()) {
-									top = true;
-								}
-								for (int k = 0; k < nmo.length; k++) {
-									for (int l = 0; l < nmo[i].length; l++) {
-										if (nmo[k][l] != null) {
-											c.setObjs(mo[i][j], nmo[k][l]);
-											c.isColliding();
-											if (c.left()) {
-												left = true;
-											}
-											if (c.right()) {
-												right = true;
-											}
-											if (c.top()) {
-												top = true;
-											}
-											if (c.bottom()) {
-												bottom = true;
-											}
+								// System.out.println("RIGHT HIT");
+							}
+							if (c.top()) {
+								top = true;
+							}
+							for (int k = 0; k < nmo.length; k++) {
+								for (int l = 0; l < nmo[i].length; l++) {
+									if (nmo[k][l] != null) {
+										c.setObjs(mo[i][j], nmo[k][l]);
+										c.isColliding();
+										if (c.left()) {
+											left = true;
+										}
+										if (c.right()) {
+											right = true;
+										}
+										if (c.top()) {
+											top = true;
+										}
+										if (c.bottom()) {
+											bottom = true;
 										}
 									}
 								}
 							}
-							if (mo[i][j] instanceof Rock) {
-								c.isColliding();
-								if (c.left() && !flipped) {
-									flipped = true;
-									int temp = mo[i][j].getHBHeight();
-									mo[i][j].setHBHeight(mo[i][j].getHBWidth());
-									mo[i][j].setHBWidth(temp);
-									mo[i][j].setHBX(mo[i][j].getHBX() + 64);
-									mo[i][j].setHBY(mo[i][j].getHBY() + 96);
-								}
-								if(c.right() && !flipped){
-									flipped = true;
-									int temp = mo[i][j].getHBHeight();
-									mo[i][j].setHBHeight(mo[i][j].getHBWidth());
-									mo[i][j].setHBWidth(temp);
-									mo[i][j].setHBX(mo[i][j].getHBX() - 64);
-									mo[i][j].setHBY(mo[i][j].getHBY() + 96);
-								}
+						}
+						if (mo[i][j] instanceof Rock) {
+							c.isColliding();
+							if (c.left() && !flipped) {
+								flipped = true;
+								int temp = mo[i][j].getHBHeight();
+								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+								mo[i][j].setHBWidth(temp);
+								mo[i][j].setHBX(mo[i][j].getHBX() + 64);
+								mo[i][j].setHBY(mo[i][j].getHBY() + 96);
+							}
+							if(c.right() && !flipped){
+								flipped = true;
+								int temp = mo[i][j].getHBHeight();
+								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+								mo[i][j].setHBWidth(temp);
+								mo[i][j].setHBX(mo[i][j].getHBX() - 64);
+								mo[i][j].setHBY(mo[i][j].getHBY() + 96);
+							}
+							if(c.top()){
+								top = true;
+							}
+						}
+						flipped = false;
+						if(mo[i][j] instanceof Flower){
+							c.isColliding();
+							if(c.left() && !flowerFlip){
+								flowerFlip = true;
+								leftFlowerFlip = true;
+								int temp = mo[i][j].getHBHeight();
+								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+								mo[i][j].setHBWidth(temp);
+								//mo[i][j].setHBX(mo[i][j].getHBX() + 64);
+								mo[i][j].setHBY(mo[i][j].getHBY() + 148);
 								if(c.top()){
 									top = true;
 								}
 							}
-							flipped = false;
-							if(mo[i][j] instanceof Flower){
-								c.isColliding();
-								if(c.left() && !flowerFlip){
-									flowerFlip = true;
-									leftFlowerFlip = true;
-									int temp = mo[i][j].getHBHeight();
-									mo[i][j].setHBHeight(mo[i][j].getHBWidth());
-									mo[i][j].setHBWidth(temp);
-									//mo[i][j].setHBX(mo[i][j].getHBX() + 64);
-									mo[i][j].setHBY(mo[i][j].getHBY() + 148);
-									if(c.top()){
-										top = true;
-									}
+							if(c.right() && !flowerFlip){
+								flowerFlip = true;
+								rightFlowerFlip = true;
+								int temp = mo[i][j].getHBHeight();
+								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
+								mo[i][j].setHBWidth(temp);
+								//mo[i][j].setHBX(mo[i][j].getHBX() - 64);
+								mo[i][j].setHBY(mo[i][j].getHBY() + 148);
+								if(c.top()){
+									top = true;
 								}
-								if(c.right() && !flowerFlip){
-									flowerFlip = true;
-									rightFlowerFlip = true;
-									int temp = mo[i][j].getHBHeight();
-									mo[i][j].setHBHeight(mo[i][j].getHBWidth());
-									mo[i][j].setHBWidth(temp);
-									//mo[i][j].setHBX(mo[i][j].getHBX() - 64);
-									mo[i][j].setHBY(mo[i][j].getHBY() + 148);
-									if(c.top()){
-										top = true;
-									}
-								}
-								/*if(!c.isColliding() && leftFlowerFlip){
+							}
+							/*if(!c.isColliding() && leftFlowerFlip){
 									flowerFlip = false;
 									rightFlowerFlip = false;
 									int temp = mo[i][j].getHBHeight();
@@ -1135,13 +1235,13 @@ public class Platformer extends Application implements Images {
 									//mo[i][j].setHBX(mo[i][j].getHBX() + 64);
 									mo[i][j].setHBY(mo[i][j].getHBY() - 148);
 								}*/
-								
-							}
+
 						}
 					}
 				}
 			}
 		}
+	}
 
 	// makes shape move....
 	private void moveRectangleOnKeyPress(Scene scene, final Rectangle rectangle, final ImageView image) {
@@ -1307,11 +1407,11 @@ public class Platformer extends Application implements Images {
 		} else if (cur == 3) {
 			m.readIn("Assets/Json/map.txt");
 		} else if (cur == 5) {
-			m.readIn("Assets/Json/map4.txt");
+			m.readIn("Assets/Json/map7.txt");
 		} else if (cur == 6) {
-
+			m.readIn("Assets/Json/map7.txt");
 		} else if (cur == 7) {
-
+			m.readIn("Assets/Json/map6.txt");
 		} else if (cur == 8) {
 
 		}
