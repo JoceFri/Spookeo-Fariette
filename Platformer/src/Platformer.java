@@ -1031,6 +1031,16 @@ public class Platformer extends Application {
 		}
 	}
 
+	private void Objgravity(boolean onTop, Obj grav) {
+		if (!onTop) {
+			if (!(grav.getY() + gravity + grav.getHeight() >= HEIGHT)) {
+				grav.setY(grav.getY() + gravity);
+				grav.getImageView().setY(grav.getY());
+				grav.setHBY(grav.getY());
+			}
+		}
+	}
+
 	// jump
 	double jumpmax = 0;
 	boolean canJump = true;
@@ -1117,11 +1127,42 @@ public class Platformer extends Application {
 
 		for (int i = 0; i < mo.length; i++) {
 			for (int j = 0; j < mo[i].length; j++) {
+
 				if (mo[i][j] != null) {
+					if (mo[i][j] instanceof Box) {
+						mo[i][j].resetCollision();
+						for (int k = 0; k < nmo.length; k++) {
+							for (int l = 0; l < nmo[k].length; l++) {
+								
+								c2.isColliding();
+								if (nmo[k][l] != null) {
+									c2.setObjs(mo[i][j], nmo[k][l]);
+									if (c2.top()) {
+										mo[i][j].setTop(true);
+									}
+									
+								}
+							}
+						}
+						for(int k = 0; k < mo.length; k++){
+							for(int l = 0; l < mo[k].length; l++){
+								if(mo[k][l] instanceof Rock){
+									c2.isColliding();
+									System.out.println(k + " " + l);
+									c2.setObjs(mo[i][j], mo[k][l]);
+									if(c2.top()){
+										mo[i][j].setTop(true);
+									}
+								}
+							}
+						}
+						Objgravity(mo[i][j].getTop(), mo[i][j]);
+					}
 					c.setObjs(hero, mo[i][j]);
 					if (c.isColliding()) {
 						if (mo[i][j] instanceof Box) {
 							// System.out.println("BOOP");
+
 							if (c.left()) {
 								mo[i][j].setX(hero.getAbsX() + hero.getWidth() + 1);
 								mo[i][j].setHBX(mo[i][j].getX());
@@ -1149,25 +1190,21 @@ public class Platformer extends Application {
 							}
 							for (int k = 0; k < nmo.length; k++) {
 								for (int l = 0; l < nmo[i].length; l++) {
+									c2.isColliding();
 									if (nmo[k][l] != null) {
-										c.setObjs(mo[i][j], nmo[k][l]);
-										c.isColliding();
-										if (c.left()) {
+										c2.setObjs(mo[i][j], nmo[k][l]);
+
+										if (c2.left()) {
 											left = true;
 										}
-										if (c.right()) {
+										if (c2.right()) {
 											right = true;
-										}
-										if (c.top()) {
-											top = true;
-										}
-										if (c.bottom()) {
-											bottom = true;
 										}
 									}
 								}
 							}
 						}
+
 						if (mo[i][j] instanceof Rock) {
 							c.isColliding();
 							if (c.left() && !flipped) {
@@ -1176,65 +1213,47 @@ public class Platformer extends Application {
 								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
 								mo[i][j].setHBWidth(temp);
 								mo[i][j].setHBX(mo[i][j].getHBX() + 64);
-								mo[i][j].setHBY(mo[i][j].getHBY() + 96);
+								mo[i][j].setHBY(mo[i][j].getHBY() + 94);
 							}
-							if(c.right() && !flipped){
+							if (c.right() && !flipped) {
 								flipped = true;
 								int temp = mo[i][j].getHBHeight();
 								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
 								mo[i][j].setHBWidth(temp);
 								mo[i][j].setHBX(mo[i][j].getHBX() - 64);
-								mo[i][j].setHBY(mo[i][j].getHBY() + 96);
+								mo[i][j].setHBY(mo[i][j].getHBY() + 93);
 							}
-							if(c.top()){
+							if (c.top()) {
 								top = true;
 							}
 						}
 						flipped = false;
-						if(mo[i][j] instanceof Flower){
+						if (mo[i][j] instanceof Flower) {
 							c.isColliding();
-							if(c.left() && !flowerFlip){
+							if (c.left() && !flowerFlip) {
 								flowerFlip = true;
 								leftFlowerFlip = true;
 								int temp = mo[i][j].getHBHeight();
 								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
 								mo[i][j].setHBWidth(temp);
-								//mo[i][j].setHBX(mo[i][j].getHBX() + 64);
+								// mo[i][j].setHBX(mo[i][j].getHBX() + 64);
 								mo[i][j].setHBY(mo[i][j].getHBY() + 148);
-								if(c.top()){
+								if (c.top()) {
 									top = true;
 								}
 							}
-							if(c.right() && !flowerFlip){
+							if (c.right() && !flowerFlip) {
 								flowerFlip = true;
 								rightFlowerFlip = true;
 								int temp = mo[i][j].getHBHeight();
 								mo[i][j].setHBHeight(mo[i][j].getHBWidth());
 								mo[i][j].setHBWidth(temp);
-								//mo[i][j].setHBX(mo[i][j].getHBX() - 64);
+								// mo[i][j].setHBX(mo[i][j].getHBX() - 64);
 								mo[i][j].setHBY(mo[i][j].getHBY() + 148);
-								if(c.top()){
+								if (c.top()) {
 									top = true;
 								}
 							}
-							/*if(!c.isColliding() && leftFlowerFlip){
-									flowerFlip = false;
-									rightFlowerFlip = false;
-									int temp = mo[i][j].getHBHeight();
-									mo[i][j].setHBHeight(mo[i][j].getHBWidth());
-									mo[i][j].setHBWidth(temp);
-									//mo[i][j].setHBX(mo[i][j].getHBX() - 64);
-									mo[i][j].setHBY(mo[i][j].getHBY() - 148);
-								}
-								if(!c.isColliding() && rightFlowerFlip){
-									flowerFlip = false;
-									rightFlowerFlip = false;
-									int temp = mo[i][j].getHBHeight();
-									mo[i][j].setHBHeight(mo[i][j].getHBWidth());
-									mo[i][j].setHBWidth(temp);
-									//mo[i][j].setHBX(mo[i][j].getHBX() + 64);
-									mo[i][j].setHBY(mo[i][j].getHBY() - 148);
-								}*/
 
 						}
 					}
@@ -1409,9 +1428,9 @@ public class Platformer extends Application {
 		} else if (cur == 5) {
 			m.readIn("Assets/Json/map7.txt");
 		} else if (cur == 6) {
-			m.readIn("Assets/Json/map7.txt");
-		} else if (cur == 7) {
 			m.readIn("Assets/Json/map6.txt");
+		} else if (cur == 7) {
+
 		} else if (cur == 8) {
 
 		}
