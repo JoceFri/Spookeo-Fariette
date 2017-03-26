@@ -5,6 +5,7 @@ public class Moveable extends Obj {
 	boolean right = false;
 	boolean left = false;
 	boolean bottom = false;
+	boolean flipped = false;
 	public Moveable(double ex, double why, int sizeX, int sizeY, ImageView person, double hbx, double hby, int hbwidth,
 			int hblength) {
 		super(ex, why, sizeX, sizeY, person, hbx, hby, hbwidth, hblength);
@@ -22,5 +23,12 @@ public class Moveable extends Obj {
 		left = false;
 		bottom = false;
 	}
+	
+	public void setFlipped(boolean flip){
+		flipped = flip;
+	}
+	
+	public boolean getFlipped(){
+		return flipped;
+	}
 }
-
