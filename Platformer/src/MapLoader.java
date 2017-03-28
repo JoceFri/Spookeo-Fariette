@@ -46,9 +46,13 @@ public class MapLoader {
 	ImageView rock = new ImageView("Assets/Art/skinny rock.png");
 	ImageView flower = new ImageView("Assets/Art/tippableflower (1).png");
 	ImageView winner = new ImageView("Assets/Art/triforce.png");
+	
+	//enemies
+	ImageView dogspook = new ImageView("Assets/Animations/ghostdog.png");
 
 	Nonmoveable[][] nmo = null;
 	Moveable[][] mo = null;
+	Enemy[][] enemies = null;
 	int width = 0;
 	int height = 0;
 	winBox win = null;
@@ -58,22 +62,23 @@ public class MapLoader {
 		try {
 
 			Scanner in = new Scanner(getResourceAsFile(path));
-			
+
 			width = in.nextInt();
 			height = in.nextInt();
 			type = in.nextInt();
 			in.nextLine();
 			nmo = new Nonmoveable[width][height];
 			mo = new Moveable[width][height];
+			enemies = new Enemy[width][height];
 			int j = 0;
-			
+
 			while (in.hasNextLine()) {
 
 				String temp = in.nextLine();
 				char[] line = temp.toCharArray();
 
 				for (int i = 0; i < line.length; i++) {
-					
+
 					// ------------------------------------HAPPY
 					// MEADOWS--------------------------------------------------------------//
 					// ground block
@@ -196,6 +201,9 @@ public class MapLoader {
 					// flower
 					else if (line[i] == 'z') {
 						mo[i][j] = new Flower(i * 64, j * 64, 64, 64, flower, i * 64, j * 64, 64, 192);
+					//enemy
+					} else if (line[i] == '1') {
+						enemies[i][j] = new Enemy(i * 64, j * 64, 64, 64, dogspook, i * 64, j * 64, 64, 64);
 					} else {
 					}
 
@@ -218,14 +226,18 @@ public class MapLoader {
 		return nmo;
 	}
 	
+	public Enemy[][] getEnemies() {
+		return enemies;
+	}
+
 	public double getWidth() {
 		return (double) 64 * width;
 	}
-	
+
 	public double getHeight() {
 		return (double) 64 * height;
 	}
-	
+
 	public int getType() {
 		return type;
 	}
