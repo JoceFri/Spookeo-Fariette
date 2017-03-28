@@ -49,4 +49,12 @@ public class Enemy extends Actor {
 			count--;
 		}
 	}
+	public boolean detected(Player hero){
+		if(Math.abs(hero.getHBX() - this.getHBX()) <= 196 && Math.abs(hero.getHBY() - this.getHBY()) <= 196){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }
