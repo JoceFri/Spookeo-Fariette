@@ -1,0 +1,17 @@
+*FLOWER
+*
+sprite_sheet		:=flower.png;
+size_x			:=192;
+size_y			:=192;
+padding_x		:=0;
+padding_y		:=0;
+num_rows		:=4;
+action			:=STANDING;
+columns			:=1;
+action			:=TIPPING;
+columns			:=9;
+action			:SITTING;
+columns			:=1;
+action			:FLING;
+columns			:9;
+END

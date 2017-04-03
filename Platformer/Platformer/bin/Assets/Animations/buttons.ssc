@@ -1,0 +1,42 @@
+*BUTTONS
+*
+*
+sprite_sheet	:=buttons.png;
+size_x          :=156;
+size_y          :=32;
+padding_x       :=0;
+padding_y       :=0;
+num_rows        :=16;
+action          :=CONTROLS;
+columns         :=1;
+action			:=MENU;
+columns			:=1;
+action			:=PLAY;
+columns			:=1;
+action			:=RESUME;
+columns			:=1;
+action			:=RESET;
+columns			:=1;
+action			:=LEVEL;
+columns			:=1;
+action			:=JOEY;
+columns			:=1;
+action			:=ALICIA;
+columns			:=1;
+action			:=CONTROLS2;
+columns			:=1;
+action			:=MENU2;
+columns			:=1;
+action			:=PLAY2;
+columns			:=1;
+action			:=RESUME2;
+columns			:=1;
+action			:=RESET2;
+columns			:=1;
+action			:=LEVEL2;
+columns			:=1;
+action			:=JOEY2;
+columns			:=1;
+action			:=ALICIA2;
+columns			:=1;
+END

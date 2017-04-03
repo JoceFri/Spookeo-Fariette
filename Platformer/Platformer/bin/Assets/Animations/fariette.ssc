@@ -1,0 +1,25 @@
+*Fariette
+*
+sprite_sheet	:=fariette.png;
+size_x          :=64;
+size_y          :=64;
+padding_x       :=0;
+padding_y       :=0;
+num_rows        :=8;
+action          :=IDLE;
+columns         :=8;
+action			:=PUSH;
+columns			:=9;
+action			:=JUMP;
+columns			:=7;
+action			:=FALL;
+columns			:=9;
+action			:=DEATH;
+columns			:=9;
+action			:=DEATH_IDLE;
+columns			:=6;
+action			:=COFFEE_DRINK;
+columns			:=9;
+action			:=HAPPY; 
+columns			:=8;
+END
