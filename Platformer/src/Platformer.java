@@ -16,7 +16,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -133,12 +132,12 @@ public class Platformer extends Application {
 	Animator startButton = new Animator("src/Assets/Animations/buttons.png", "src/Assets/Animations/buttons.ssc");
 	FrameSetter play = new FrameSetter(2);
 
-	Animator dog = new Animator("src/Assets/Animations/ghostdog.png",
-			"src/Assets/Animations/ghostdog.ssc");
+	Animator dog = new Animator("src/Assets/Animations/ghostdog.png", "src/Assets/Animations/ghostdog.ssc");
 	FrameSetter doggo = new FrameSetter(8);
-	Enemy enemy1 = new Enemy(1664, 448, 64, 64, new ImageView("Assets/Art/joey.png"), 1664, 448, 64, 64);
+	// Enemy enemy1 = new Enemy(1664, 448, 64, 64, new
+	// ImageView("Assets/Art/joey.png"), 1664, 448, 64, 64);
 	String action2 = "IDLE";
-	
+
 	Animator titleScreen = new Animator("src/Assets/Animations/title_screen.png",
 			"src/Assets/Animations/title_screen.ssc");
 	FrameSetter title = new FrameSetter(2);
@@ -157,7 +156,7 @@ public class Platformer extends Application {
 		thestage = primaryStage;
 
 		dog.startActionAnimation(action2);
-		enemy1.getImageView().setImage(doggo.getFrame(dog, action2));
+		// enemy1.getImageView().setImage(doggo.getFrame(dog, action2));
 		// Set background positions
 		clouds.setX(0);
 		clouds2.setX(1800);
@@ -220,14 +219,15 @@ public class Platformer extends Application {
 			}
 		}
 
-		for (int i = 0; i < enemies.length; i++) {			
+		for (int i = 0; i < enemies.length; i++) {
 			for (int j = 0; j < enemies[i].length; j++) {
 				if (enemies[i][j] != null) {
 					gc.drawImage(enemies[i][j].getImageView().getImage(), enemies[i][j].getX(), enemies[i][j].getY());
 				}
 			}
 		}
-		gc.drawImage(enemy1.getImageView().getImage(), enemy1.getX(), enemy1.getY());
+		// gc.drawImage(enemy1.getImageView().getImage(), enemy1.getX(),
+		// enemy1.getY());
 	}
 
 	private void gameStart() {
@@ -259,7 +259,9 @@ public class Platformer extends Application {
 					update();
 					detection();
 					backgroundHelper();
-
+					if (cur == 3 || cur == 8) {
+						autoScroll();
+					}
 					if (!top) {
 						gravity(rectangle, hero.getImageView());
 					}
@@ -367,7 +369,7 @@ public class Platformer extends Application {
 			farietteImage.getImageView().setImage(farietteFrame.getFrame(farietteSelect, "IDLE"));
 		}
 		titleImage.getImageView().setImage(title.getFrame(titleScreen, "FLASH"));
-		enemy1.getImageView().setImage(doggo.getFrame(dog, action2));
+		// enemy1.getImageView().setImage(doggo.getFrame(dog, action2));
 
 	}
 
@@ -398,7 +400,8 @@ public class Platformer extends Application {
 				}
 			}
 		}
-		gc.drawImage(enemy1.getImageView().getImage(), enemy1.getX(), enemy1.getY());
+		// gc.drawImage(enemy1.getImageView().getImage(), enemy1.getX(),
+		// enemy1.getY());
 	}
 
 	private void sound() {
@@ -1135,6 +1138,7 @@ public class Platformer extends Application {
 					c.isColliding();
 					if (c.left()) {
 						left = true;
+
 					}
 					if (c.right()) {
 						right = true;
@@ -1291,23 +1295,23 @@ public class Platformer extends Application {
 
 	public void detection() {
 		boolean detected = false;
-//		for (int i = 0; i < enemies.length; i++) {
-//			for (int j = 0; j < enemies[i].length; j++) {
-//				if (enemies[i][j] != null) {
-//					detected = enemies[i][j].detected(hero);
-					detected = enemy1.detected(hero);
-					if (detected) {
-						if (!action2.equals("BARK")) {
-							action2 = "BARK";
-						}
-					} else {
-						if (!action2.equals("IDLE")) {
-							action2 = "IDLE";
-						}
-					}
-//				}
-//			}
-//		}
+		// for (int i = 0; i < enemies.length; i++) {
+		// for (int j = 0; j < enemies[i].length; j++) {
+		// if (enemies[i][j] != null) {
+		// detected = enemies[i][j].detected(hero);
+		// detected = enemy1.detected(hero);
+		if (detected) {
+			if (!action2.equals("BARK")) {
+				action2 = "BARK";
+			}
+		} else {
+			if (!action2.equals("IDLE")) {
+				action2 = "IDLE";
+			}
+		}
+		// }
+		// }
+		// }
 	}
 
 	// makes shape move....
@@ -1363,11 +1367,7 @@ public class Platformer extends Application {
 				}
 
 				if (event.getCode().equals(KeyCode.S) || event.getCode().equals(KeyCode.DOWN)) {
-					if (!action.equals("PUSH")) {
-						heroAnimation.startActionAnimation("PUSH");
-						heroFrame.changeCount(7);
-						action = "PUSH";
-					}
+
 				}
 
 			}
@@ -1398,34 +1398,36 @@ public class Platformer extends Application {
 
 	// Scrolling
 	public void scrollCheckLeft(double x) {
-
-		if (x <= (0.2 * WIDTH) && xOffset - acceleration > 0) {
-			xOffset = xOffset - acceleration;
-			hero.setAbsX(hero.getAbsX() - acceleration);
-			lefty = false;
-			thestage.setScene(gameScene);
-		} else {
-			lefty = true;
+		if (cur != 3 && cur != 8) {
+			if (x <= (0.2 * WIDTH) && xOffset - acceleration > 0) {
+				xOffset = xOffset - acceleration;
+				hero.setAbsX(hero.getAbsX() - acceleration);
+				lefty = false;
+				thestage.setScene(gameScene);
+			} else {
+				lefty = true;
+			}
 		}
 	}
 
 	public void scrollCheckRight(double x) {
+		if (cur != 3 && cur != 8) {
+			if (x >= (0.6 * WIDTH) && xOffset + acceleration < (0.76 * m.getWidth())) {
 
-		if (x >= (0.6 * WIDTH) && xOffset + acceleration < (0.76 * m.getWidth())) {
+				xOffset = xOffset + acceleration;
+				hero.setAbsX(hero.getAbsX() + acceleration);
+				righty = false;
+				thestage.setScene(gameScene);
+			}
 
-			xOffset = xOffset + acceleration;
-			hero.setAbsX(hero.getAbsX() + acceleration);
-			righty = false;
-			thestage.setScene(gameScene);
-		}
-
-		else {
-			righty = true;
+			else {
+				righty = true;
+			}
 		}
 	}
 
 	private void moveRight(Rectangle rectangle, ImageView image) {
-		if (hero.getHBX() > 0.5 * WIDTH && xOffset + acceleration < (0.76 * m.getWidth())) {
+		if (hero.getHBX() > 0.5 * WIDTH && xOffset + acceleration < (0.76 * m.getWidth()) && (cur != 3 && cur != 8)) {
 			xOffset = xOffset + acceleration;
 			hero.setAbsX(hero.getAbsX() + acceleration);
 			hero.setHBX(hero.getAbsX());
@@ -1440,7 +1442,7 @@ public class Platformer extends Application {
 	}
 
 	private void moveLeft(Rectangle rectangle, ImageView image) {
-		if (hero.getX() < 0.5 * WIDTH && xOffset - acceleration > 0) {
+		if (hero.getX() < 0.5 * WIDTH && xOffset - acceleration > 0 && (cur != 3 && cur != 8)) {
 			xOffset = xOffset - acceleration;
 			hero.setAbsX(hero.getAbsX() - acceleration);
 			hero.setHBX(hero.getAbsX());
@@ -1450,6 +1452,25 @@ public class Platformer extends Application {
 				hero.setAbsX(hero.getAbsX() - acceleration);
 				image.setX(rectangle.getX());
 				hero.setHBX(hero.getAbsX());
+			}
+		}
+	}
+
+	public void autoScroll() {
+		if (xOffset + acceleration < (0.76 * m.getWidth())) {
+			xOffset = xOffset + acceleration / 2;
+			hero.setX(hero.getAbsX() - xOffset);
+			rectangle.setX(hero.getAbsX() - xOffset);
+			hero.getImageView().setX(hero.getAbsX() - xOffset);
+			if (hero.getAbsX() - xOffset < 0) {
+				hero.setAbsX(hero.getAbsX() + acceleration);
+				hero.setHBX(hero.getAbsX());
+				rectangle.setX(hero.getAbsX() - xOffset);
+				hero.getImageView().setX(hero.getAbsX() - xOffset);
+				if (left) {
+					lives--;
+					reset();
+				}
 			}
 		}
 	}
@@ -1470,7 +1491,7 @@ public class Platformer extends Application {
 		} else if (cur == 1) {
 			m.readIn("Assets/Json/map2.txt");
 		} else if (cur == 2) {
-			m.readIn("Assets/Json/map.txt");
+			m.readIn("Assets/Json/map3.txt");
 		} else if (cur == 3) {
 			m.readIn("Assets/Json/map.txt");
 		} else if (cur == 5) {
