@@ -14,9 +14,9 @@ public class FrameSetter {
 	}
 	
 	public Image getFrame(Animator anim, String action) {
-		
+	
 		Image temp = null;
-		
+		try {
 		if (cooldown == 0) {
 			temp = SwingFXUtils.toFXImage(anim.getNextFrame(), null);
 			cooldown = 60 / spriteCount;
@@ -25,6 +25,10 @@ public class FrameSetter {
 			
 			temp = SwingFXUtils.toFXImage(anim.getFrameAtIndex(action, anim.getCurrentFrameIndex()), null);
 			cooldown--;	
+		}
+		} catch(Exception e) {
+			temp = SwingFXUtils.toFXImage(anim.getNextFrame(), null);
+			//System.out.println("i broke here");
 		}
 		return temp;
 	}
