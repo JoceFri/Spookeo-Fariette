@@ -17,6 +17,22 @@ public class Moveable extends Obj {
 	public void setTop(boolean newTop){
 		top = newTop;
 	}
+	
+	public boolean getRight(){
+		return right;
+	}
+	
+	public void setRight(boolean newRight){
+		right = newRight;
+	}
+	
+	public boolean getLeft(){
+		return left;
+	}
+	
+	public void setLeft(boolean newLeft){
+		left = newLeft;
+	}
 	public void resetCollision() {
 		top = false;
 		right = false;
