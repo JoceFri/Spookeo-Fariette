@@ -309,7 +309,7 @@ public class Platformer extends Application {
 		gameLoop.start();
 		thestage.setTitle("Spookeo and Fariette");
 		thestage.setScene(menuScene);
-		bgNoise.loadSound("Main_Theme.wav");
+		bgNoise.loadSound("Assets/Sound/Main_Theme.wav");
 		thestage.show();
 	}
 
@@ -447,13 +447,13 @@ public class Platformer extends Application {
 
 	private void sound() {
 		jumpSound.loadSound("Assets/Sound/jump1.wav");
-		borkbork.loadSound("Dog_Bark_3.wav");
-		fairyAha.loadSound("-Ah-ha!.wav");
-		gotem.loadSound("-I_Got_You!-.wav");
-		deathSong.loadSound("Spookeo_and_Fairiette_Death.wav");
-		laugh.loadSound("Evil_Laughter_2.wav");
-		playagain.loadSound("Spookeo_and_Fairiette_Play_Again-.wav");
-		bgNoise.runLoop();
+		borkbork.loadSound("Assets/Sound/Dog_Bark_3.wav");
+		fairyAha.loadSound("Assets/Sound/-Ah-ha!-.wav");
+		gotem.loadSound("Assets/Sound/-I_Got_You!-.wav");
+		deathSong.loadSound("Assets/Sound/Spookeo_and_Fairiette_Death.wav");
+		laugh.loadSound("Assets/Sound/Evil_Laughter_2.wav");
+		playagain.loadSound("Assets/Sound/Spookeo_and_Fairiette_Play_Again-.wav");
+		//bgNoise.runLoop();
 	}
 
 	private void draw() {
@@ -707,7 +707,9 @@ public class Platformer extends Application {
 
 				cur = 0;
 				reset();
-				bgNoise.loadSound("Main_Theme.wav");
+				bgNoise.stop();
+				bgNoise.loadSound("Assets/Sound/Main_Theme.wav");
+				bgNoise.runLoop();
 				// hero.getImageView().setImage(spookeo);
 				heroAnimation = new Animator("src/Assets/Animations/spookeo_sheet.png",
 						"src/Assets/Animations/Spookeo.ssc");
@@ -753,7 +755,9 @@ public class Platformer extends Application {
 
 				cur = 5;
 				resetF();
-				bgNoise.loadSound("Spooky_Forrest_Theme.wav");
+				bgNoise.stop();
+				bgNoise.loadSound("Assets/Sound/Spooky_Forrest_Theme.wav");
+				bgNoise.runLoop();
 				heroAnimation = new Animator("src/Assets/Animations/fariette.png",
 						"src/Assets/Animations/fariette.ssc");
 				heroAnimation.startActionAnimation("IDLE");
@@ -1106,7 +1110,9 @@ public class Platformer extends Application {
 	private void gravity(final Rectangle rectangle, final ImageView image) {
 		if (rectangle.getY() + rectangle.getHeight() + gravity >= HEIGHT) {
 			lives--;
+			bgNoise.stop();
 			deathSong.runOnce();
+			bgNoise.runLoop();
 			reset();
 
 		}
@@ -1172,6 +1178,7 @@ public class Platformer extends Application {
 	public void deathCheck(AnimationTimer loop) {
 		if (lives <= 0) {
 			loop.stop();
+			bgNoise.stop();
 			playagain.runOnce();
 			thestage.setScene(deathScene);
 			lives = 3;
@@ -1654,7 +1661,9 @@ public class Platformer extends Application {
 				rectangle.setX(hero.getAbsX() - xOffset);
 				hero.getImageView().setX(hero.getAbsX() - xOffset);
 				if (left) {
+					bgNoise.stop();
 					deathSong.runOnce();
+					bgNoise.runLoop();
 					lives--;
 					reset();
 				}
