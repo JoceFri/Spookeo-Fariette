@@ -1,0 +1,13 @@
+*FAIRY GUARD
+*
+sprite_sheet	:=fairyguard.png;
+size_x          :=64;
+size_y          :=64;
+padding_x       :=0;
+padding_y       :=0;
+num_rows        :=2;
+action          :=IDLE;
+columns         :=9;
+action		:=GOTYOU;
+columns		:=8;
+END
