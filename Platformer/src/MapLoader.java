@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import DavidMohrhardt.animator.Animator;
 import javafx.scene.image.ImageView;
 
 public class MapLoader {
@@ -45,10 +46,13 @@ public class MapLoader {
 	ImageView box = new ImageView("Assets/Art/pushable_box.png");
 	ImageView rock = new ImageView("Assets/Art/skinny rock.png");
 	ImageView flower = new ImageView("Assets/Art/tippableflower (1).png");
-	ImageView winner = new ImageView("Assets/Art/triforce.png");
+	ImageView winner = new ImageView("Assets/Art/sign.png");
+	
 	
 	//enemies
 	ImageView dogspook = new ImageView("Assets/Animations/ghostdog.png");
+	Animator enemy = new Animator("src/Assets/Animations/ghostdog.png", "src/Assets/Animations/ghostdog.ssc");
+	FrameSetter enemySetter = new FrameSetter(8);
 
 	Nonmoveable[][] nmo = null;
 	Moveable[][] mo = null;
@@ -186,7 +190,7 @@ public class MapLoader {
 					// winBox
 					else if (line[i] == 'w') {
 						System.out.println("added" + " " + i + " " + j);
-						nmo[i][j] = new winBox(i * 64, j * 64, 64, 64, winner, i * 64, j * 64, 64, 64);
+						nmo[i][j] = new winBox(i * 64, j * 64 + 23, 64, 64, winner, i * 64, j * 64 + 23, 64, 64);
 					}
 					// box
 					else if (line[i] == 'x') {
@@ -195,7 +199,7 @@ public class MapLoader {
 
 					// rock
 					else if (line[i] == 'y') {
-						mo[i][j] = new Rock(i * 64, j * 64, 64, 128, rock, i * 64, j * 64, 64, 128);
+						mo[i][j] = new Rock(i * 64, j * 64, 64, 128,  i * 64, j * 64, 64, 128);
 					}
 
 					// flower
@@ -203,7 +207,7 @@ public class MapLoader {
 						mo[i][j] = new Flower(i * 64, j * 64, 64, 64, flower, i * 64, j * 64, 64, 192);
 					//enemy
 					} else if (line[i] == '1') {
-						enemies[i][j] = new Enemy(i * 64, j * 64, 64, 64, dogspook, i * 64, j * 64, 64, 64);
+						enemies[i][j] = new Enemy(i * 64, j * 64, 64, 64, dogspook, i * 64, j * 64, 64, 64, enemy, enemySetter);
 					} else {
 					}
 
