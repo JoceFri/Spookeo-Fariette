@@ -1,3 +1,4 @@
+import DavidMohrhardt.animator.Animator;
 import javafx.scene.image.ImageView;
 
 public class Enemy extends Actor {
@@ -7,13 +8,14 @@ public class Enemy extends Actor {
 	private boolean right = false;
 	boolean swapLeft = false;
 	boolean swapRight = true;
+	ImageView e = null;
 
 	public Enemy(double ex, double why, int sizeX, int sizeY, ImageView person, double hbx, double hby, int hbwidth,
-			int hblength) {
-
-		super(ex, why, sizeX, sizeY, person, hbx, hby, hbwidth, hblength);
-
+			int hblength, Animator enemy, FrameSetter enemySetter) {
+		super(ex, why, sizeX, sizeY, person, hbx, hby, hbwidth, hblength, enemy, enemySetter);
 	}
+
+
 
 	public void track(double ex, double accel) {
 			if (ex < this.getX() && !(this.getRight())) {
@@ -52,12 +54,14 @@ public class Enemy extends Actor {
 					System.out.println("Moved Right. Left collision is " + this.getRight());
 					this.setX(this.getX() + accel);
 					this.setHBX(this.getX());
+					//e.setScaleX(-1);
 				}
 
 				if (!right && !(this.getRight())) {
 					System.out.println("Moved left. Right collision is " + this.getLeft());
 					this.setX(this.getX() - accel);
 					this.setHBX(this.getX());
+					//e.setScaleX(-1);
 				}
 
 				this.getImageView().setX(this.getX());
