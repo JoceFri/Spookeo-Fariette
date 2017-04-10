@@ -1,3 +1,4 @@
+import DavidMohrhardt.animator.Animator;
 import javafx.scene.image.ImageView;
 
 public class Obj {
@@ -12,7 +13,8 @@ public class Obj {
 	private int hbht = 0;
 	
 	
-	
+	Animator a;
+	FrameSetter b;
 	ImageView actor;
 	
 	// Set initial x and y coordinates and image associated with actor
@@ -34,6 +36,42 @@ public class Obj {
 	
 	//--------------- Setters ----------------------//
 	
+	public Obj(double ex, double why, int sizeX, int sizeY, double hbx, double hby, int hbwidth, int hblength) {
+		x = ex;
+		y = why;
+		width = sizeX;
+		height = sizeY;
+		//actor = person;
+//		actor.setX(ex);
+//		actor.setY(why);
+//		actor.setFitWidth(sizeX);
+//		actor.setFitHeight(sizeY);
+		hbex = hbx;
+		hbwhy = hby;
+		hbwid = hbwidth;
+		hbht = hblength;
+	}
+
+	public Obj(double ex, double why, int sizeX, int sizeY, double hbx, double hby, ImageView person, int hbwidth, int hblength,
+			Animator enemy, FrameSetter enemySetter) {
+		x = ex;
+		y = why;
+		width = sizeX;
+		height = sizeY;
+		hbex = hbx;
+		hbwhy = hby;
+		hbwid = hbwidth;
+		hbht = hblength;
+		a = enemy;
+		b = enemySetter;
+		actor = person;
+	}
+	public FrameSetter getFrameSetter() {
+		return b;
+	}
+	public Animator getAnimator() {
+		return a;
+	}
 	// set x coordinate of the actor
 	public void setX(double newX) {
 		x = newX;
