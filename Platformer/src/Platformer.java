@@ -480,7 +480,8 @@ public class Platformer extends Application {
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
-		// mc.drawImage(controls, 0, 100);
+		// mc.drawImage(, 0, 100);
+		 
 		menuCanvas.getGraphicsContext2D();
 		Canvas deathCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext dc = deathCanvas.getGraphicsContext2D();
@@ -571,8 +572,10 @@ public class Platformer extends Application {
 		// make menu
 		menuRoot = new Pane();
 		menuRoot.setBackground(new Background(menuBG));
+	
 		menuRoot.getChildren().add(new ImageView(title.getFrame(titleScreen, "FLASH")));
-
+		menuRoot.getChildren().get(0).setTranslateX(WIDTH / 2 - 150);
+		menuRoot.getChildren().get(0).setTranslateY(100);
 		menuRoot.getChildren().add(menuCanvas);
 		menuRoot.getChildren().add(startButton2());
 		menuRoot.getChildren().add(controlButton());
@@ -774,7 +777,7 @@ public class Platformer extends Application {
 						"src/Assets/Animations/Spookeo.ssc");
 				heroAnimation.startActionAnimation("IDLE");
 				hero.getImageView().setImage(heroFrame.getFrame(heroAnimation, "IDLE"));
-				//start(thestage);
+
 				gameState = 2;
 				thestage.setScene(storyScene);
 			}
@@ -819,7 +822,7 @@ public class Platformer extends Application {
 						"src/Assets/Animations/fariette.ssc");
 				heroAnimation.startActionAnimation("IDLE");
 				hero.getImageView().setImage(heroFrame.getFrame(heroAnimation, "IDLE"));
-			//	start(thestage);
+
 				gameState = 2;
 				thestage.setScene(storyScene);
 			}
@@ -849,12 +852,7 @@ public class Platformer extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-			//	start(thestage);
-				// sc.drawImage(story1, WIDTH / 2 - 500, HEIGHT / 2 - 250);
-				// storyRoot.getChildren().remove(storyCanvas);
-
-
-
+		
 				thestage.setScene(storyScene2);
 			}
 
@@ -884,12 +882,6 @@ public class Platformer extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-				//start(thestage);
-				// sc.drawImage(story1, WIDTH / 2 - 500, HEIGHT / 2 - 250);
-				// storyRoot.getChildren().remove(storyCanvas);
-
-
-
 				thestage.setScene(storyScene3);
 			}
 
@@ -919,10 +911,6 @@ public class Platformer extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-				//start(thestage);
-				// sc.drawImage(story1, WIDTH / 2 - 500, HEIGHT / 2 - 250);
-				// storyRoot.getChildren().remove(storyCanvas);
-
 
 				if (s) {
 					thestage.setScene(storySceneS);
