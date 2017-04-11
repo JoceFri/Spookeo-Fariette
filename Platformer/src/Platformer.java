@@ -41,6 +41,7 @@ public class Platformer extends Application {
 	private static final double gravity = 2.0;
 	private int cooldown = 120;
 	private int lives = 3;
+	int borkborkcd = 30;
 	private int gameState = 0;
 	private boolean bottom = false;
 	private boolean top = false;
@@ -60,18 +61,28 @@ public class Platformer extends Application {
 	private Collision c3;
 	int cur = 0;
 	private Sounds bgNoise = new Sounds();
+	private Sounds farietteUgh = new Sounds();
+	private Sounds ohYeah = new Sounds();
+	private Sounds spookeoTheme = new Sounds();
+	private Sounds farietteTheme = new Sounds();
+	private Sounds deathSong = new Sounds();
+	private Sounds fairyAha = new Sounds();
+	private Sounds gotem = new Sounds();
+	private Sounds borkbork = new Sounds();
+	private Sounds laugh = new Sounds();
+	private Sounds playagain = new Sounds();
 	private Sounds jumpSound = new Sounds();
 	boolean checks = false;
 	boolean fachecks = false;
 	int asdf = 0;
 	int storyNext = 0;
-
 	boolean s = false;
+
 	private Stage thestage;
 	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols, winScene, nextLevel, deathScene,
-	characterScene, storyScene, storyScene2, storyScene3, storySceneS, storySceneF;
+			characterScene, storyScene, storyScene2, storyScene3, storySceneS, storySceneF;
 	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot, winRoot, nextLevelroot, deathRoot,
-	characterRoot, storyRoot, storyRoot2, storyRoot3, storyRootS, storyRootF;
+			characterRoot, storyRoot, storyRoot2, storyRoot3, storyRootS, storyRootF;
 
 	private Player hero = new Player(300, 200, 65, 64, new ImageView("Assets/Art/triforce.png"), 300, 200, 64, 64);
 	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new ImageView("Assets/Art/pushable_box.png"), 500,
@@ -84,6 +95,7 @@ public class Platformer extends Application {
 	BackgroundFill igControlBG = new BackgroundFill(Color.BLACK, null, null);
 	BackgroundFill igMenuBG = new BackgroundFill(Color.BLACK, null, null);
 	BackgroundFill transparent = new BackgroundFill(null, null, null);
+
 	Canvas storyCanvas;
 	MapLoader m = new MapLoader();
 	Moveable[][] mo = null;
@@ -140,17 +152,13 @@ public class Platformer extends Application {
 	FrameSetter spookeoFrame = new FrameSetter(9);
 	Actor spookeoImage = new Actor(450, 252, 192, 192, new ImageView("Assets/Art/joey.png"), 450, 252, 192, 192);
 
-	//
-	// Animator dog = new Animator("src/Assets/Animations/ghostdog.png",
-	// "src/Assets/Animations/ghostdog.ssc");
-	// FrameSetter doggo = new FrameSetter(8);
-	// Enemy enemy1 = new Enemy(900, 300, 64, 64, new
-	// ImageView("Assets/Art/joey.png"), 900, 300, 64, 64);
+	Animator dog = new Animator("src/Assets/Animations/ghostdog.png", "src/Assets/Animations/ghostdog.ssc");
+	FrameSetter doggo = new FrameSetter(8);
 	String action2 = "IDLE";
 
 	Animator startButton = new Animator("src/Assets/Animations/buttons.png", "src/Assets/Animations/buttons.ssc");
 	FrameSetter play = new FrameSetter(2);
-	GraphicsContext sc ;
+	GraphicsContext sc;
 	Animator titleScreen = new Animator("src/Assets/Animations/title_screen.png",
 			"src/Assets/Animations/title_screen.ssc");
 	FrameSetter title = new FrameSetter(2);
@@ -158,7 +166,6 @@ public class Platformer extends Application {
 
 	Animator rocks = new Animator("src/Assets/Animations/rock.png", "src/Assets/Animations/rock.ssc");
 	FrameSetter roc = new FrameSetter(2);
-
 	Animator dogtest;
 
 	// --------------------------- Methods to run everything
@@ -171,11 +178,8 @@ public class Platformer extends Application {
 	// sets scene and adds objects
 	@Override
 	public void start(Stage primaryStage) {
-
 		thestage = primaryStage;
-
-		// dog.startActionAnimation(action2);
-		// enemy1.getImageView().setImage(doggo.getFrame(dog, action2));
+		dog.startActionAnimation(action2);
 		// Set background positions
 		clouds.setX(0);
 		clouds2.setX(1800);
@@ -220,14 +224,13 @@ public class Platformer extends Application {
 		mo = m.getMO();
 		nmo = m.getNMO();
 		enemies = m.getEnemies();
-
 		for (int i = 0; i < enemies.length; i++) {
 			for (int j = 0; j < enemies[i].length; j++) {
 				if (enemies[i][j] != null) {
 					System.out.println(enemies[i][j].getImageView());
 					enemies[i][j].getAnimator().startActionAnimation("IDLE");
 					enemies[i][j].getImageView()
-					.setImage(enemies[i][j].getFrameSetter().getFrame(enemies[i][j].getAnimator(), "IDLE"));
+							.setImage(enemies[i][j].getFrameSetter().getFrame(enemies[i][j].getAnimator(), "IDLE"));
 				}
 			}
 		}
@@ -235,8 +238,6 @@ public class Platformer extends Application {
 			for (int j = 0; j < nmo[i].length; j++) {
 				if (nmo[i][j] != null) {
 					gc.drawImage(nmo[i][j].getImageView().getImage(), nmo[i][j].getX(), nmo[i][j].getY());
-					// c3 = new Collision(enemies[i][j], nmo[i][j]);
-
 				}
 			}
 		}
@@ -253,6 +254,7 @@ public class Platformer extends Application {
 					}
 				}
 			}
+
 		}
 		for (int i = 0; i < enemies.length; i++) {
 			for (int j = 0; j < enemies[i].length; j++) {
@@ -263,10 +265,7 @@ public class Platformer extends Application {
 				}
 			}
 		}
-
 	}
-
-
 
 	private void gameStart() {
 		gameLoop = new AnimationTimer() {
@@ -324,7 +323,6 @@ public class Platformer extends Application {
 		gameLoop.start();
 		thestage.setTitle("Spookeo and Fariette");
 		thestage.setScene(menuScene);
-
 		thestage.show();
 	}
 
@@ -419,16 +417,6 @@ public class Platformer extends Application {
 		}
 		titleImage.getImageView().setImage(title.getFrame(titleScreen, "FLASH"));
 
-		for (int i = 0; i < enemies.length; i++) {
-			for (int j = 0; j < enemies[i].length; j++) {
-				if (enemies[i][j] != null) {
-					enemies[i][j].getImageView()
-					.setImage(enemies[i][j].getFrameSetter().getFrame(enemies[i][j].getAnimator(), action2));
-				}
-			}
-		}
-		// enemies.getImageView().setImage(doggo.getFrame(dog, action2));
-
 	}
 
 	private void cameraScroll(double xOffset, double yOffset) {
@@ -458,18 +446,25 @@ public class Platformer extends Application {
 		for (int i = 0; i < enemies.length; i++) {
 			for (int j = 0; j < enemies[i].length; j++) {
 				if (enemies[i][j] != null) {
-					gc.drawImage(enemies[i][j].getImageView().getImage(), enemies[i][j].getX(), enemies[i][j].getY());
+					enemies[i][j].getImageView()
+							.setImage(enemies[i][j].getFrameSetter().getFrame(enemies[i][j].getAnimator(), action2));
 				}
 			}
 		}
-		// gc.drawImage(enemy1.getImageView().getImage(), enemy1.getX(),
-		// enemy1.getY());
 	}
 
 	private void sound() {
 		bgNoise.loadSound("Assets/Sound/Main_Theme.wav");
 		jumpSound.loadSound("Assets/Sound/jump1.wav");
-		// bgNoise.runLoop();
+		farietteUgh.loadSound("Assets/Sound/ugh.wav");
+		ohYeah.loadSound("Assets/Sound/ohYeah.wav");
+		borkbork.loadSound("Assets/Sound/Dog_Bark_3.wav");
+		fairyAha.loadSound("Assets/Sound/-Ah-ha!-.wav");
+		gotem.loadSound("Assets/Sound/-I_Got_You!-.wav");
+		deathSong.loadSound("Assets/Sound/Spookeo_and_Fairiette_Death.wav");
+		laugh.loadSound("Assets/Sound/Evil_Laughter_2.wav");
+		playagain.loadSound("Assets/Sound/Spookeo_and_Fairiette_Play_Again-.wav");
+		bgNoise.runLoop();
 	}
 
 	private void draw() {
@@ -480,8 +475,7 @@ public class Platformer extends Application {
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
-		// mc.drawImage(, 0, 100);
-		 
+		// mc.drawImage(controls, 0, 100);
 		menuCanvas.getGraphicsContext2D();
 		Canvas deathCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext dc = deathCanvas.getGraphicsContext2D();
@@ -496,7 +490,6 @@ public class Platformer extends Application {
 		Canvas iGCCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext igcc = iGCCanvas.getGraphicsContext2D();
 		igcc.drawImage(controls, 0, 100);
-
 		storyCanvas = new Canvas(WIDTH, HEIGHT);
 		sc = storyCanvas.getGraphicsContext2D();
 		sc.drawImage(story1, WIDTH / 2 - 500, HEIGHT / 2 - 250);
@@ -517,37 +510,42 @@ public class Platformer extends Application {
 		GraphicsContext scF = storyCanvasF.getGraphicsContext2D();
 		scF.drawImage(story4f, WIDTH / 2 - 500, HEIGHT / 2 - 250);
 		// -------- Menu ----------//
-		//story scene
+		// story scene
 		storyRoot = new Pane();
 		storyRoot.setBackground(new Background(menuBG));
 		storyRoot.getChildren().add(storyCanvas);
 		storyRoot.getChildren().add(nextStoryButton());
-		storyScene = new Scene (storyRoot, WIDTH, HEIGHT);
+		storyScene = new Scene(storyRoot, WIDTH, HEIGHT);
 
 		storyRoot2 = new Pane();
 		storyRoot2.setBackground(new Background(menuBG));
 		storyRoot2.getChildren().add(storyCanvas2);
 		storyRoot2.getChildren().add(nextStoryButton2());
-		storyScene2 = new Scene (storyRoot2, WIDTH, HEIGHT);
+		storyScene2 = new Scene(storyRoot2, WIDTH, HEIGHT);
 
 		storyRoot3 = new Pane();
 		storyRoot3.setBackground(new Background(menuBG));
 		storyRoot3.getChildren().add(storyCanvas3);
 		storyRoot3.getChildren().add(nextStoryButton3());
-		storyScene3 = new Scene (storyRoot3, WIDTH, HEIGHT);
+		storyScene3 = new Scene(storyRoot3, WIDTH, HEIGHT);
 
 		storyRootS = new Pane();
 		storyRootS.setBackground(new Background(menuBG));
 		storyRootS.getChildren().add(storyCanvasS);
 		storyRootS.getChildren().add(playB());
-		storySceneS = new Scene (storyRootS, WIDTH, HEIGHT);
+		storySceneS = new Scene(storyRootS, WIDTH, HEIGHT);
 
 		storyRootF = new Pane();
 		storyRootF.setBackground(new Background(menuBG));
 		storyRootF.getChildren().add(storyCanvasF);
 		storyRootF.getChildren().add(playB());
-		storySceneF = new Scene (storyRootF, WIDTH, HEIGHT);
+		storySceneF = new Scene(storyRootF, WIDTH, HEIGHT);
 
+		Canvas storyCanvas = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext sc = storyCanvas.getGraphicsContext2D();
+		// sc.drawImage(story1, 1, 100);
+
+		// -------- Menu ----------//
 		// make win scene
 		winRoot = new Pane();
 		winRoot.getChildren().add(winCanvas);
@@ -572,7 +570,6 @@ public class Platformer extends Application {
 		// make menu
 		menuRoot = new Pane();
 		menuRoot.setBackground(new Background(menuBG));
-	
 		menuRoot.getChildren().add(new ImageView(title.getFrame(titleScreen, "FLASH")));
 		menuRoot.getChildren().get(0).setTranslateX(WIDTH / 2 - 150);
 		menuRoot.getChildren().get(0).setTranslateY(100);
@@ -772,12 +769,15 @@ public class Platformer extends Application {
 				cur = 0;
 				reset();
 				s = true;
+				bgNoise.stop();
+				spookeoTheme.loadSound("Assets/Sound/Main_Theme.wav");
+				spookeoTheme.runLoop();
 				// hero.getImageView().setImage(spookeo);
 				heroAnimation = new Animator("src/Assets/Animations/spookeo_sheet.png",
 						"src/Assets/Animations/Spookeo.ssc");
 				heroAnimation.startActionAnimation("IDLE");
 				hero.getImageView().setImage(heroFrame.getFrame(heroAnimation, "IDLE"));
-
+				start(thestage);
 				gameState = 2;
 				thestage.setScene(storyScene);
 			}
@@ -814,15 +814,18 @@ public class Platformer extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
+
 				s = false;
 				cur = 5;
 				resetF();
-				// hero.getImageView().setImage(fariette);
+				bgNoise.stop();
+				farietteTheme.loadSound("Assets/Sound/Spooky_Forrest_Theme.wav");
+				farietteTheme.runLoop();
 				heroAnimation = new Animator("src/Assets/Animations/fariette.png",
 						"src/Assets/Animations/fariette.ssc");
 				heroAnimation.startActionAnimation("IDLE");
 				hero.getImageView().setImage(heroFrame.getFrame(heroAnimation, "IDLE"));
-
+				// start(thestage);
 				gameState = 2;
 				thestage.setScene(storyScene);
 			}
@@ -852,7 +855,10 @@ public class Platformer extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-		
+				// start(thestage);
+				// sc.drawImage(story1, WIDTH / 2 - 500, HEIGHT / 2 - 250);
+				// storyRoot.getChildren().remove(storyCanvas);
+
 				thestage.setScene(storyScene2);
 			}
 
@@ -882,6 +888,10 @@ public class Platformer extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
+				// start(thestage);
+				// sc.drawImage(story1, WIDTH / 2 - 500, HEIGHT / 2 - 250);
+				// storyRoot.getChildren().remove(storyCanvas);
+
 				thestage.setScene(storyScene3);
 			}
 
@@ -911,11 +921,13 @@ public class Platformer extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
+				// start(thestage);
+				// sc.drawImage(story1, WIDTH / 2 - 500, HEIGHT / 2 - 250);
+				// storyRoot.getChildren().remove(storyCanvas);
 
 				if (s) {
 					thestage.setScene(storySceneS);
-				}
-				else {
+				} else {
 					thestage.setScene(storySceneF);
 				}
 			}
@@ -924,7 +936,6 @@ public class Platformer extends Application {
 		return btn;
 	}
 
-	
 	private Button playB() {
 		Button btn = new Button("", new ImageView(play.getFrame(startButton, "RESUME")));
 		btn.setBackground(new Background(transparent));
@@ -954,6 +965,7 @@ public class Platformer extends Application {
 		});
 		return btn;
 	}
+
 	// next level button
 	private Button nextButton() {
 		Button btn = new Button("", new ImageView(play.getFrame(startButton, "LEVEL")));
@@ -980,6 +992,7 @@ public class Platformer extends Application {
 
 				cur++;
 				reset();
+				ohYeah.reset();
 				start(thestage);
 				thestage.setScene(gameScene);
 			}
@@ -1128,7 +1141,6 @@ public class Platformer extends Application {
 			@Override
 			public void handle(ActionEvent event) {
 				igmenuroot.getChildren().add(new ImageView(title.getFrame(titleScreen, "FLASH")));
-				igmenuroot.getChildren().add(menuButton());
 				thestage.setScene(igmenu);
 				gameLoop.stop();
 			}
@@ -1206,7 +1218,7 @@ public class Platformer extends Application {
 	private Button menuButton2() {
 		Button btn = new Button("", new ImageView(play.getFrame(startButton, "MENU")));
 		btn.setBackground(new Background(transparent));
-		btn.relocate(550, 575);
+		btn.relocate(600, 600);
 
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
@@ -1232,6 +1244,12 @@ public class Platformer extends Application {
 				menuRoot.getChildren().add(new ImageView(title.getFrame(titleScreen, "FLASH")));
 				thestage.setTitle("Spookeo and Fariette");
 				thestage.setScene(menuScene);
+				if (cur >= 5) {
+					farietteTheme.stop();
+				} else if (cur <= 3) {
+					spookeoTheme.stop();
+				}
+				bgNoise.runLoop();
 				reset();
 				gameLoop.stop();
 
@@ -1294,6 +1312,10 @@ public class Platformer extends Application {
 	private void gravity(final Rectangle rectangle, final ImageView image) {
 		if (rectangle.getY() + rectangle.getHeight() + gravity >= HEIGHT) {
 			lives--;
+			if (cur >= 5) {
+				farietteUgh.runOnce();
+				farietteUgh.reset();
+			}
 			reset();
 
 		}
@@ -1359,6 +1381,12 @@ public class Platformer extends Application {
 	public void deathCheck(AnimationTimer loop) {
 		if (lives <= 0) {
 			loop.stop();
+			if (cur <= 3) {
+				spookeoTheme.stop();
+			} else if (cur >= 5) {
+				farietteTheme.stop();
+			}
+			deathSong.runOnce();
 			thestage.setScene(deathScene);
 			lives = 3;
 		}
@@ -1444,7 +1472,7 @@ public class Platformer extends Application {
 								if (!action.equals("PUSH")) {
 									heroAnimation.startActionAnimation("PUSH");
 									heroFrame.changeCount(7);
-									// action = "PUSH";
+									action = "PUSH";
 								}
 								// System.out.println("LEFT HIT");
 							}
@@ -1455,7 +1483,7 @@ public class Platformer extends Application {
 								if (!action.equals("PUSH")) {
 									heroAnimation.startActionAnimation("PUSH");
 									heroFrame.changeCount(7);
-									// action = "PUSH";
+									action = "PUSH";
 								}
 								// System.out.println("RIGHT HIT");
 							}
@@ -1691,6 +1719,9 @@ public class Platformer extends Application {
 
 	public void winCheck(AnimationTimer loop) {
 		gameLoop.stop();
+		if (cur >= 5) {
+			ohYeah.runOnce();
+		}
 		thestage.setScene(nextLevel);
 		// farietteAdded = false;
 		if (cur == 3 || cur == 8) {
@@ -1709,7 +1740,7 @@ public class Platformer extends Application {
 		} else if (cur == 3) {
 			m.readIn("Assets/Json/map.txt");
 		} else if (cur == 5) {
-			m.readIn("Assets/Json/map7.txt");
+			m.readIn("Assets/Json/map3.txt");
 		} else if (cur == 6) {
 			m.readIn("Assets/Json/map6.txt");
 		} else if (cur == 7) {
@@ -1780,74 +1811,75 @@ public class Platformer extends Application {
 		gameRoot.getChildren().add(rectangle);
 	}
 
+	boolean ahaPlayed = false;
+
 	public void detection() {
 		boolean detected = false;
-		// for (int i = 0; i < enemies.length; i++) {
-		// for (int j = 0; j < enemies[i].length; j++) {
-		// if (enemies[i][j] != null) {
-		// detected = enemies[i][j].detected(hero);
-		int h = 0;
-		int k = 0;
-		for (int i = 0; i < enemies.length; i++) {
-			for (int j = 0; j < enemies[i].length; j++) {
-				if (enemies[i][j] != null)
-					enemies[i][j].resetCollision();
-			}
-		}
-		// enemy1.getImageView().setScaleX(-1);
-		for (int i = 0; i < nmo.length; i++) {
-			for (int j = 0; j < nmo[i].length; j++) {
-				if (enemies[i][j] != null)
-					if (nmo[i][j] != null) {
-						System.out.println(h + " :: " + k + " :: " + enemies[h][k]);
-						c3.setObjs(enemies[h][k], nmo[i][j]);
-						c3.isColliding();
-						if (c3.right()) {
-							enemies[h][k].setRight(true);
-							// System.out.println("HELLO FROM THE RIGHT");
-						}
-
-						if (c3.left()) {
-							enemies[h][k].setLeft(true);
-							// System.out.println("HELLO FROM THE LEFT");
-						}
-						if (c3.top()) {
-							enemies[h][k].setTop(true);
-						}
-					}
-				k++;
-			}
-			h++;
-		}
 		for (int i = 0; i < enemies.length; i++) {
 			for (int j = 0; j < enemies[i].length; j++) {
 				if (enemies[i][j] != null) {
+					detected = enemies[i][j].detected(hero);
+					enemies[i][j].resetCollision();
+
+					for (int k = 0; k < nmo.length; k++) {
+						for (int h = 0; h < nmo[k].length; h++) {
+							if (nmo[k][h] != null) {
+								c3.setObjs(enemies[i][j], nmo[k][h]);
+								c3.isColliding();
+								if (c3.right()) {
+									enemies[i][j].setRight(true);
+									// System.out.println("HELLO FROM THE
+									// RIGHT");
+								}
+
+								if (c3.left()) {
+									enemies[i][j].setLeft(true);
+									// System.out.println("HELLO FROM THE
+									// LEFT");
+								}
+								if (c3.top()) {
+									enemies[i][j].setTop(true);
+								}
+							}
+						}
+					}
 					Objgravity(enemies[i][j].getTop(), enemies[i][j]);
 					detected = enemies[i][j].detected(hero);
+
 					if (detected) {
 						// Check collision here
 						if (!action2.equals("BARK")) {
 							action2 = "BARK";
 
 						}
+						if (cur >= 5) {
+							if (borkborkcd >= 40) {
+								borkbork.runOnce();
+								borkborkcd = 0;
+							}
+							borkbork.reset();
+							borkborkcd++;
+						} else if (cur <= 4) {
+							if (!ahaPlayed) {
+								fairyAha.runOnce();
+								ahaPlayed = true;
+							}
+							fairyAha.reset();
+						}
 						enemies[i][j].track(hero.getAbsX(), 1);
 
-					} else {
+					} else if (!detected) {
 						if (!action2.equals("IDLE")) {
 							action2 = "IDLE";
-
 						}
 						enemies[i][j].move(1);
+						ahaPlayed = false;
 						// System.out.println(enemy1.getLeft() + " " +
 						// enemy1.getRight());
 					}
 				}
 			}
 		}
-
-		// }
-		// }
-		// }
 	}
 
 	public void autoScroll() {
@@ -1862,6 +1894,10 @@ public class Platformer extends Application {
 				rectangle.setX(hero.getAbsX() - xOffset);
 				hero.getImageView().setX(hero.getAbsX() - xOffset);
 				if (left) {
+					if (cur >= 5) {
+						farietteUgh.runOnce();
+						farietteUgh.reset();
+					}
 					lives--;
 					reset();
 				}
