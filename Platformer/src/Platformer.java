@@ -64,12 +64,14 @@ public class Platformer extends Application {
 	boolean checks = false;
 	boolean fachecks = false;
 	int asdf = 0;
+	int storyNext = 0;
 
+	boolean s = false;
 	private Stage thestage;
 	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols, winScene, nextLevel, deathScene,
-			characterScene, storyScene;
+	characterScene, storyScene, storyScene2, storyScene3, storySceneS, storySceneF;
 	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot, winRoot, nextLevelroot, deathRoot,
-			characterRoot, storyRoot;
+	characterRoot, storyRoot, storyRoot2, storyRoot3, storyRootS, storyRootF;
 
 	private Player hero = new Player(300, 200, 65, 64, new ImageView("Assets/Art/triforce.png"), 300, 200, 64, 64);
 	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new ImageView("Assets/Art/pushable_box.png"), 500,
@@ -82,7 +84,7 @@ public class Platformer extends Application {
 	BackgroundFill igControlBG = new BackgroundFill(Color.BLACK, null, null);
 	BackgroundFill igMenuBG = new BackgroundFill(Color.BLACK, null, null);
 	BackgroundFill transparent = new BackgroundFill(null, null, null);
-
+	Canvas storyCanvas;
 	MapLoader m = new MapLoader();
 	Moveable[][] mo = null;
 	Nonmoveable[][] nmo = null;
@@ -117,11 +119,11 @@ public class Platformer extends Application {
 	// Tracker
 	double check = 0.0;
 
-	ImageView story1 = new ImageView("Assets/Art/storyboard_panel1.png");
-	ImageView story2 = new ImageView("Assets/Art/storyboard_panel2.png");
-	ImageView story3 = new ImageView("Assets/Art/storyboard_panel3.png");
-	ImageView story4f = new ImageView("Assets/Art/Storyboard_panel4_fariette.png");
-	ImageView story4s = new ImageView("Assets/Art/storyboard_panel4_spookeo.png");
+	Image story1 = new Image("Assets/Art/storyboard_panel1.png");
+	Image story2 = new Image("Assets/Art/storyboard_panel2.png");
+	Image story3 = new Image("Assets/Art/storyboard_panel3.png");
+	Image story4f = new Image("Assets/Art/Storyboard_panel4_fariette.png");
+	Image story4s = new Image("Assets/Art/storyboard_panel4_spookeo.png");
 
 	AnimationTimer gameLoop;
 	URL url = getClass().getResource("Assets/Json/characters.json");
@@ -148,7 +150,7 @@ public class Platformer extends Application {
 
 	Animator startButton = new Animator("src/Assets/Animations/buttons.png", "src/Assets/Animations/buttons.ssc");
 	FrameSetter play = new FrameSetter(2);
-
+	GraphicsContext sc ;
 	Animator titleScreen = new Animator("src/Assets/Animations/title_screen.png",
 			"src/Assets/Animations/title_screen.ssc");
 	FrameSetter title = new FrameSetter(2);
@@ -225,7 +227,7 @@ public class Platformer extends Application {
 					System.out.println(enemies[i][j].getImageView());
 					enemies[i][j].getAnimator().startActionAnimation("IDLE");
 					enemies[i][j].getImageView()
-							.setImage(enemies[i][j].getFrameSetter().getFrame(enemies[i][j].getAnimator(), "IDLE"));
+					.setImage(enemies[i][j].getFrameSetter().getFrame(enemies[i][j].getAnimator(), "IDLE"));
 				}
 			}
 		}
@@ -421,7 +423,7 @@ public class Platformer extends Application {
 			for (int j = 0; j < enemies[i].length; j++) {
 				if (enemies[i][j] != null) {
 					enemies[i][j].getImageView()
-							.setImage(enemies[i][j].getFrameSetter().getFrame(enemies[i][j].getAnimator(), action2));
+					.setImage(enemies[i][j].getFrameSetter().getFrame(enemies[i][j].getAnimator(), action2));
 				}
 			}
 		}
@@ -494,11 +496,57 @@ public class Platformer extends Application {
 		GraphicsContext igcc = iGCCanvas.getGraphicsContext2D();
 		igcc.drawImage(controls, 0, 100);
 
-		Canvas storyCanvas = new Canvas(WIDTH, HEIGHT);
-		GraphicsContext sc = storyCanvas.getGraphicsContext2D();
-		// sc.drawImage(story1, 1, 100);
+		storyCanvas = new Canvas(WIDTH, HEIGHT);
+		sc = storyCanvas.getGraphicsContext2D();
+		sc.drawImage(story1, WIDTH / 2 - 500, HEIGHT / 2 - 250);
 
+		Canvas storyCanvas2 = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext sc2 = storyCanvas2.getGraphicsContext2D();
+		sc2.drawImage(story2, WIDTH / 2 - 500, HEIGHT / 2 - 250);
+
+		Canvas storyCanvas3 = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext sc3 = storyCanvas3.getGraphicsContext2D();
+		sc3.drawImage(story3, WIDTH / 2 - 500, HEIGHT / 2 - 250);
+
+		Canvas storyCanvasS = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext scS = storyCanvasS.getGraphicsContext2D();
+		scS.drawImage(story4s, WIDTH / 2 - 500, HEIGHT / 2 - 250);
+
+		Canvas storyCanvasF = new Canvas(WIDTH, HEIGHT);
+		GraphicsContext scF = storyCanvasF.getGraphicsContext2D();
+		scF.drawImage(story4f, WIDTH / 2 - 500, HEIGHT / 2 - 250);
 		// -------- Menu ----------//
+		//story scene
+		storyRoot = new Pane();
+		storyRoot.setBackground(new Background(menuBG));
+		storyRoot.getChildren().add(storyCanvas);
+		storyRoot.getChildren().add(nextStoryButton());
+		storyScene = new Scene (storyRoot, WIDTH, HEIGHT);
+
+		storyRoot2 = new Pane();
+		storyRoot2.setBackground(new Background(menuBG));
+		storyRoot2.getChildren().add(storyCanvas2);
+		storyRoot2.getChildren().add(nextStoryButton2());
+		storyScene2 = new Scene (storyRoot2, WIDTH, HEIGHT);
+
+		storyRoot3 = new Pane();
+		storyRoot3.setBackground(new Background(menuBG));
+		storyRoot3.getChildren().add(storyCanvas3);
+		storyRoot3.getChildren().add(nextStoryButton3());
+		storyScene3 = new Scene (storyRoot3, WIDTH, HEIGHT);
+
+		storyRootS = new Pane();
+		storyRootS.setBackground(new Background(menuBG));
+		storyRootS.getChildren().add(storyCanvasS);
+		storyRootS.getChildren().add(playB());
+		storySceneS = new Scene (storyRootS, WIDTH, HEIGHT);
+
+		storyRootF = new Pane();
+		storyRootF.setBackground(new Background(menuBG));
+		storyRootF.getChildren().add(storyCanvasF);
+		storyRootF.getChildren().add(playB());
+		storySceneF = new Scene (storyRootF, WIDTH, HEIGHT);
+
 		// make win scene
 		winRoot = new Pane();
 		winRoot.getChildren().add(winCanvas);
@@ -720,14 +768,15 @@ public class Platformer extends Application {
 
 				cur = 0;
 				reset();
+				s = true;
 				// hero.getImageView().setImage(spookeo);
 				heroAnimation = new Animator("src/Assets/Animations/spookeo_sheet.png",
 						"src/Assets/Animations/Spookeo.ssc");
 				heroAnimation.startActionAnimation("IDLE");
 				hero.getImageView().setImage(heroFrame.getFrame(heroAnimation, "IDLE"));
-				start(thestage);
+				//start(thestage);
 				gameState = 2;
-				thestage.setScene(gameScene);
+				thestage.setScene(storyScene);
 			}
 		});
 
@@ -762,7 +811,7 @@ public class Platformer extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-
+				s = false;
 				cur = 5;
 				resetF();
 				// hero.getImageView().setImage(fariette);
@@ -770,14 +819,153 @@ public class Platformer extends Application {
 						"src/Assets/Animations/fariette.ssc");
 				heroAnimation.startActionAnimation("IDLE");
 				hero.getImageView().setImage(heroFrame.getFrame(heroAnimation, "IDLE"));
-				start(thestage);
+			//	start(thestage);
 				gameState = 2;
-				thestage.setScene(gameScene);
+				thestage.setScene(storyScene);
 			}
 		});
 		return btn;
 	}
 
+	private Button nextStoryButton() {
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "RESUME")));
+		btn.setBackground(new Background(transparent));
+		btn.relocate(WIDTH / 2 - 100, HEIGHT - 100);
+		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME2")));
+			}
+		});
+
+		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME")));
+			}
+		});
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+			//	start(thestage);
+				// sc.drawImage(story1, WIDTH / 2 - 500, HEIGHT / 2 - 250);
+				// storyRoot.getChildren().remove(storyCanvas);
+
+
+
+				thestage.setScene(storyScene2);
+			}
+
+		});
+		return btn;
+	}
+
+	private Button nextStoryButton2() {
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "RESUME")));
+		btn.setBackground(new Background(transparent));
+		btn.relocate(WIDTH / 2 - 100, HEIGHT - 100);
+		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME2")));
+			}
+		});
+
+		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME")));
+			}
+		});
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				//start(thestage);
+				// sc.drawImage(story1, WIDTH / 2 - 500, HEIGHT / 2 - 250);
+				// storyRoot.getChildren().remove(storyCanvas);
+
+
+
+				thestage.setScene(storyScene3);
+			}
+
+		});
+		return btn;
+	}
+
+	private Button nextStoryButton3() {
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "RESUME")));
+		btn.setBackground(new Background(transparent));
+		btn.relocate(WIDTH / 2 - 100, HEIGHT - 100);
+		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME2")));
+			}
+		});
+
+		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME")));
+			}
+		});
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				//start(thestage);
+				// sc.drawImage(story1, WIDTH / 2 - 500, HEIGHT / 2 - 250);
+				// storyRoot.getChildren().remove(storyCanvas);
+
+
+				if (s) {
+					thestage.setScene(storySceneS);
+				}
+				else {
+					thestage.setScene(storySceneF);
+				}
+			}
+
+		});
+		return btn;
+	}
+
+	
+	private Button playB() {
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "RESUME")));
+		btn.setBackground(new Background(transparent));
+		btn.relocate(WIDTH / 2 - 100, HEIGHT - 100);
+		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME2")));
+			}
+		});
+
+		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME")));
+			}
+		});
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				start(thestage);
+				thestage.setScene(gameScene);
+			}
+
+		});
+		return btn;
+	}
 	// next level button
 	private Button nextButton() {
 		Button btn = new Button("", new ImageView(play.getFrame(startButton, "LEVEL")));
