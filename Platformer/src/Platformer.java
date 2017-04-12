@@ -69,9 +69,9 @@ public class Platformer extends Application {
 	boolean s = false;
 	private Stage thestage;
 	private Scene menuScene, gameScene, controlScene, igmenu, igcontrols, winScene, nextLevel, deathScene,
-	characterScene, storyScene, storyScene2, storyScene3, storySceneS, storySceneF;
+			characterScene, storyScene, storyScene2, storyScene3, storySceneS, storySceneF;
 	private Pane menuRoot, gameRoot, controlRoot, igmenuroot, igcontrolroot, winRoot, nextLevelroot, deathRoot,
-	characterRoot, storyRoot, storyRoot2, storyRoot3, storyRootS, storyRootF;
+			characterRoot, storyRoot, storyRoot2, storyRoot3, storyRootS, storyRootF;
 
 	private Player hero = new Player(300, 200, 65, 64, new ImageView("Assets/Art/triforce.png"), 300, 200, 64, 64);
 	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new ImageView("Assets/Art/pushable_box.png"), 500,
@@ -150,7 +150,7 @@ public class Platformer extends Application {
 
 	Animator startButton = new Animator("src/Assets/Animations/buttons.png", "src/Assets/Animations/buttons.ssc");
 	FrameSetter play = new FrameSetter(2);
-	GraphicsContext sc ;
+	GraphicsContext sc;
 	Animator titleScreen = new Animator("src/Assets/Animations/title_screen.png",
 			"src/Assets/Animations/title_screen.ssc");
 	FrameSetter title = new FrameSetter(2);
@@ -224,10 +224,9 @@ public class Platformer extends Application {
 		for (int i = 0; i < enemies.length; i++) {
 			for (int j = 0; j < enemies[i].length; j++) {
 				if (enemies[i][j] != null) {
-					System.out.println(enemies[i][j].getImageView());
-					enemies[i][j].getAnimator().startActionAnimation("IDLE");
+					enemies[i][j].getAnimator().startActionAnimation(enemies[i][j].getAction());
 					enemies[i][j].getImageView()
-					.setImage(enemies[i][j].getFrameSetter().getFrame(enemies[i][j].getAnimator(), "IDLE"));
+							.setImage(enemies[i][j].getFrameSetter().getFrame(enemies[i][j].getAnimator(), enemies[i][j].getAction()));
 				}
 			}
 		}
@@ -265,8 +264,6 @@ public class Platformer extends Application {
 		}
 
 	}
-
-
 
 	private void gameStart() {
 		gameLoop = new AnimationTimer() {
@@ -396,8 +393,6 @@ public class Platformer extends Application {
 	public void animations() {
 		hero.getImageView().setImage(heroFrame.getFrame(heroAnimation, action));
 		if (checks && asdf <= 55) {
-
-			System.out.println(asdf);
 			spookeoImage.getImageView().setImage(spookeoFrame.getFrame(spookeoSelect, "UNF"));
 			asdf++;
 		} else if (checks) {
@@ -423,7 +418,7 @@ public class Platformer extends Application {
 			for (int j = 0; j < enemies[i].length; j++) {
 				if (enemies[i][j] != null) {
 					enemies[i][j].getImageView()
-					.setImage(enemies[i][j].getFrameSetter().getFrame(enemies[i][j].getAnimator(), action2));
+							.setImage(enemies[i][j].getFrameSetter().getFrame(enemies[i][j].getAnimator(), enemies[i][j].getAction()));
 				}
 			}
 		}
@@ -481,7 +476,7 @@ public class Platformer extends Application {
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
 		// mc.drawImage(, 0, 100);
-		 
+
 		menuCanvas.getGraphicsContext2D();
 		Canvas deathCanvas = new Canvas(WIDTH, HEIGHT);
 		GraphicsContext dc = deathCanvas.getGraphicsContext2D();
@@ -517,36 +512,36 @@ public class Platformer extends Application {
 		GraphicsContext scF = storyCanvasF.getGraphicsContext2D();
 		scF.drawImage(story4f, WIDTH / 2 - 500, HEIGHT / 2 - 250);
 		// -------- Menu ----------//
-		//story scene
+		// story scene
 		storyRoot = new Pane();
 		storyRoot.setBackground(new Background(menuBG));
 		storyRoot.getChildren().add(storyCanvas);
 		storyRoot.getChildren().add(nextStoryButton());
-		storyScene = new Scene (storyRoot, WIDTH, HEIGHT);
+		storyScene = new Scene(storyRoot, WIDTH, HEIGHT);
 
 		storyRoot2 = new Pane();
 		storyRoot2.setBackground(new Background(menuBG));
 		storyRoot2.getChildren().add(storyCanvas2);
 		storyRoot2.getChildren().add(nextStoryButton2());
-		storyScene2 = new Scene (storyRoot2, WIDTH, HEIGHT);
+		storyScene2 = new Scene(storyRoot2, WIDTH, HEIGHT);
 
 		storyRoot3 = new Pane();
 		storyRoot3.setBackground(new Background(menuBG));
 		storyRoot3.getChildren().add(storyCanvas3);
 		storyRoot3.getChildren().add(nextStoryButton3());
-		storyScene3 = new Scene (storyRoot3, WIDTH, HEIGHT);
+		storyScene3 = new Scene(storyRoot3, WIDTH, HEIGHT);
 
 		storyRootS = new Pane();
 		storyRootS.setBackground(new Background(menuBG));
 		storyRootS.getChildren().add(storyCanvasS);
 		storyRootS.getChildren().add(playB());
-		storySceneS = new Scene (storyRootS, WIDTH, HEIGHT);
+		storySceneS = new Scene(storyRootS, WIDTH, HEIGHT);
 
 		storyRootF = new Pane();
 		storyRootF.setBackground(new Background(menuBG));
 		storyRootF.getChildren().add(storyCanvasF);
 		storyRootF.getChildren().add(playB());
-		storySceneF = new Scene (storyRootF, WIDTH, HEIGHT);
+		storySceneF = new Scene(storyRootF, WIDTH, HEIGHT);
 
 		// make win scene
 		winRoot = new Pane();
@@ -572,7 +567,7 @@ public class Platformer extends Application {
 		// make menu
 		menuRoot = new Pane();
 		menuRoot.setBackground(new Background(menuBG));
-	
+
 		menuRoot.getChildren().add(new ImageView(title.getFrame(titleScreen, "FLASH")));
 		menuRoot.getChildren().get(0).setTranslateX(WIDTH / 2 - 150);
 		menuRoot.getChildren().get(0).setTranslateY(100);
@@ -600,6 +595,8 @@ public class Platformer extends Application {
 		igmenuroot = new Pane();
 		igmenuroot.setBackground(new Background(igMenuBG));
 		igmenuroot.getChildren().add(iGMCanvas);
+		igmenuroot.getChildren().get(0).setTranslateX(WIDTH / 2 - 150);
+		igmenuroot.getChildren().get(0).setTranslateY(100);
 		igmenuroot.getChildren().add(resetButton());
 		igmenuroot.getChildren().add(menuButton2());
 		igmenuroot.getChildren().add(resumeButton());
@@ -852,7 +849,7 @@ public class Platformer extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
-		
+
 				thestage.setScene(storyScene2);
 			}
 
@@ -914,8 +911,7 @@ public class Platformer extends Application {
 
 				if (s) {
 					thestage.setScene(storySceneS);
-				}
-				else {
+				} else {
 					thestage.setScene(storySceneF);
 				}
 			}
@@ -924,7 +920,6 @@ public class Platformer extends Application {
 		return btn;
 	}
 
-	
 	private Button playB() {
 		Button btn = new Button("", new ImageView(play.getFrame(startButton, "PLAY")));
 		btn.setBackground(new Background(transparent));
@@ -954,6 +949,7 @@ public class Platformer extends Application {
 		});
 		return btn;
 	}
+
 	// next level button
 	private Button nextButton() {
 		Button btn = new Button("", new ImageView(play.getFrame(startButton, "LEVEL")));
@@ -1700,21 +1696,21 @@ public class Platformer extends Application {
 
 	public void LevelBuilder() {
 		if (cur == 0) {
-			m.readIn("Assets/Json/map3.txt");
+			m.readIn("Assets/Json/map.txt");
 		} else if (cur == 1) {
 			m.readIn("Assets/Json/map2.txt");
 		} else if (cur == 2) {
 			m.readIn("Assets/Json/map3.txt");
 		} else if (cur == 3) {
-			m.readIn("Assets/Json/map.txt");
+			m.readIn("Assets/Json/map4.txt");
 		} else if (cur == 5) {
-			m.readIn("Assets/Json/map7.txt");
+			m.readIn("Assets/Json/map5.txt");
 		} else if (cur == 6) {
 			m.readIn("Assets/Json/map6.txt");
 		} else if (cur == 7) {
-
+			m.readIn("Assets/Json/map7.txt");
 		} else if (cur == 8) {
-
+			m.readIn("Assets/Json/map8.txt");
 		}
 	}
 
@@ -1780,73 +1776,70 @@ public class Platformer extends Application {
 	}
 
 	public void detection() {
-		boolean detected = false;
-		// for (int i = 0; i < enemies.length; i++) {
-		// for (int j = 0; j < enemies[i].length; j++) {
-		// if (enemies[i][j] != null) {
-		// detected = enemies[i][j].detected(hero);
-		int h = 0;
-		int k = 0;
+
 		for (int i = 0; i < enemies.length; i++) {
 			for (int j = 0; j < enemies[i].length; j++) {
-				if (enemies[i][j] != null)
+				if (enemies[i][j] != null) {
 					enemies[i][j].resetCollision();
-			}
-		}
-		// enemy1.getImageView().setScaleX(-1);
-		for (int i = 0; i < nmo.length; i++) {
-			for (int j = 0; j < nmo[i].length; j++) {
-				if (enemies[i][j] != null)
-					if (nmo[i][j] != null) {
-						System.out.println(h + " :: " + k + " :: " + enemies[h][k]);
-						c3.setObjs(enemies[h][k], nmo[i][j]);
-						c3.isColliding();
-						if (c3.right()) {
-							enemies[h][k].setRight(true);
-							// System.out.println("HELLO FROM THE RIGHT");
-						}
+					enemies[i][j].setDetected(false);
 
-						if (c3.left()) {
-							enemies[h][k].setLeft(true);
-							// System.out.println("HELLO FROM THE LEFT");
-						}
-						if (c3.top()) {
-							enemies[h][k].setTop(true);
+					// enemy1.getImageView().setScaleX(-1);
+					for (int h = 0; h < nmo.length; h++) {
+						for (int k = 0; k < nmo[h].length; k++) {
+							if (nmo[h][k] != null) {
+								// System.out.println(h + " :: " + k + " ::
+								// " + enemies[h][k]);
+								c3.setObjs(enemies[i][j], nmo[h][k]);
+								c3.isColliding();
+								if (c3.right()) {
+									enemies[i][j].setRight(true);
+									// System.out.println("HELLO FROM THE
+									// RIGHT");
+								}
+
+								if (c3.left()) {
+									enemies[i][j].setLeft(true);
+									// System.out.println("HELLO FROM THE
+									// LEFT");
+								}
+								if (c3.top()) {
+									enemies[i][j].setTop(true);
+								}
+							}
 						}
 					}
-				k++;
+				}
 			}
-			h++;
 		}
 		for (int i = 0; i < enemies.length; i++) {
 			for (int j = 0; j < enemies[i].length; j++) {
 				if (enemies[i][j] != null) {
 					Objgravity(enemies[i][j].getTop(), enemies[i][j]);
-					detected = enemies[i][j].detected(hero);
-					if (detected) {
+					enemies[i][j].setDetected(enemies[i][j].detected(hero));
+					if (enemies[i][j].getDetected()) {
 						// Check collision here
-						if (!action2.equals("BARK")) {
-							action2 = "BARK";
-
+					
+						if (enemies[i][j].getType() == 1) {
+							if (!enemies[i][j].getAction().equals("BARK")) {
+								enemies[i][j].setAction("BARK");
+							}
+						} else if (enemies[i][j].getType() == 2) {
+							if (!enemies[i][j].getAction().equals("GOTYOU")) {
+								enemies[i][j].setAction("GOTYOU");
+							}
+						} else {
 						}
-						enemies[i][j].track(hero.getAbsX(), 1);
-
+						enemies[i][j].track(hero.getAbsX());
 					} else {
-						if (!action2.equals("IDLE")) {
-							action2 = "IDLE";
-
+						if (!enemies[i][j].getAction().equals("IDLE")) {
+							enemies[i][j].setAction("IDLE");
 						}
-						enemies[i][j].move(1);
-						// System.out.println(enemy1.getLeft() + " " +
-						// enemy1.getRight());
+						enemies[i][j].move();
 					}
+
 				}
 			}
 		}
-
-		// }
-		// }
-		// }
 	}
 
 	public void autoScroll() {
