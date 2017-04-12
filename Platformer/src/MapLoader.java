@@ -47,12 +47,6 @@ public class MapLoader {
 	ImageView rock = new ImageView("Assets/Art/skinny rock.png");
 	ImageView flower = new ImageView("Assets/Art/tippableflower (1).png");
 	ImageView winner = new ImageView("Assets/Art/sign.png");
-	
-	
-	//enemies
-	ImageView dogspook = new ImageView("Assets/Animations/ghostdog.png");
-	Animator enemy = new Animator("src/Assets/Animations/ghostdog.png", "src/Assets/Animations/ghostdog.ssc");
-	FrameSetter enemySetter = new FrameSetter(8);
 
 	Nonmoveable[][] nmo = null;
 	Moveable[][] mo = null;
@@ -205,10 +199,21 @@ public class MapLoader {
 					// flower
 					else if (line[i] == 'z') {
 						mo[i][j] = new Flower(i * 64, j * 64, 64, 64, flower, i * 64, j * 64, 64, 192);
-					//enemy
-					} else if (line[i] == '1') {
-						enemies[i][j] = new Enemy(i * 64, j * 64, 64, 64, dogspook, i * 64, j * 64, 64, 64, enemy, enemySetter);
-					} else {
+					} 
+					
+					//ghost dog enemy
+					else if (line[i] == 'D') {
+						enemies[i][j] = new Enemy(i * 64, j * 64, 64, 64, new ImageView("Assets/Animations/ghostdog.png"), i * 64, j * 64, 64, 64, 
+								new Animator("src/Assets/Animations/ghostdog.png", "src/Assets/Animations/ghostdog.ssc"), new FrameSetter(8), 1, 0.5);
+					} 
+					
+					//fairy guard enemy
+					else if (line[i] == 'F') {
+						enemies[i][j] = new Enemy(i * 64, j * 64, 64, 64, new ImageView("Assets/Animations/fairyguard.png"), i * 64, j * 64, 64, 64, 
+								new Animator("src/Assets/Animations/fairyguard.png", "src/Assets/Animations/fairyguard.ssc"), new FrameSetter(9), 2, 0.5);
+					} 
+					
+					else {		
 					}
 
 				}
