@@ -1,4 +1,3 @@
-
 import java.net.URL;
 import DavidMohrhardt.animator.Animator;
 import javafx.animation.AnimationTimer;
@@ -16,7 +15,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -474,7 +472,7 @@ public class Platformer extends Application {
 
 		// make canvases
 		Canvas menuCanvas = new Canvas(WIDTH, HEIGHT);
-		GraphicsContext mc = menuCanvas.getGraphicsContext2D();
+		//GraphicsContext mc = menuCanvas.getGraphicsContext2D();
 		// mc.drawImage(, 0, 100);
 
 		menuCanvas.getGraphicsContext2D();
@@ -1417,7 +1415,6 @@ public class Platformer extends Application {
 							for (int l = 0; l < mo[k].length; l++) {
 								if (mo[k][l] instanceof Rock) {
 									c2.isColliding();
-									System.out.println(k + " " + l);
 									c2.setObjs(mo[i][j], mo[k][l]);
 									if (c2.top()) {
 										mo[i][j].setTop(true);
@@ -1430,29 +1427,22 @@ public class Platformer extends Application {
 					c.setObjs(hero, mo[i][j]);
 					if (c.isColliding()) {
 						if (mo[i][j] instanceof Box) {
-							// System.out.println("BOOP");
 
 							if (c.left()) {
 								mo[i][j].setX(hero.getAbsX() + hero.getWidth() + 1);
 								mo[i][j].setHBX(mo[i][j].getX());
 								mo[i][j].getImageView().setX(mo[i][j].getX());
 								if (!action.equals("PUSH")) {
-									heroAnimation.startActionAnimation("PUSH");
-									heroFrame.changeCount(7);
-									// action = "PUSH";
+									action = "PUSH";
 								}
-								// System.out.println("LEFT HIT");
 							}
 							if (c.right()) {
 								mo[i][j].setX(hero.getAbsX() - mo[i][j].getWidth() - 1);
 								mo[i][j].setHBX(mo[i][j].getX());
 								mo[i][j].getImageView().setX(mo[i][j].getX());
 								if (!action.equals("PUSH")) {
-									heroAnimation.startActionAnimation("PUSH");
-									heroFrame.changeCount(7);
-									// action = "PUSH";
+									action = "PUSH";
 								}
-								// System.out.println("RIGHT HIT");
 							}
 							if (c.top()) {
 								top = true;
@@ -1605,11 +1595,6 @@ public class Platformer extends Application {
 				}
 
 				if (event.getCode().equals(KeyCode.S) || event.getCode().equals(KeyCode.DOWN)) {
-					if (!action.equals("PUSH")) {
-						heroAnimation.startActionAnimation("PUSH");
-						heroFrame.changeCount(7);
-						action = "PUSH";
-					}
 				}
 
 			}
@@ -1709,7 +1694,7 @@ public class Platformer extends Application {
 
 	public void LevelBuilder() {
 		if (cur == 0) {
-			m.readIn("Assets/Json/map.txt");
+			m.readIn("Assets/Json/map1.txt");
 		} else if (cur == 1) {
 			m.readIn("Assets/Json/map2.txt");
 		} else if (cur == 2) {
