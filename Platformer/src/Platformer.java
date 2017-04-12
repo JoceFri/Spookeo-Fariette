@@ -831,21 +831,21 @@ public class Platformer extends Application {
 	}
 
 	private Button nextStoryButton() {
-		Button btn = new Button("", new ImageView(play.getFrame(startButton, "RESUME")));
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "NEXT")));
 		btn.setBackground(new Background(transparent));
 		btn.relocate(WIDTH / 2 - 100, HEIGHT - 100);
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 
-				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME2")));
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "NEXT2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME")));
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "NEXT")));
 			}
 		});
 		btn.setOnAction(new EventHandler<ActionEvent>() {
@@ -861,21 +861,21 @@ public class Platformer extends Application {
 	}
 
 	private Button nextStoryButton2() {
-		Button btn = new Button("", new ImageView(play.getFrame(startButton, "RESUME")));
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "NEXT")));
 		btn.setBackground(new Background(transparent));
 		btn.relocate(WIDTH / 2 - 100, HEIGHT - 100);
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 
-				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME2")));
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "NEXT2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME")));
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "NEXT")));
 			}
 		});
 		btn.setOnAction(new EventHandler<ActionEvent>() {
@@ -890,21 +890,21 @@ public class Platformer extends Application {
 	}
 
 	private Button nextStoryButton3() {
-		Button btn = new Button("", new ImageView(play.getFrame(startButton, "RESUME")));
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "NEXT")));
 		btn.setBackground(new Background(transparent));
 		btn.relocate(WIDTH / 2 - 100, HEIGHT - 100);
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 
-				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME2")));
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "NEXT2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME")));
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "NEXT")));
 			}
 		});
 		btn.setOnAction(new EventHandler<ActionEvent>() {
@@ -926,21 +926,21 @@ public class Platformer extends Application {
 
 	
 	private Button playB() {
-		Button btn = new Button("", new ImageView(play.getFrame(startButton, "RESUME")));
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "PLAY")));
 		btn.setBackground(new Background(transparent));
 		btn.relocate(WIDTH / 2 - 100, HEIGHT - 100);
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 
-				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME2")));
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "PLAY2")));
 			}
 		});
 
 		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				btn.setGraphic(new ImageView(play.getFrame(startButton, "RESUME")));
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "PLAY")));
 			}
 		});
 		btn.setOnAction(new EventHandler<ActionEvent>() {
@@ -1128,7 +1128,6 @@ public class Platformer extends Application {
 			@Override
 			public void handle(ActionEvent event) {
 				igmenuroot.getChildren().add(new ImageView(title.getFrame(titleScreen, "FLASH")));
-				igmenuroot.getChildren().add(menuButton());
 				thestage.setScene(igmenu);
 				gameLoop.stop();
 			}
@@ -1206,7 +1205,7 @@ public class Platformer extends Application {
 	private Button menuButton2() {
 		Button btn = new Button("", new ImageView(play.getFrame(startButton, "MENU")));
 		btn.setBackground(new Background(transparent));
-		btn.relocate(550, 575);
+		btn.relocate(600, 600);
 
 		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
 			@Override
