@@ -1537,6 +1537,19 @@ public class Platformer extends Application {
 				}
 			}
 		}
+		
+		// Collision check with enemies
+		for (int i =0; i < enemies.length; i++) {
+			for (int j = 0; j < enemies[i].length; j++) {
+				if (enemies[i][j] != null) {
+					c.setObjs(hero, enemies[i][j]);
+					if (c.isColliding()) {
+						lives--;
+						reset();
+					}
+				}
+			}
+		}
 	}
 
 	// makes shape move....
