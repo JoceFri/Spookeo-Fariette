@@ -7,7 +7,7 @@ padding_x       :=0;
 padding_y       :=0;
 num_rows        :=2;
 action          :=IDLE;
-columns         :=9;
-action		:=GOTYOU;
-columns		:=8;
+columns         :=8;
+action		    :=GOTYOU;
+columns		    :=7;
 END
