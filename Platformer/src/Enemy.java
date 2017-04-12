@@ -6,30 +6,56 @@ public class Enemy extends Actor {
 	private int count = 240;
 	private int wait = 240;
 	private boolean right = false;
+	private int type = 0;
+	private double speed = 0;
 	boolean swapLeft = false;
 	boolean swapRight = true;
+	boolean detected = false;
 	ImageView e = null;
+	String action = "IDLE";
 
 	public Enemy(double ex, double why, int sizeX, int sizeY, ImageView person, double hbx, double hby, int hbwidth,
-			int hblength, Animator enemy, FrameSetter enemySetter) {
+			int hblength, Animator enemy, FrameSetter enemySetter, int typ, double spee) {
 		super(ex, why, sizeX, sizeY, person, hbx, hby, hbwidth, hblength, enemy, enemySetter);
+		type = typ;
+		speed = spee;
 	}
 
 
+	
+	public String getAction() {
+		return action;
+	}
+	
+	public void setAction(String act) {
+		action = act;
+	}
+	
+	public int getType() {
+		return type;
+	}
+	
+	public boolean getDetected() {
+		return detected;
+	}
 
-	public void track(double ex, double accel) {
+	public void setDetected(boolean val) {
+		detected = val;
+	}
+	
+	public void track(double ex) {
 			if (ex < this.getX() && !(this.getRight())) {
-				this.setX(this.getX() - accel);
+				this.setX(this.getX() - speed);
 				this.setHBX(this.getX());
 			}
 
 			if (ex > this.getX() && !(this.getLeft())) {
-				this.setX(this.getX() + accel);
+				this.setX(this.getX() + speed);
 				this.setHBX(this.getX());
 			}
 		}
 
-	public void move(double accel) {
+	public void move() {
 
 		if (count <= 0) {
 			if (right) {
@@ -51,15 +77,14 @@ public class Enemy extends Actor {
 
 		else {
 				if (right && !(this.getLeft())) {
-					System.out.println("Moved Right. Left collision is " + this.getRight());
-					this.setX(this.getX() + accel);
+					this.setX(this.getX() + speed);
 					this.setHBX(this.getX());
 					//e.setScaleX(-1);
 				}
 
 				if (!right && !(this.getRight())) {
-					System.out.println("Moved left. Right collision is " + this.getLeft());
-					this.setX(this.getX() - accel);
+					
+					this.setX(this.getX() - speed);
 					this.setHBX(this.getX());
 					//e.setScaleX(-1);
 				}
