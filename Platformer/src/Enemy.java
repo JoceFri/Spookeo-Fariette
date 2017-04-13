@@ -11,6 +11,7 @@ public class Enemy extends Actor {
 	boolean swapLeft = false;
 	boolean swapRight = true;
 	boolean detected = false;
+	boolean fairyahaplay = false;
 	ImageView e = null;
 	String action = "IDLE";
 
@@ -100,5 +101,13 @@ public class Enemy extends Actor {
 		} else {
 			return false;
 		}
+	}
+	
+	public void setAhaPlayed(boolean aha){
+		fairyahaplay = aha;
+	}
+	
+	public boolean getAhaPlayed(){
+		return fairyahaplay;
 	}
 }
