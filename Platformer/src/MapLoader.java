@@ -180,11 +180,24 @@ public class MapLoader {
 					else if (line[i] == 'u') {
 						nmo[i][j] = new Nonmoveable(i * 64, j * 64, 64, 64, dirt20, i * 64, j * 64 + 32, 32, 32);
 					}
-					// winBox
+					
+					//winBox
 					else if (line[i] == 'w') {
-						System.out.println("added" + " " + i + " " + j);
 						nmo[i][j] = new winBox(i * 64, j * 64 + 23, 64, 64, winner, i * 64, j * 64 + 23, 64, 64);
 					}
+					
+					// winBox fariette
+					else if (line[i] == 'V') {
+						nmo[i][j] = new winBox(i * 64, j * 64 + 23, 64, 64, new ImageView("Assets/Animations/fariette.png"), i * 64, j * 64 + 23, 64, 64,
+								new Animator("src/Assets/Animations/fariette.png", "src/Assets/Animations/fariette.ssc"), new FrameSetter(8));
+					}
+					
+					// winBox spookeo
+					else if (line[i] == 'W') {
+						nmo[i][j] = new winBox(i * 64, j * 64 + 23, 64, 64, new ImageView("Assets/Animations/spookeo_sheet.png"), i * 64, j * 64 + 23, 64, 64,
+								new Animator("src/Assets/Animations/spookeo_sheet.png", "src/Assets/Animations/Spookeo.ssc"), new FrameSetter(9));
+					}
+					
 					// box
 					else if (line[i] == 'x') {
 						mo[i][j] = new Box(i * 64, j * 64 + 32, 64, 64, box, i * 64, j * 64 + 32, 62, 62);
