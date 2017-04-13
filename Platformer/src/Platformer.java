@@ -58,6 +58,16 @@ public class Platformer extends Application {
 	private Collision c3;
 	int cur = 0;
 	private Sounds bgNoise = new Sounds();
+	private Sounds farietteUgh = new Sounds();
+	private Sounds ohYeah = new Sounds();
+	private Sounds spookeoTheme = new Sounds();
+	private Sounds farietteTheme = new Sounds();
+	private Sounds deathSong = new Sounds();
+	private Sounds fairyAha = new Sounds();
+	private Sounds gotem = new Sounds();
+	private Sounds borkbork = new Sounds();
+	private Sounds laugh = new Sounds();
+	private Sounds playagain = new Sounds();
 	private Sounds jumpSound = new Sounds();
 	boolean checks = false;
 	boolean fachecks = false;
@@ -470,7 +480,15 @@ public class Platformer extends Application {
 	private void sound() {
 		bgNoise.loadSound("Assets/Sound/Main_Theme.wav");
 		jumpSound.loadSound("Assets/Sound/jump1.wav");
-		// bgNoise.runLoop();
+		farietteUgh.loadSound("Assets/Sound/ugh.wav");
+		ohYeah.loadSound("Assets/Sound/ohYeah.wav");
+		borkbork.loadSound("Assets/Sound/Dog_Bark_3.wav");
+		fairyAha.loadSound("Assets/Sound/-Ah-ha!-.wav");
+		gotem.loadSound("Assets/Sound/-I_Got_You!-.wav");
+		deathSong.loadSound("Assets/Sound/Spookeo_and_Fairiette_Death.wav");
+		laugh.loadSound("Assets/Sound/Evil_Laughter_2.wav");
+		playagain.loadSound("Assets/Sound/Spookeo_and_Fairiette_Play_Again-.wav");
+		bgNoise.runLoop();
 	}
 
 	private void draw() {
@@ -775,6 +793,9 @@ public class Platformer extends Application {
 				cur = 0;
 				reset();
 				s = true;
+				bgNoise.stop();
+				spookeoTheme.loadSound("Assets/Sound/Main_Theme.wav");
+				spookeoTheme.runLoop();
 				// hero.getImageView().setImage(spookeo);
 				heroAnimation = new Animator("src/Assets/Animations/spookeo_sheet.png",
 						"src/Assets/Animations/Spookeo.ssc");
@@ -820,6 +841,9 @@ public class Platformer extends Application {
 				s = false;
 				cur = 5;
 				resetF();
+				bgNoise.stop();
+				farietteTheme.loadSound("Assets/Sound/Spooky_Forrest_Theme.wav");
+				farietteTheme.runLoop();
 				// hero.getImageView().setImage(fariette);
 				heroAnimation = new Animator("src/Assets/Animations/fariette.png",
 						"src/Assets/Animations/fariette.ssc");
@@ -1360,6 +1384,12 @@ public class Platformer extends Application {
 	public void deathCheck(AnimationTimer loop) {
 		if (lives <= 0) {
 			loop.stop();
+			if (cur <= 3) {
+				spookeoTheme.stop();
+			} else if (cur >= 5) {
+				farietteTheme.stop();
+			}
+			deathSong.runOnce();
 			thestage.setScene(deathScene);
 			lives = 3;
 		}
@@ -1692,6 +1722,9 @@ public class Platformer extends Application {
 
 	public void winCheck(AnimationTimer loop) {
 		gameLoop.stop();
+		if (cur >= 5) {
+			ohYeah.runOnce();
+		}
 		thestage.setScene(nextLevel);
 		// farietteAdded = false;
 		if (cur == 3 || cur == 8) {
@@ -1780,7 +1813,6 @@ public class Platformer extends Application {
 		gameRoot.getChildren().add(hero.getImageView());
 		gameRoot.getChildren().add(rectangle);
 	}
-
 	public void detection() {
 
 		for (int i = 0; i < enemies.length; i++) {
@@ -1820,26 +1852,41 @@ public class Platformer extends Application {
 		for (int i = 0; i < enemies.length; i++) {
 			for (int j = 0; j < enemies[i].length; j++) {
 				if (enemies[i][j] != null) {
+					
 					Objgravity(enemies[i][j].getTop(), enemies[i][j]);
 					enemies[i][j].setDetected(enemies[i][j].detected(hero));
 					if (enemies[i][j].getDetected()) {
 						// Check collision here
 					
 						if (enemies[i][j].getType() == 1) {
+							int borkborkcd = 40;
 							if (!enemies[i][j].getAction().equals("BARK")) {
 								enemies[i][j].setAction("BARK");
+								
+								if (borkborkcd >= 40) {
+									borkbork.runOnce();
+									borkborkcd = 0;
+								}
+								borkbork.reset();
+								borkborkcd++;
 							}
 						} else if (enemies[i][j].getType() == 2) {
 							if (!enemies[i][j].getAction().equals("GOTYOU")) {
 								enemies[i][j].setAction("GOTYOU");
 							}
+							if (!enemies[i][j].getAhaPlayed()) {
+								fairyAha.runOnce();
+								enemies[i][j].setAhaPlayed(true);
+							}
+							fairyAha.reset();
 						} else {
 						}
 						enemies[i][j].track(hero.getAbsX());
-					} else {
+					} else if(!enemies[i][j].getDetected()){
 						if (!enemies[i][j].getAction().equals("IDLE")) {
 							enemies[i][j].setAction("IDLE");
 						}
+						enemies[i][j].setAhaPlayed(false);
 						enemies[i][j].move();
 					}
 
