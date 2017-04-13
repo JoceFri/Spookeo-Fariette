@@ -420,7 +420,15 @@ public class Platformer extends Application {
 				}
 			}
 		}
-		// enemies.getImageView().setImage(doggo.getFrame(dog, action2));
+		
+		for (int i = 0; i < nmo.length; i++) {
+			for (int j = 0; j < nmo[i].length; j++) {
+				if (nmo[i][j] != null & nmo[i][j] instanceof winBox && nmo[i][j].getAnimator() != null) {
+					nmo[i][j].getImageView().setImage(nmo[i][j].getFrameSetter().getFrame(nmo[i][j].getAnimator(), "IDLE"));
+					nmo[i][j].getImageView().setScaleX(-1);
+				}
+			}
+		}
 
 	}
 
@@ -1718,7 +1726,7 @@ public class Platformer extends Application {
 		gameRoot.getChildren().remove(hero.getImageView());
 		gameRoot.getChildren().remove(rectangle);
 		xOffset = 0;
-		m.readIn("Assets/Json/map.txt");
+		m.readIn("Assets/Json/map1.txt");
 		movingUp = false;
 		movingRight = false;
 		movingLeft = false;
@@ -1748,7 +1756,7 @@ public class Platformer extends Application {
 		gameRoot.getChildren().remove(hero.getImageView());
 		gameRoot.getChildren().remove(rectangle);
 		xOffset = 0;
-		m.readIn("Assets/Json/map.txt");
+		m.readIn("Assets/Json/map5.txt");
 		movingUp = false;
 		movingRight = false;
 		movingLeft = false;
