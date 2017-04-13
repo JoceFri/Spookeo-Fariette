@@ -53,12 +53,14 @@ public class MapLoader {
 	int width = 0;
 	int height = 0;
 	winBox win = null;
+	
+	String path = System.getProperty("user.dir");
 
-	public void readIn(String path) {
+	public void readIn(String pathe) {
 
 		try {
 
-			Scanner in = new Scanner(getResourceAsFile(path));
+			Scanner in = new Scanner(getResourceAsFile(pathe));
 
 			width = in.nextInt();
 			height = in.nextInt();
@@ -189,13 +191,13 @@ public class MapLoader {
 					// winBox fariette
 					else if (line[i] == 'V') {
 						nmo[i][j] = new winBox(i * 64, j * 64 + 23, 64, 64, new ImageView("Assets/Animations/fariette.png"), i * 64, j * 64 + 23, 64, 64,
-								new Animator("src/Assets/Animations/fariette.png", "src/Assets/Animations/fariette.ssc"), new FrameSetter(8));
+								new Animator(path + "/src/Assets/Animations/fariette.png", path + "/src/Assets/Animations/fariette.ssc"), new FrameSetter(8));
 					}
 					
 					// winBox spookeo
 					else if (line[i] == 'W') {
 						nmo[i][j] = new winBox(i * 64, j * 64 + 23, 64, 64, new ImageView("Assets/Animations/spookeo_sheet.png"), i * 64, j * 64 + 23, 64, 64,
-								new Animator("src/Assets/Animations/spookeo_sheet.png", "src/Assets/Animations/Spookeo.ssc"), new FrameSetter(9));
+								new Animator(path + "/src/Assets/Animations/spookeo_sheet.png", path + "/src/Assets/Animations/Spookeo.ssc"), new FrameSetter(9));
 					}
 					
 					// box
@@ -216,13 +218,13 @@ public class MapLoader {
 					//ghost dog enemy
 					else if (line[i] == 'D') {
 						enemies[i][j] = new Enemy(i * 64, j * 64, 64, 64, new ImageView("Assets/Animations/ghostdog.png"), i * 64, j * 64, 64, 64, 
-								new Animator("src/Assets/Animations/ghostdog.png", "src/Assets/Animations/ghostdog.ssc"), new FrameSetter(8), 1, 0.5);
+								new Animator(path + "/src/Assets/Animations/ghostdog.png", path + "/src/Assets/Animations/ghostdog.ssc"), new FrameSetter(8), 1, 0.5);
 					} 
 					
 					//fairy guard enemy
 					else if (line[i] == 'F') {
 						enemies[i][j] = new Enemy(i * 64, j * 64, 64, 64, new ImageView("Assets/Animations/fairyguard.png"), i * 64, j * 64, 64, 64, 
-								new Animator("src/Assets/Animations/fairyguard.png", "src/Assets/Animations/fairyguard.ssc"), new FrameSetter(9), 2, 0.5);
+								new Animator(path + "/src/Assets/Animations/fairyguard.png", path + "/src/Assets/Animations/fairyguard.ssc"), new FrameSetter(9), 2, 0.5);
 					} 
 					
 					else {		
