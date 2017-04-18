@@ -17,6 +17,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
@@ -72,6 +73,7 @@ public class Platformer extends Application {
 	private Sounds jumpSound = new Sounds();
 	boolean checks = false;
 	boolean fachecks = false;
+	boolean farietteDead = false;
 	int asdf = 0;
 	int storyNext = 0;
 
@@ -86,7 +88,7 @@ public class Platformer extends Application {
 	private Actor box = new Actor(500, HEIGHT - 100, 100, 100, new ImageView("Assets/Art/pushable_box.png"), 500,
 			HEIGHT - 100, 100, 100);
 	final Rectangle rectangle = makeRectangle(hero.getX(), hero.getY(), hero.getWidth(), hero.getHeight());
-
+	Rectangle rectanglez = new Rectangle(WIDTH / 2 - 25,HEIGHT / 2 + 100,64,64);
 	BackgroundFill menuBG = new BackgroundFill(Color.BLACK, null, null);
 	BackgroundFill controlBG = new BackgroundFill(Color.BLACK, null, null);
 	BackgroundFill gameBG = new BackgroundFill(Color.BLACK, null, null);
@@ -103,7 +105,7 @@ public class Platformer extends Application {
 	Canvas charCanvas = new Canvas(WIDTH, HEIGHT);
 	GraphicsContext chc = charCanvas.getGraphicsContext2D();
 	Background gameBack = null;
-
+	Rectangle no = new Rectangle(WIDTH / 2 - 110, 150, 377, 150);
 	ImageView bg = new ImageView("Assets/Art/BackGround.png");
 	Image winScreen = new Image("Assets/Art/endgame.png");
 	Image controls = new Image("Assets/Art/controls_sheet2.png");
@@ -113,7 +115,7 @@ public class Platformer extends Application {
 	
 	int places = 0;
 	int place = 0;
-
+	boolean spookeoDead = false;
 	// Load all the backgrounds
 	// Meadows
 	ImageView meadows = new ImageView("Assets/Art/happy_meadows.png");
@@ -149,9 +151,17 @@ public class Platformer extends Application {
 	FrameSetter farietteFrame = new FrameSetter(9);
 	Actor farietteImage = new Actor(1000, 252, 192, 192, new ImageView("Assets/Art/k.png"), 1000, 252, 192, 192);
 
+	Animator farietteSelectz = new Animator(path + "/src/Assets/Animations/fariette.png", path + "/src/Assets/Animations/fariette.ssc");
+	FrameSetter farietteFramez = new FrameSetter(9);
+	
 	Animator spookeoSelect = new Animator(path + "/src/Assets/Animations/spookeo_sheet.png",
 			path + "/src/Assets/Animations/Spookeo.ssc");
 	FrameSetter spookeoFrame = new FrameSetter(9);
+	
+	Animator spookeoSelectz = new Animator(path + "/src/Assets/Animations/spookeo_sheet.png",
+			path + "/src/Assets/Animations/Spookeo.ssc");
+	FrameSetter spookeoFramez = new FrameSetter(9);
+	
 	Actor spookeoImage = new Actor(450, 252, 192, 192, new ImageView("Assets/Art/joey.png"), 450, 252, 192, 192);
 
 	//
@@ -164,6 +174,7 @@ public class Platformer extends Application {
 
 	Animator startButton = new Animator(path + "/src/Assets/Animations/buttons.png", path + "/src/Assets/Animations/buttons.ssc");
 	FrameSetter play = new FrameSetter(2);
+	
 	GraphicsContext sc;
 	Animator titleScreen = new Animator(path + "/src/Assets/Animations/title_screen.png",
 			path + "/src/Assets/Animations/title_screen.ssc");
@@ -206,6 +217,8 @@ public class Platformer extends Application {
 
 		spookeoSelect.startActionAnimation("IDLE");
 		spookeoImage.getImageView().setImage(spookeoFrame.getFrame(spookeoSelect, "IDLE"));
+		
+		
 
 		farietteSelect.startActionAnimation("IDLE");
 		farietteImage.getImageView().setImage(farietteFrame.getFrame(farietteSelect, "IDLE"));
@@ -284,7 +297,7 @@ public class Platformer extends Application {
 
 			@Override
 			public void handle(long now) {
-				deathCheck(gameLoop);
+				deathCheck();
 				if (gameState == 0) {
 					animations();
 					chc.drawImage(titleImage.getImageView().getImage(), titleImage.getX(), titleImage.getY(),
@@ -301,6 +314,10 @@ public class Platformer extends Application {
 				}
 
 				if (gameState == 2) {
+					fachecks = false;
+					farietteDead = false;
+					checks = false;
+					spookeoDead = false;
 					resetCollision();
 					collisionCheck();
 					cameraScroll(xOffset, 0);
@@ -328,6 +345,16 @@ public class Platformer extends Application {
 						jump(rectangle, hero.getImageView());
 					}
 					cooldown++;
+				}
+				if (gameState == 5) {
+					if (cur <= 3) {
+						animations();
+						spookeoDead = true;
+					}
+					else if (cur >= 5) {
+						animations();
+						farietteDead = true;
+					}
 				}
 			}
 		};
@@ -426,6 +453,25 @@ public class Platformer extends Application {
 			farietteImage.getImageView().setImage(farietteFrame.getFrame(farietteSelect, "IDLE"));
 
 		}
+		if (spookeoDead && asdf < 60) {
+				
+				rectanglez.setFill(new ImagePattern(spookeoFramez.getFrame(spookeoSelectz, "DEATH")));
+				asdf++;
+		
+		}
+		else if (spookeoDead) {
+			rectanglez.setFill(new ImagePattern(spookeoFramez.getFrame(spookeoSelectz, "DEATH_IDLE")));
+		}
+		if (farietteDead && asdf < 60) {
+			
+			rectanglez.setFill(new ImagePattern(farietteFramez.getFrame(farietteSelectz, "DEATH")));
+			asdf++;
+	
+	}
+	else if (farietteDead) {
+		rectanglez.setFill(new ImagePattern(farietteFramez.getFrame(farietteSelectz, "DEATH_IDLE")));
+	}
+
 		titleImage.getImageView().setImage(title.getFrame(titleScreen, "FLASH"));
 
 		for (int i = 0; i < enemies.length; i++) {
@@ -594,6 +640,7 @@ public class Platformer extends Application {
 		deathRoot = new Pane();
 		deathRoot.setBackground(new Background(menuBG));
 		deathRoot.getChildren().add(deathCanvas);
+		deathRoot.getChildren().add(heroDeath());
 		deathRoot.getChildren().add(menuButton());
 		deathScene = new Scene(deathRoot, WIDTH, HEIGHT);
 
@@ -628,6 +675,7 @@ public class Platformer extends Application {
 		// next
 		nextLevelroot = new Pane();
 		nextLevelroot.getChildren().add(nextButton());
+		nextLevelroot.getChildren().add(nextcongrats());
 		nextLevelroot.setBackground(new Background(menuBG));
 		nextLevel = new Scene(nextLevelroot, WIDTH, HEIGHT);
 		// ---------- Game ----------//
@@ -780,6 +828,7 @@ public class Platformer extends Application {
 
 	// spookeo's character select button
 	private Button spookeoButton() {
+		
 		asdf = 0;
 		Button btn = new Button("", new ImageView(play.getFrame(startButton, "JOEY")));
 
@@ -1240,6 +1289,7 @@ public class Platformer extends Application {
 			@Override
 			public void handle(ActionEvent event) {
 				// menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
+				gameLoop.stop();
 				gameState = 0;
 				thestage.setTitle("Spookeo and Fariette");
 				thestage.setScene(menuScene);
@@ -1286,6 +1336,7 @@ public class Platformer extends Application {
 					farietteTheme.stop();
 					farietteTheme.reset();
 				}
+				lives = 3;
 				reset();
 				bgNoise.runLoop();
 				gameState = 0;
@@ -1319,6 +1370,7 @@ public class Platformer extends Application {
 
 			@Override
 			public void handle(ActionEvent event) {
+			
 				thestage.setScene(igmenu);
 			}
 		});
@@ -1428,9 +1480,9 @@ public class Platformer extends Application {
 	}
 
 	// Check for death
-	public void deathCheck(AnimationTimer loop) {
+	public void deathCheck() {
 		if (lives <= 0) {
-			loop.stop();
+			gameState = 5;
 			if (cur <= 3) {
 				spookeoTheme.stop();
 				spookeoTheme.reset();
@@ -1439,6 +1491,8 @@ public class Platformer extends Application {
 				farietteTheme.reset();
 			}
 			deathSong.runOnce();
+		//	System.out.println("hi");
+			gameLoop.stop();
 			deathSong.reset();
 			thestage.setScene(deathScene);
 			lives = 3;
@@ -1944,7 +1998,18 @@ public class Platformer extends Application {
 			}
 		}
 	}
-
+	public Rectangle heroDeath() {
+	
+		//Button btn = new Button("", new ImageView(play.getFrame(startButton, "JOEY")));
+		
+		return rectanglez;
+	}
+	
+	public Rectangle nextcongrats() {
+		Image i = new Image("Assets/Art/congrats.png");
+		no.setFill((new ImagePattern(i)));
+		return no;
+	}
 	public void autoScroll() {
 		if (xOffset + acceleration < (0.76 * m.getWidth())) {
 			xOffset = xOffset + acceleration / 2;
