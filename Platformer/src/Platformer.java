@@ -55,22 +55,23 @@ public class Platformer extends Application {
 	boolean rightFlowerFlip = false;
 	boolean boxLeft = false;
 	boolean boxRight = false;
+	private boolean flag = false;
 	private Collision c;
 	private Collision c2;
 	private Collision c3;
 	int cur = 0;
 	private Sounds bgNoise = new Sounds();
-	private Sounds farietteUgh = new Sounds();
-	private Sounds ohYeah = new Sounds();
+	//private Sounds farietteUgh = new Sounds();
+	//private Sounds ohYeah = new Sounds();
 	private Sounds spookeoTheme = new Sounds();
 	private Sounds farietteTheme = new Sounds();
 	private Sounds deathSong = new Sounds();
 	private Sounds fairyAha = new Sounds();
 	private Sounds gotem = new Sounds();
 	private Sounds borkbork = new Sounds();
-	private Sounds laugh = new Sounds();
+	//private Sounds laugh = new Sounds();
 	private Sounds playagain = new Sounds();
-	private Sounds jumpSound = new Sounds();
+	//private Sounds jumpSound = new Sounds();
 	boolean checks = false;
 	boolean fachecks = false;
 	boolean farietteDead = false;
@@ -532,14 +533,16 @@ public class Platformer extends Application {
 	private void sound() {
 
 		bgNoise.loadSound("Assets/Sound/Main_Theme.wav");
-		jumpSound.loadSound("Assets/Sound/jump1.wav");
-		farietteUgh.loadSound("Assets/Sound/ugh.wav");
-		ohYeah.loadSound("Assets/Sound/ohYeah.wav");
+		//jumpSound.loadSound("Assets/Sound/jump1.wav");
+		//farietteUgh.loadSound("Assets/Sound/ugh.wav");
+		//ohYeah.loadSound("Assets/Sound/ohYeah.wav");
 		borkbork.loadSound("Assets/Sound/Dog_Bark_3.wav");
+		spookeoTheme.loadSound("Assets/Sound/Happy Meadows.wav");
+		farietteTheme.loadSound("Assets/Sound/Spooky_Forrest_Theme.wav");
 		fairyAha.loadSound("Assets/Sound/-Ah-ha!-.wav");
 		gotem.loadSound("Assets/Sound/-I_Got_You!-.wav");
 		deathSong.loadSound("Assets/Sound/Spookeo_and_Fairiette_Death.wav");
-		laugh.loadSound("Assets/Sound/Evil_Laughter_2.wav");
+		//laugh.loadSound("Assets/Sound/Evil_Laughter_2.wav");
 		playagain.loadSound("Assets/Sound/Spookeo_and_Fairiette_Play_Again-.wav");
 		if (soundCount == 0) {
 			bgNoise.runLoop();
@@ -641,7 +644,7 @@ public class Platformer extends Application {
 		deathRoot.setBackground(new Background(menuBG));
 		deathRoot.getChildren().add(deathCanvas);
 		deathRoot.getChildren().add(heroDeath());
-		deathRoot.getChildren().add(menuButton());
+		deathRoot.getChildren().add(menuButton3());
 		deathScene = new Scene(deathRoot, WIDTH, HEIGHT);
 
 		// make control
@@ -863,7 +866,6 @@ public class Platformer extends Application {
 				s = true;
 				bgNoise.stop();
 				bgNoise.reset();
-				spookeoTheme.loadSound("Assets/Sound/Main_Theme.wav");
 				spookeoTheme.runLoop();
 				// hero.getImageView().setImage(spookeo);
 				heroAnimation = new Animator("src/Assets/Animations/spookeo_sheet.png",
@@ -912,7 +914,6 @@ public class Platformer extends Application {
 				resetF();
 				bgNoise.stop();
 				bgNoise.reset();
-				farietteTheme.loadSound("Assets/Sound/Spooky_Forrest_Theme.wav");
 				farietteTheme.runLoop();
 				// hero.getImageView().setImage(fariette);
 				heroAnimation = new Animator("src/Assets/Animations/fariette.png",
@@ -1328,11 +1329,11 @@ public class Platformer extends Application {
 				//menuRoot.getChildren().add(new ImageView(title.getFrame(titleScreen, "FLASH")));
 				thestage.setTitle("Spookeo and Fariette");
 				thestage.setScene(menuScene);
-				if( cur<= 3){
+				if(cur <= 2 || cur == 8){
 					spookeoTheme.stop();
 					spookeoTheme.reset();
 				}
-				if( cur >=5){
+				if( (cur >=5 && cur < 8) || cur == 3){
 					farietteTheme.stop();
 					farietteTheme.reset();
 				}
@@ -1341,6 +1342,46 @@ public class Platformer extends Application {
 				bgNoise.runLoop();
 				gameState = 0;
 				gameLoop.stop();
+
+			}
+		});
+		return btn;
+	}
+	
+	// creates button to reach menu
+	private Button menuButton3() {
+		Button btn = new Button("", new ImageView(play.getFrame(startButton, "MENU")));
+		btn.setBackground(new Background(transparent));
+		btn.relocate((WIDTH / 2) - 94, 575);
+
+		btn.setOnMouseEntered(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "MENU2")));
+			}
+		});
+
+		btn.setOnMouseExited(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				btn.setGraphic(new ImageView(play.getFrame(startButton, "MENU")));
+			}
+		});
+
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+
+			// action for the start button
+			// sets button to false and creates a rectangle that appears after
+			@Override
+			public void handle(ActionEvent event) {
+				// menuRoot.getChildren().add(TITLE_SCREEN.getImageView());
+				gameLoop.stop();
+				deathSong.stop();
+				bgNoise.runLoop();
+				gameState = 0;
+				thestage.setTitle("Spookeo and Fariette");
+				thestage.setScene(menuScene);
 
 			}
 		});
@@ -1483,10 +1524,10 @@ public class Platformer extends Application {
 	public void deathCheck() {
 		if (lives <= 0) {
 			gameState = 5;
-			if (cur <= 3) {
+			if (cur <= 2 || cur == 8) {
 				spookeoTheme.stop();
 				spookeoTheme.reset();
-			} else if (cur >= 5) {
+			} else if ((cur >= 5 && cur < 8) || cur == 3) {
 				farietteTheme.stop();
 				farietteTheme.reset();
 			}
@@ -1528,6 +1569,9 @@ public class Platformer extends Application {
 						bottom = true;
 					}
 					if (c.isColliding() && nmo[i][j] instanceof winBox) {
+						if (cur == 3 || cur == 8) {
+							flag = true;
+						}
 						winCheck(gameLoop);
 					}
 				}
@@ -1827,12 +1871,20 @@ public class Platformer extends Application {
 	public void winCheck(AnimationTimer loop) {
 		gameLoop.stop();
 		if (cur >= 5) {
-			ohYeah.runOnce();
+			//ohYeah.runOnce();
 		}
 		thestage.setScene(nextLevel);
 		// farietteAdded = false;
-		if (cur == 3 || cur == 8) {
+		if ((cur == 3 || cur == 8) && flag) {
 			//gameLoop.stop();
+			if (cur == 3) {
+				farietteTheme.stop();
+				playagain.runLoop();
+			}
+			else if (cur == 8) {
+				spookeoTheme.stop();
+				playagain.runLoop();
+			}
 			thestage.setScene(winScene);
 		}
 	}
@@ -1845,6 +1897,8 @@ public class Platformer extends Application {
 		} else if (cur == 2) {
 			m.readIn("Assets/Json/map3.txt");
 		} else if (cur == 3) {
+			spookeoTheme.stop();
+			farietteTheme.runLoop();
 			m.readIn("Assets/Json/map4.txt");
 		} else if (cur == 5) {
 			m.readIn("Assets/Json/map5.txt");
@@ -1853,6 +1907,8 @@ public class Platformer extends Application {
 		} else if (cur == 7) {
 			m.readIn("Assets/Json/map7.txt");
 		} else if (cur == 8) {
+			farietteTheme.stop();
+			spookeoTheme.runLoop();
 			m.readIn("Assets/Json/map8.txt");
 		}
 	}
@@ -1860,6 +1916,7 @@ public class Platformer extends Application {
 	// Reset game
 	public void reset() {
 		
+		flag = false;
 		gameRoot.getChildren().remove(hero.getImageView());
 		gameRoot.getChildren().remove(rectangle);
 		xOffset = 0;
@@ -1890,6 +1947,7 @@ public class Platformer extends Application {
 
 	public void resetF() {
 
+		flag = false;
 		gameRoot.getChildren().remove(hero.getImageView());
 		gameRoot.getChildren().remove(rectangle);
 		xOffset = 0;
